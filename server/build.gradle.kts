@@ -14,7 +14,8 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:${Versions.ktor}")
     implementation("io.ktor:ktor-serialization:${Versions.ktor}")
 
-    implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("ch.qos.logback:logback-classic:${Versions.logback}")
+    implementation(Koin.ktor)
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.kotlinxSerialization}") // JVM dependency
     implementation("io.ktor:ktor-websockets:${Versions.ktor}")

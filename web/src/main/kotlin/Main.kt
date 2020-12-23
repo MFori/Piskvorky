@@ -1,12 +1,11 @@
 import co.touchlab.kermit.Kermit
-import cz.martinforejt.piskvorky.domain.di.initKoin
+import cz.martinforejt.piskvorky.domain.core.di.initKoin
 import cz.martinforejt.piskvorky.domain.repository.PeopleInSpaceRepository
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import react.child
 import react.createContext
 import react.dom.a
-import react.dom.nav
 import react.dom.render
 import react.router.dom.*
 

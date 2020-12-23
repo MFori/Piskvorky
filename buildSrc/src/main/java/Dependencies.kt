@@ -10,12 +10,13 @@ object Versions {
     const val kermit = "0.1.8"
 
     const val sqliteJdbcDriver = "3.30.1"
-    const val slf4j = "1.7.30"
     const val compose = "1.0.0-alpha09"
     const val nav_compose = "1.0.0-alpha04"
     const val accompanist = "0.4.1"
 
     const val shadow = "6.1.0"
+
+    const val logback = "1.2.3"
 
     const val junit = "4.13"
     const val testRunner = "1.3.0"
@@ -49,6 +50,7 @@ object Compose {
 
 object Koin {
     val core = "org.koin:koin-core:${Versions.koin}"
+    val ktor = "org.koin:koin-ktor:${Versions.koin}"
     val test = "org.koin:koin-test:${Versions.koin}"
     val android = "org.koin:koin-android:${Versions.koin}"
     val androidViewModel = "org.koin:koin-androidx-viewmodel:${Versions.koin}"
@@ -62,7 +64,6 @@ object Ktor {
 
     val clientAndroid = "io.ktor:ktor-client-android:${Versions.ktor}"
     val clientApache = "io.ktor:ktor-client-apache:${Versions.ktor}"
-    val slf4j = "org.slf4j:slf4j-simple:${Versions.slf4j}"
     val clientIos = "io.ktor:ktor-client-ios:${Versions.ktor}"
     val clientCio = "io.ktor:ktor-client-cio:${Versions.ktor}"
     val clientJs = "io.ktor:ktor-client-js:${Versions.ktor}"

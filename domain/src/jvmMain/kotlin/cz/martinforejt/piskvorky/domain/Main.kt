@@ -1,6 +1,6 @@
 package cz.martinforejt.piskvorky.domain
 
-import cz.martinforejt.piskvorky.domain.di.initKoin
+import cz.martinforejt.piskvorky.domain.core.di.initKoin
 import cz.martinforejt.piskvorky.domain.remote.PeopleInSpaceApi
 import kotlinx.coroutines.runBlocking
 

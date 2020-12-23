@@ -53,7 +53,6 @@ kotlin {
 
         sourceSets["jvmMain"].dependencies {
             implementation(Ktor.clientApache)
-            implementation(Ktor.slf4j)
         }
 
         sourceSets["jsMain"].dependencies {

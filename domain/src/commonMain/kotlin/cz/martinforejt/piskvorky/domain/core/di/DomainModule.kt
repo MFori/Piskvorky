@@ -1,4 +1,4 @@
-package cz.martinforejt.piskvorky.domain.di
+package cz.martinforejt.piskvorky.domain.core.di
 
 import co.touchlab.kermit.Kermit
 import cz.martinforejt.piskvorky.domain.remote.PeopleInSpaceApi
@@ -9,20 +9,16 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
 import kotlinx.serialization.json.Json
-import org.koin.core.context.startKoin
-import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
-fun initKoin(enableNetworkLogs: Boolean = false, appDeclaration: KoinAppDeclaration = {}) =
-    startKoin {
-        appDeclaration()
-        modules(commonModule(enableNetworkLogs = enableNetworkLogs))
-    }
+/**
+ * Created by Martin Forejt on 23.12.2020.
+ * me@martinforejt.cz
+ *
+ * @author Martin Forejt
+ */
 
-// called by iOS etc
-fun initKoin() = initKoin(enableNetworkLogs = false) {}
-
-fun commonModule(enableNetworkLogs: Boolean) = module {
+fun domainModule(enableNetworkLogs: Boolean) = module {
     single { createJson() }
     single { createHttpClient(get(), enableNetworkLogs = enableNetworkLogs) }
     single { PeopleInSpaceRepository() }
