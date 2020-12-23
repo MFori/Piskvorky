@@ -2,7 +2,7 @@ import cz.martinforejt.piskvorky.domain.remote.Assignment
 import react.*
 import react.dom.*
 import kotlinx.coroutines.*
-
+import react.router.dom.routeLink
 
 
 val App = functionalComponent<RProps> { _ ->
@@ -29,5 +29,8 @@ val App = functionalComponent<RProps> { _ ->
                 +"${item.name} (${item.craft})"
             }
         }
+    }
+    routeLink("/login") {
+        +"Login2"
     }
 }

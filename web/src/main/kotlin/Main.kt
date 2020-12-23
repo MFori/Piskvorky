@@ -30,10 +30,7 @@ fun main() {
             browserRouter {
                 switch {
                     route("/", exact = true) {
-                        //child(App)
-                        routeLink("/login") {
-                            +"Login2"
-                        }
+                        child(App)
                     }
                     route("/ha") {
                         routeLink("/login") {
