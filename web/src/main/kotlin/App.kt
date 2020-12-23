@@ -1,3 +1,4 @@
+import cz.martinforejt.piskvorky.api.model.UserResponse
 import cz.martinforejt.piskvorky.domain.remote.Assignment
 import react.*
 import react.dom.*

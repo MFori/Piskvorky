@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.*
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-
+import kotlinx.serialization.*
 
 class PeopleInSpaceRepository() : KoinComponent {
     private val peopleInSpaceApi: PeopleInSpaceApi by inject()

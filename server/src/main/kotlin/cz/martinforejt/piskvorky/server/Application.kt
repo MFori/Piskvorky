@@ -1,5 +1,6 @@
 package cz.martinforejt.piskvorky.server
 
+import cz.martinforejt.piskvorky.api.model.UserResponse
 import cz.martinforejt.piskvorky.domain.di.initKoin
 import cz.martinforejt.piskvorky.domain.remote.Assignment
 import cz.martinforejt.piskvorky.domain.remote.AstroResult
@@ -23,6 +24,7 @@ fun Application.module(testing: Boolean = false) {
 
     val koin = initKoin(enableNetworkLogs = true).koin
     val peopleInSpaceApi = koin.get<PeopleInSpaceApi>()
+    UserResponse()
 
     val port = System.getenv("PORT")?.toInt() ?: 9090
     embeddedServer(Netty, port) {
