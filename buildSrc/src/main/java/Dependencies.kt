@@ -14,6 +14,8 @@ object Versions {
     const val nav_compose = "1.0.0-alpha04"
     const val accompanist = "0.4.1"
 
+    const val shadow = "6.1.0"
+
     const val junit = "4.13"
     const val testRunner = "1.3.0"
 }

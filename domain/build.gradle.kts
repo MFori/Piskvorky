@@ -3,14 +3,22 @@ plugins {
     id("kotlinx-serialization")
 }
 
+version = "1.0"
+
 kotlin {
 
     jvm()
 
     js {
         browser {
+            compilations.all {
+                kotlinOptions {
+                    version = "1.0"
+                }
+            }
         }
     }
+
 
     sourceSets {
 
@@ -30,12 +38,12 @@ kotlin {
             implementation(Serialization.core)
 
             // SQL Delight
-            implementation(SqlDelight.runtime)
-            implementation(SqlDelight.coroutineExtensions)
+            //implementation(SqlDelight.runtime)
+            //implementation(SqlDelight.coroutineExtensions)
 
             // koin
             api(Koin.core)
-            api(Koin.test)
+            // api(Koin.test)
 
             // kermit
             api(Deps.kermit)

@@ -1,14 +1,11 @@
 package cz.martinforejt.piskvorky.domain.repository
 
 import co.touchlab.kermit.Kermit
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToList
 import cz.martinforejt.piskvorky.domain.model.personBios
 import cz.martinforejt.piskvorky.domain.model.personImages
 import cz.martinforejt.piskvorky.domain.remote.Assignment
 import cz.martinforejt.piskvorky.domain.remote.IssPosition
 import cz.martinforejt.piskvorky.domain.remote.PeopleInSpaceApi
-import com.surrus.peopleinspace.db.PeopleInSpaceDatabase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -24,7 +21,7 @@ class PeopleInSpaceRepository() : KoinComponent {
 
     private val coroutineScope: CoroutineScope = MainScope()
     private val peopleInSpaceDatabase = createDb()
-    private val peopleInSpaceQueries = peopleInSpaceDatabase?.peopleInSpaceQueries
+  //  private val peopleInSpaceQueries = peopleInSpaceDatabase?.peopleInSpaceQueries
 
     var peopleJob: Job? = null
     var issPositionJob: Job? = null
@@ -35,13 +32,15 @@ class PeopleInSpaceRepository() : KoinComponent {
         }
     }
 
+    /*
     fun fetchPeopleAsFlow(): Flow<List<Assignment>> {
         // the main reason we need to do this check is that sqldelight isn't currently
         // setup for javascript client
-        return peopleInSpaceQueries?.selectAll(mapper = { name, craft ->
+
+       return peopleInSpaceQueries?.selectAll(mapper = { name, craft ->
             Assignment(name = name, craft = craft)
         })?.asFlow()?.mapToList() ?: flowOf(emptyList<Assignment>())
-    }
+    }*/
 
     private suspend fun fetchAndStorePeople()  {
         logger.d { "fetchAndStorePeople" }
@@ -49,10 +48,10 @@ class PeopleInSpaceRepository() : KoinComponent {
 
         // this is very basic implementation for now that removes all existing rows
         // in db and then inserts results from api request
-        peopleInSpaceQueries?.deleteAll()
+       /* peopleInSpaceQueries?.deleteAll()
         result.people.forEach {
             peopleInSpaceQueries?.insertItem(it.name, it.craft)
-        }
+        }*/
     }
 
     // Used by web client atm
@@ -70,9 +69,9 @@ class PeopleInSpaceRepository() : KoinComponent {
     fun startObservingPeopleUpdates(success: (List<Assignment>) -> Unit) {
         logger.d { "startObservingPeopleUpdates" }
         peopleJob = coroutineScope.launch {
-            fetchPeopleAsFlow().collect {
+            /*fetchPeopleAsFlow().collect {
                 success(it)
-            }
+            }*/
         }
     }
 

@@ -1,7 +1,10 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("kotlin-platform-jvm")
     application
     kotlin("plugin.serialization")
+    id("com.github.johnrengelman.shadow")
 }
 
 dependencies {
@@ -19,6 +22,14 @@ dependencies {
     implementation(project(":domain"))
 }
 
+val mMainClassName = "cz.martinforejt.piskvorky.server.ApplicationKt"
 application {
-    mainClass.set("ServerKt")
+    mainClass.set(mMainClassName)
+}
+project.setProperty("mainClassName", mMainClassName)
+
+tasks.withType<ShadowJar> {
+    archiveBaseName.set("piskvorky-server")
+    archiveClassifier.set("")
+    archiveVersion.set("")
 }

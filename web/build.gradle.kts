@@ -8,19 +8,35 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.7.2")
 
-    implementation("org.jetbrains:kotlin-react:16.13.1-pre.110-kotlin-1.4.0")
-    implementation("org.jetbrains:kotlin-react-dom:16.13.1-pre.110-kotlin-1.4.0")
-    implementation("org.jetbrains:kotlin-react-router-dom:5.1.2-pre.110-kotlin-1.4.0")
-    implementation(npm("react", "16.13.0"))
-    implementation(npm("react-dom", "16.13.0"))
+    implementation("org.jetbrains:kotlin-react:17.0.0-pre.133-kotlin-1.4.21")
+    implementation("org.jetbrains:kotlin-react-dom:17.0.0-pre.133-kotlin-1.4.21")
+    implementation("org.jetbrains:kotlin-react-router-dom:5.2.0-pre.133-kotlin-1.4.21")
+    implementation(npm("react", "17.0.0"))
+    implementation(npm("react-dom", "17.0.0"))
+    //implementation(npm("react-router-dom"))
 
     implementation(project(":domain"))
 }
 
+version = "1.0"
+
 
 kotlin {
     js {
+        binaries.executable()
         useCommonJs()
-        browser()
+        nodejs()
+        browser {
+            compilations.all {
+                kotlinOptions {
+                    metaInfo = true
+                    sourceMap = true
+                    sourceMapEmbedSources = "always"
+                    moduleKind = "commonjs"
+                    main = "call"
+                    version = "1.0"
+                }
+            }
+        }
     }
 }

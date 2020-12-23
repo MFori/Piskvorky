@@ -5,7 +5,10 @@ import org.koin.core.KoinComponent
 import org.koin.core.get
 import react.child
 import react.createContext
+import react.dom.a
+import react.dom.nav
 import react.dom.render
+import react.router.dom.*
 
 object AppDependencies : KoinComponent {
     val repository: PeopleInSpaceRepository
@@ -24,7 +27,32 @@ val AppDependenciesContext = createContext<AppDependencies>()
 fun main() {
     render(kotlinx.browser.document.getElementById("root")) {
         AppDependenciesContext.Provider(AppDependencies) {
-            child(App)
+            browserRouter {
+                switch {
+                    route("/", exact = true) {
+                        //child(App)
+                        routeLink("/login") {
+                            +"Login2"
+                        }
+                    }
+                    route("/ha") {
+                        routeLink("/login") {
+                            +"Login"
+                        }
+                        a(href = "#/") {
+                            +"Back"
+                        }
+                        routeLink("/") {
+                            +"Root"
+                        }
+                    }
+                    route("/login") {
+                        routeLink("/") {
+                            +"Back"
+                        }
+                    }
+                }
+            }
         }
     }
 }
