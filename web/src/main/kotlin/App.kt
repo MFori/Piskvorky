@@ -22,7 +22,7 @@ val App = functionalComponent<RProps> { _ ->
     }
 
     h1 {
-        +"People In Space"
+        +"Piskvorky"
     }
     ul {
         people.forEach { item ->

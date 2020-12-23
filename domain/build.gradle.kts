@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     kotlin("multiplatform")
     id("kotlinx-serialization")
@@ -38,10 +40,6 @@ kotlin {
             // Kotlinx Serialization
             implementation(Serialization.core)
 
-            // SQL Delight
-            //implementation(SqlDelight.runtime)
-            //implementation(SqlDelight.coroutineExtensions)
-
             // koin
             api(Koin.core)
 
@@ -62,6 +60,8 @@ kotlin {
 }
 
 openApiGenerate {
+    val spec = "petstore-v3.0.yaml"
+
     generatorName.set("kotlin")
     library.set("multiplatform")
 
@@ -70,7 +70,7 @@ openApiGenerate {
         //"apis" to "",
         //"supportingFiles" to ""
     ))
-    inputSpec.set("$rootDir/domain/api/specs/swagger.yaml")
+    inputSpec.set("$rootDir/domain/api/specs/$spec")
     outputDir.set("$rootDir/domain/api")
     modelPackage.set("cz.martinforejt.piskvorky.api.model")
     configOptions.set(
