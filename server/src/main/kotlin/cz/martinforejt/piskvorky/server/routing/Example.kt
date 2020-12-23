@@ -21,7 +21,7 @@ fun Route.exampleRoutes() {
 
     get("/") {
         call.respondText(
-            this::class.java.classLoader.getResource("index.html")!!.readText(),
+            "<h1>Hello world</h1>",
             ContentType.Text.Html
         )
     }

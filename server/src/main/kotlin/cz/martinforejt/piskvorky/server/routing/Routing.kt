@@ -13,11 +13,15 @@ import io.ktor.routing.*
  * @author Martin Forejt
  */
 
+const val API_VERSION = "/v1"
+
 fun Application.registerRoutes() {
     routing {
-        securityRoutes()
-        usersRoutes()
-        exampleRoutes()
+        route(API_VERSION) {
+            securityRoutes()
+            usersRoutes()
+            exampleRoutes()
+        }
     }
 
     install(StatusPages) {
@@ -29,7 +33,7 @@ fun Application.registerRoutes() {
         }*/
         exception<Throwable> { cause ->
             call.respond(
-                message = mapOf("mssage" to "Error not found"),
+                message = mapOf("mssage" to cause.localizedMessage),
                 status = HttpStatusCode.NotFound
             )
         }

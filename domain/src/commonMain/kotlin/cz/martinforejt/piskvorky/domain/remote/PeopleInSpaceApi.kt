@@ -21,7 +21,7 @@ data class IssResponse(val message: String, val iss_position: IssPosition, val t
 class PeopleInSpaceApi(
     private val client: HttpClient,
     //private val baseUrl: String = "http://api.open-notify.org",
-    private val baseUrl: String = "http://localhost:9090",
+    private val baseUrl: String = "http://localhost:9090/v1",
 ) : KoinComponent {
     suspend fun fetchPeople() = client.get<AstroResult>("$baseUrl/astros_local.json")
     suspend fun fetchISSPosition() = client.get<IssResponse>("$baseUrl/iss-now.json")
