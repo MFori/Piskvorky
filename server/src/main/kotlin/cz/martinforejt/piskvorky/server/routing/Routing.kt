@@ -1,6 +1,9 @@
 package cz.martinforejt.piskvorky.server.routing
 
+import cz.martinforejt.piskvorky.server.routing.exception.ApiException
+import cz.martinforejt.piskvorky.server.security.JWT_AUTH_NAME
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.response.*
@@ -17,28 +20,27 @@ const val API_VERSION = "/v1"
 
 fun Application.registerRoutes() {
     routing {
-        route(API_VERSION) {
-            securityRoutes()
-            usersRoutes()
-            exampleRoutes()
+        authenticate(JWT_AUTH_NAME) {
+            route(API_VERSION) {
+                profileRoutes()
+                exampleRoutes()
+            }
+
         }
     }
 
     install(StatusPages) {
-        /*exception<AuthenticationException> { cause ->
-            call.respond(HttpStatusCode.Unauthorized)
+        exception<ApiException> { cause ->
+            call.respond(cause.httpStatusCode, mapOf("message" to (cause.message ?: cause.localizedMessage)))
         }
-        exception<AuthorizationException> { cause ->
-            call.respond(HttpStatusCode.Forbidden)
-        }*/
         exception<Throwable> { cause ->
             call.respond(
-                message = mapOf("mssage" to cause.localizedMessage),
-                status = HttpStatusCode.NotFound
+                message = mapOf("message" to cause.localizedMessage),
+                status = HttpStatusCode.InternalServerError
             )
         }
     }
     intercept(ApplicationCallPipeline.Fallback) {
-        throw IllegalStateException()
+        throw ApiException(HttpStatusCode.NotFound)
     }
 }

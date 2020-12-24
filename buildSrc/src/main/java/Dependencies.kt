@@ -1,4 +1,3 @@
-
 object Versions {
     const val kotlin = "1.4.21"
     const val kotlinCoroutines = "1.4.2-native-mt"
@@ -45,7 +44,7 @@ object Compose {
     const val material = "androidx.compose.material:material:${Versions.compose}"
     const val runtimeLiveData = "androidx.compose.runtime:runtime-livedata:${Versions.compose}"
     const val navigation = "androidx.navigation:navigation-compose:${Versions.nav_compose}"
-    const val accompanist= "dev.chrisbanes.accompanist:accompanist-coil:${Versions.accompanist}"
+    const val accompanist = "dev.chrisbanes.accompanist:accompanist-coil:${Versions.accompanist}"
 }
 
 object Koin {
@@ -57,6 +56,9 @@ object Koin {
 }
 
 object Ktor {
+    val authCore = "io.ktor:ktor-auth:${Versions.ktor}"
+    val authJwt = "io.ktor:ktor-auth-jwt:${Versions.ktor}"
+
     val clientCore = "io.ktor:ktor-client-core:${Versions.ktor}"
     val clientJson = "io.ktor:ktor-client-json:${Versions.ktor}"
     val clientLogging = "io.ktor:ktor-client-logging:${Versions.ktor}"

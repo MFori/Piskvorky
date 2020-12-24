@@ -1,0 +1,13 @@
+POST http://localhost:9090/v1/login
+Content-Type: application/json
+
+{"email":  "admin@admin.com", "password": "pass123"}
+
+###
+GET http://localhost:9090/v1/profile
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImlkIjoxLCJleHAiOjE2MDg4MDI3NjAsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIn0.ly0hxOWK--Pf5hdk6fpklonH__DADXEDPU0c5bOONbRjT0GE1JWVQ91awDFmsWviuM0yubP46ZypTbdxJDPHwA
+
+###
+GET http://localhost:9090/v1/profiled
+
