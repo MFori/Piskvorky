@@ -1,0 +1,8 @@
+body, html {
+    background: #4c6c9e;
+    color: #ffffff;
+    height: 100%;
+}
+#root {
+    height: 100%;
+}
