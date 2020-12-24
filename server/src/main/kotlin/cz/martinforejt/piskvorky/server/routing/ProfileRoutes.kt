@@ -1,6 +1,7 @@
 package cz.martinforejt.piskvorky.server.routing
 
 import cz.martinforejt.piskvorky.server.routing.exception.AuthenticationException
+import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -20,11 +21,10 @@ fun Route.profileRoutes() {
     route("/profile") {
 
         get("/") {
-            val email = call.principal<JWTPrincipal>()?.payload?.getClaim("email")?.asString()
-            val id = call.principal<JWTPrincipal>()?.payload?.getClaim("id")?.asInt()
+            val user = call.principal<UserPrincipal>()
 
-            if(email != null) {
-                call.respond(mapOf("email" to email))
+            if(user != null) {
+                call.respond(mapOf("email" to user.email))
             } else {
                 throw AuthenticationException()
             }

@@ -1,5 +1,6 @@
 package cz.martinforejt.piskvorky.server.security
 
+import io.ktor.auth.*
 import kotlinx.serialization.Serializable
 
 /**
@@ -12,4 +13,10 @@ import kotlinx.serialization.Serializable
 data class UserCredential(
     val email: String,
     val password: String
-)
+) : Credential
+
+@Serializable
+data class UserIdCredential(
+    val id: Int,
+    val email: String
+) : Credential

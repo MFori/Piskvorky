@@ -11,3 +11,5 @@ docker build -t piskvorky-web -f web/Dockerfile .
 
 
 docker-compose up
+
+https://youtrack.jetbrains.com/issue/KTOR-646

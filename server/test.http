@@ -6,8 +6,16 @@ Content-Type: application/json
 ###
 GET http://localhost:9090/v1/profile
 Content-Type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImlkIjoxLCJleHAiOjE2MDg4MDI3NjAsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIn0.ly0hxOWK--Pf5hdk6fpklonH__DADXEDPU0c5bOONbRjT0GE1JWVQ91awDFmsWviuM0yubP46ZypTbdxJDPHwA
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImlkIjoxLCJleHAiOjE2MDg4NDk3NDEsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIn0.UyRXateFxpmeMLGOLyWP36m_rFXtdAfiQ7WeGaKvCxtoYbhpbYXPtf5ZZR6nbEQAJKzFK45TpmVtwWw2EtKUwA
 
 ###
-GET http://localhost:9090/v1/profiled
+GET http://localhost:9090/v1/game
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImlkIjoxLCJleHAiOjE2MDg4NDM5NDgsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIn0.Vj_0QhRi315dF1tKFVpf5QcX53Uuocwh6A5nvIU9uvlYVRWoJpBJBZidrJR36RVLeRg2BtBk_41WQTLHbV3oIQ
 
+###
+GET http://localhost:9090/hello
+
+
+###
+GET http://localhost:8080/

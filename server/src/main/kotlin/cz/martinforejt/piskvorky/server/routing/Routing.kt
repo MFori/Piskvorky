@@ -2,12 +2,16 @@ package cz.martinforejt.piskvorky.server.routing
 
 import cz.martinforejt.piskvorky.server.routing.exception.ApiException
 import cz.martinforejt.piskvorky.server.security.JWT_AUTH_NAME
+import cz.martinforejt.piskvorky.server.security.JwtManager
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.http.*
+import io.ktor.http.cio.websocket.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.websocket.*
+import org.koin.ktor.ext.inject
 
 /**
  * Created by Martin Forejt on 23.12.2020.
@@ -24,8 +28,12 @@ fun Application.registerRoutes() {
             route(API_VERSION) {
                 profileRoutes()
                 exampleRoutes()
+                gameRoutes()
             }
+        }
 
+        route(API_VERSION) {
+            gameRoutes()
         }
     }
 

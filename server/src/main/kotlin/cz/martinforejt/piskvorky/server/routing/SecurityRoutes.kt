@@ -1,14 +1,12 @@
 package cz.martinforejt.piskvorky.server.routing
 
 import cz.martinforejt.piskvorky.server.routing.exception.UnauthorizedException
-import cz.martinforejt.piskvorky.server.security.JwtConfig
-import cz.martinforejt.piskvorky.server.security.UserCredential
-import cz.martinforejt.piskvorky.server.security.UserPrincipal
+import cz.martinforejt.piskvorky.server.security.*
 import io.ktor.application.*
-import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import org.koin.ktor.ext.inject
 
 /**
  * Created by Martin Forejt on 23.12.2020.
@@ -17,16 +15,13 @@ import io.ktor.routing.*
  * @author Martin Forejt
  */
 
-fun Route.securityRoutes(jwtConfig: JwtConfig) {
+fun Route.securityRoutes(jwtManager: JwtManager) {
+    val userAuthenticator by inject<IUserAuthenticator>()
 
     post("/login") {
         val credentials = call.receive<UserCredential>()
-
-        if(credentials.email=="admin@admin.com" && credentials.password=="pass123") {
-            call.respond(jwtConfig.generateToken(UserPrincipal(1, credentials.email)))
-        } else {
-            throw UnauthorizedException()
-        }
+        val principal = userAuthenticator.authenticate(credentials)
+        principal?.let { call.respond(jwtManager.generateToken(it)) } ?: throw UnauthorizedException()
     }
 
     post("/register") {

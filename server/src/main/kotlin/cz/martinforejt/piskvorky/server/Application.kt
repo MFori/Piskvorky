@@ -6,10 +6,12 @@ import cz.martinforejt.piskvorky.server.routing.registerRoutes
 import cz.martinforejt.piskvorky.server.security.setUpSecurity
 import io.ktor.application.*
 import io.ktor.features.*
+import io.ktor.http.cio.websocket.*
 import io.ktor.serialization.*
-import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.util.*
+import io.ktor.websocket.*
+import java.time.Duration
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
@@ -17,24 +19,31 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
+    install(CallLogging)
 
-    initKoin(enableNetworkLogs = true, modules = listOf(
-        serverModule
-    )).koin
+    initKoin(
+        enableNetworkLogs = true, modules = listOf(
+            serverModule(this)
+        )
+    ).koin
 
-    val port = System.getenv("PORT")?.toInt() ?: 9090
-    //embeddedServer(Netty, port) {
-        install(CORS) {
-            host("localhost:8080")
-            host("localhost:80")
-        }
+    install(CORS) {
+        host("localhost:8080")
+        host("localhost:80")
+    }
 
-        install(ContentNegotiation) {
-            json()
-        }
+    install(ContentNegotiation) {
+        json()
+    }
 
-        setUpSecurity()
-        registerRoutes()
-    //}.start(wait = true)
+    install(WebSockets) {
+        pingPeriod = Duration.ofSeconds(60)
+        timeout = Duration.ofSeconds(15)
+        maxFrameSize = Long.MAX_VALUE
+        masking = false
+    }
+
+    setUpSecurity()
+    registerRoutes()
 }
 

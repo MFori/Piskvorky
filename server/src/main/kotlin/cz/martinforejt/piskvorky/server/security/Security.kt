@@ -9,6 +9,7 @@ import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.routing.*
 import io.ktor.util.*
+import org.koin.ktor.ext.inject
 
 /**
  * Created by Martin Forejt on 23.12.2020.
@@ -22,18 +23,15 @@ const val JWT_AUTH_NAME = "jwt-auth"
 @KtorExperimentalAPI
 fun Application.setUpSecurity() {
 
-    val jwtIssuer = environment.config.property("jwt.domain").getString()
-    val jwtSecret = environment.config.property("jwt.secret").getString()
-    val jwtRealm = environment.config.property("jwt.realm").getString()
-    val jwtValidity = environment.config.property("jwt.validity_ms").getString().toInt()
-
-    val jwtConfig = JwtConfig(jwtIssuer, jwtSecret, jwtValidity)
+    val jwtConfig by inject<JwtManager>()
 
     install(Authentication) {
         jwt(JWT_AUTH_NAME) {
-            realm = jwtRealm
+            realm = jwtConfig.realm
             verifier(jwtConfig.verifier)
-            validate { credential -> validateCredential(credential) }
+            validate { credential ->
+                jwtConfig.validateCredential(credential) ?: throw AuthenticationException()
+            }
             challenge { _, _ -> throw UnauthorizedException() }
         }
     }
@@ -44,10 +42,3 @@ fun Application.setUpSecurity() {
         }
     }
 }
-
-private fun validateCredential(credential: JWTCredential): Principal? =
-    if (credential.payload.getClaim("id").isNull || credential.payload.getClaim("email").isNull) {
-        throw AuthenticationException()
-    } else {
-        JWTPrincipal(credential.payload)
-    }
