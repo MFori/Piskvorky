@@ -24,7 +24,6 @@ fun Application.registerRoutes() {
             route(API_VERSION) {
                 profileRoutes()
                 exampleRoutes()
-                gameRoutes()
             }
         }
 

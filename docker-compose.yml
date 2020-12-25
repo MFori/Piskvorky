@@ -1,7 +1,7 @@
 version: '3.9'
 services:
-  mariadb:
-    image: mariadb:10.2
+  mysql:
+    image: mysql:latest
     environment:
       MYSQL_DATABASE: piskvorky_db
       MYSQL_USER: user
@@ -14,11 +14,11 @@ services:
     ports:
       - '9090:9090'
     environment:
-      TTT_DB: piskvorky_db
-      TTT_DB_ADDRESS: mariadb
-      TTT_DB_USER: root
-      TTT_DB_PASSWORD: password
-      TTT_DB_PORT: 3306
+      SERVER_DB_NAME: piskvorky_db
+      SERVER_DB_ADDRESS: mysql
+      SERVER_DB_USER: root
+      SERVER_DB_PASSWORD: password
+      SERVER_DB_PORT: 3306
 
   web:
     container_name: web

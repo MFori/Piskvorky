@@ -8,20 +8,24 @@ plugins {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinCoroutines}")
+    implementation(Coroutines.core)
+    implementation(Serialization.core)
 
-    implementation("io.ktor:ktor-server-core:${Versions.ktor}")
-    implementation("io.ktor:ktor-server-netty:${Versions.ktor}")
-    implementation("io.ktor:ktor-serialization:${Versions.ktor}")
-    implementation("io.ktor:ktor-websockets:${Versions.ktor}")
+    implementation(Ktor.serverCore)
+    implementation(Ktor.serverNetty)
+    implementation(Ktor.serialization)
+    implementation(Ktor.websockets)
     implementation(Ktor.authCore)
     implementation(Ktor.authJwt)
 
     implementation(Koin.ktor)
+    implementation(Logback.classic)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.kotlinxSerialization}") // JVM dependency
-
-    implementation("ch.qos.logback:logback-classic:${Versions.logback}")
+    implementation(Exposed.core)
+    implementation(Exposed.jbdc)
+    implementation(Exposed.dao)
+    implementation(Hikari.core)
+    implementation(MysqlConnector.core)
 
     implementation(project(":domain"))
 }

@@ -2,6 +2,7 @@ package cz.martinforejt.piskvorky.server
 
 import cz.martinforejt.piskvorky.domain.core.di.initKoin
 import cz.martinforejt.piskvorky.server.core.di.serverModule
+import cz.martinforejt.piskvorky.server.database.DatabaseFactory
 import cz.martinforejt.piskvorky.server.routing.registerRoutes
 import cz.martinforejt.piskvorky.server.security.setUpSecurity
 import io.ktor.application.*
@@ -11,6 +12,7 @@ import io.ktor.serialization.*
 import io.ktor.server.netty.*
 import io.ktor.util.*
 import io.ktor.websocket.*
+import org.slf4j.event.Level
 import java.time.Duration
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
@@ -19,7 +21,9 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
-    install(CallLogging)
+    install(CallLogging) {
+        level = Level.INFO
+    }
 
     initKoin(
         enableNetworkLogs = true, modules = listOf(
@@ -35,6 +39,8 @@ fun Application.module(testing: Boolean = false) {
     install(ContentNegotiation) {
         json()
     }
+
+    DatabaseFactory.init()
 
     install(WebSockets) {
         pingPeriod = Duration.ofSeconds(10)
