@@ -1,8 +1,8 @@
 package cz.martinforejt.piskvorky.server.security
 
 import cz.martinforejt.piskvorky.server.routing.API_VERSION
-import cz.martinforejt.piskvorky.server.routing.exception.AuthenticationException
-import cz.martinforejt.piskvorky.server.routing.exception.UnauthorizedException
+import cz.martinforejt.piskvorky.server.routing.exception.AuthenticationApiException
+import cz.martinforejt.piskvorky.server.routing.exception.UnauthorizedApiException
 import cz.martinforejt.piskvorky.server.routing.securityRoutes
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -30,9 +30,9 @@ fun Application.setUpSecurity() {
             realm = jwtConfig.realm
             verifier(jwtConfig.verifier)
             validate { credential ->
-                jwtConfig.validateCredential(credential) ?: throw AuthenticationException()
+                jwtConfig.validateCredential(credential) ?: throw AuthenticationApiException()
             }
-            challenge { _, _ -> throw UnauthorizedException() }
+            challenge { _, _ -> throw UnauthorizedApiException() }
         }
     }
 

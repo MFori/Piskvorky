@@ -37,8 +37,8 @@ fun Application.module(testing: Boolean = false) {
     }
 
     install(WebSockets) {
-        pingPeriod = Duration.ofSeconds(60)
-        timeout = Duration.ofSeconds(15)
+        pingPeriod = Duration.ofSeconds(10)
+        timeout = Duration.ofSeconds(10)
         maxFrameSize = Long.MAX_VALUE
         masking = false
     }

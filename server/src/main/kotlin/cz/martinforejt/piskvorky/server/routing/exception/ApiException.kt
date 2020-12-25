@@ -10,9 +10,11 @@ import io.ktor.http.*
  */
 open class ApiException(
     val httpStatusCode: HttpStatusCode = HttpStatusCode.InternalServerError,
-    message: String = httpStatusCode.description
-) : Exception(message)
+    message: String? = null
+) : Exception(message ?: httpStatusCode.description)
 
-class UnauthorizedException : ApiException(HttpStatusCode.Unauthorized)
+class UnauthorizedApiException(message: String? = null) : ApiException(HttpStatusCode.Unauthorized, message)
 
-class AuthenticationException : ApiException(HttpStatusCode.Unauthorized, "Invalid login credentials")
+class AuthenticationApiException : ApiException(HttpStatusCode.Unauthorized, "Invalid login credentials")
+
+class ConflictApiException(message: String) : ApiException(HttpStatusCode.Conflict, message)

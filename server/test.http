@@ -4,14 +4,28 @@ Content-Type: application/json
 {"email":  "admin@admin.com", "password": "pass123"}
 
 ###
-GET http://localhost:9090/v1/profile
+POST http://localhost:9090/v1/register
 Content-Type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImlkIjoxLCJleHAiOjE2MDg4NDk3NDEsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIn0.UyRXateFxpmeMLGOLyWP36m_rFXtdAfiQ7WeGaKvCxtoYbhpbYXPtf5ZZR6nbEQAJKzFK45TpmVtwWw2EtKUwA
+
+{"email":  "admin@admin.com", "password": "pass123"}
 
 ###
-GET http://localhost:9090/v1/game
+POST http://localhost:9090/v1/lost-passwd
 Content-Type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImlkIjoxLCJleHAiOjE2MDg4NDM5NDgsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIn0.Vj_0QhRi315dF1tKFVpf5QcX53Uuocwh6A5nvIU9uvlYVRWoJpBJBZidrJR36RVLeRg2BtBk_41WQTLHbV3oIQ
+
+{"email":  "admin@admin.com"}
+
+###
+GET http://localhost:9090/v1/profile
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImlkIjoxLCJleHAiOjE2MDg5NjAyNjQsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIn0.7COr67Ekreu8oKSG1EBVzrhplTTnzMVi1Gxc3J06H796Wrw0qQcjXMP8pcUNShe2gcOgXQznmzRa7OLbvZ0lrw
+
+###
+POST http://localhost:9090/v1/profile/change-passwd
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImlkIjoxLCJleHAiOjE2MDg5NjAyNjQsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIn0.7COr67Ekreu8oKSG1EBVzrhplTTnzMVi1Gxc3J06H796Wrw0qQcjXMP8pcUNShe2gcOgXQznmzRa7OLbvZ0lrw
+
+{"email":  "admin@admin.com", "password": "pass123", "passwordCurrent": "pass124" }
 
 ###
 GET http://localhost:9090/hello

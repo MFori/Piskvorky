@@ -60,7 +60,7 @@ kotlin {
 }
 
 openApiGenerate {
-    val spec = "petstore-v3.0.yaml"
+    val spec = "piskvorky-v1.0.yaml"
 
     generatorName.set("kotlin")
     library.set("multiplatform")

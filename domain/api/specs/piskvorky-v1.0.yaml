@@ -7,96 +7,177 @@ servers:
   - url: http://localhost:9090/v1
   - url: https://localhost:9090/v1
 paths:
-  /pets:
-    get:
-      summary: List all pets
-      operationId: listPets
-      tags:
-        - pets
-      parameters:
-        - name: limit
-          in: query
-          description: How many items to return at one time (max 100)
-          required: false
-          schema:
-            type: integer
-            format: int32
-      responses:
-        '200':
-          description: A paged array of pets
-          headers:
-            x-next:
-              description: A link to the next page of responses
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Pets"
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+
+  /login:
     post:
-      summary: Create a pet
-      operationId: createPets
+      summary: Login user
       tags:
-        - pets
-      responses:
-        '201':
-          description: Null response
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-  /pets/{petId}:
-    get:
-      summary: Info for a specific pet
-      operationId: showPetById
-      tags:
-        - pets
-      parameters:
-        - name: petId
-          in: path
-          required: true
-          description: The id of the pet to retrieve
-          schema:
-            type: string
+        - security
+      security: []
+      requestBody:
+        description: Provide email and password
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
       responses:
         '200':
-          description: Expected response to a valid request
+          description: JWT token and validity (in ms)
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Pets"
+                $ref: "#/components/schemas/LoginResponse"
         default:
           description: unexpected error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
+  /register:
+    post:
+      summary: Register user
+      tags:
+        - security
+      security: []
+      requestBody:
+        description: Provide email and password
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        '200':
+          description: Register succes, auto login - JWT token and validity (in ms)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /lost-passwd:
+    post:
+      summary: Request to send new password to email
+      tags:
+        - security
+      security: []
+      requestBody:
+        description: Email to send new passoword
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LostPasswordRequest"
+      responses:
+        '200':
+          description: Sent
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /profile:
+    get:
+      summary: Logged user profile info
+      tags:
+        - profile
+      responses:
+        '200':
+          description: Profile info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileInfo"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /profile/change-passwd:
+    post:
+      summary: Change password
+      tags:
+        - profile
+      requestBody:
+        description: Email, new password, current password
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordRequest"
+      responses:
+        '200':
+          description: Sent
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
-    Pet:
-      required:
-        - id
-        - name
+    LoginRequest:
+      type: object
+      required: [email, password]
       properties:
-        id:
-          type: integer
-          format: int64
-        name:
+        email:
           type: string
-        tag:
+        password:
           type: string
-    Pets:
-      type: array
-      items:
-        $ref: "#/components/schemas/Pet"
+    LoginResponse:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+    RegisterRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    LostPasswordRequest:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+    ProfileInfo:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+    ChangePasswordRequest:
+      type: object
+      required: [email, password, passwordCurrent]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        passwordCurrent:
+          type: string
     Error:
       required:
         - code
@@ -107,3 +188,6 @@ components:
           format: int32
         message:
           type: string
+
+security:
+  - bearerAuth: []
