@@ -2,6 +2,7 @@ package cz.martinforejt.piskvorky.server.security
 
 import cz.martinforejt.piskvorky.server.routing.API_VERSION
 import cz.martinforejt.piskvorky.server.routing.exception.AuthenticationApiException
+import cz.martinforejt.piskvorky.server.routing.exception.ForbiddenApiException
 import cz.martinforejt.piskvorky.server.routing.exception.UnauthorizedApiException
 import cz.martinforejt.piskvorky.server.routing.securityRoutes
 import io.ktor.application.*
@@ -18,7 +19,8 @@ import org.koin.ktor.ext.inject
  * @author Martin Forejt
  */
 
-const val JWT_AUTH_NAME = "jwt-auth"
+const val JWT_AUTH_USER = "jwt-auth-user"
+const val JWT_AUTH_ADMIN = "jwt-auth-admin"
 
 @KtorExperimentalAPI
 fun Application.setUpSecurity() {
@@ -26,11 +28,23 @@ fun Application.setUpSecurity() {
     val jwtConfig by inject<JwtManager>()
 
     install(Authentication) {
-        jwt(JWT_AUTH_NAME) {
+        jwt(JWT_AUTH_USER) {
             realm = jwtConfig.realm
             verifier(jwtConfig.verifier)
             validate { credential ->
                 jwtConfig.validateCredential(credential) ?: throw AuthenticationApiException()
+            }
+            challenge { _, _ -> throw UnauthorizedApiException() }
+        }
+        jwt(JWT_AUTH_ADMIN) {
+            realm = jwtConfig.realm
+            verifier(jwtConfig.verifier)
+            validate { credential ->
+                val principal = jwtConfig.validateCredential(credential) ?: throw AuthenticationApiException()
+                if (principal.admin.not()) {
+                    throw ForbiddenApiException()
+                }
+                principal
             }
             challenge { _, _ -> throw UnauthorizedApiException() }
         }

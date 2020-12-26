@@ -63,6 +63,7 @@ object Exposed {
     const val core = "org.jetbrains.exposed:exposed-core:${Versions.exposed}"
     const val jbdc = "org.jetbrains.exposed:exposed-jdbc:${Versions.exposed}"
     const val dao = "org.jetbrains.exposed:exposed-dao:${Versions.exposed}"
+    const val time = "org.jetbrains.exposed:exposed-java-time:${Versions.exposed}"
 }
 
 object Hikari {

@@ -6,13 +6,6 @@ package cz.martinforejt.piskvorky.domain.model
  *
  * @author Martin Forejt
  */
-data class User(
-    val id: Int,
-    val email: String
-)
+expect class User
 
-data class UserWithPassword(
-    val id: Int,
-    val email: String,
-    val password: String
-)
+expect class UserWithPassword

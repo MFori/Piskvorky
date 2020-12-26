@@ -15,6 +15,8 @@ open class ApiException(
 
 class UnauthorizedApiException(message: String? = null) : ApiException(HttpStatusCode.Unauthorized, message)
 
+class ForbiddenApiException(message: String? = null) : ApiException(HttpStatusCode.Forbidden, message)
+
 class AuthenticationApiException : ApiException(HttpStatusCode.Unauthorized, "Invalid login credentials")
 
 class ConflictApiException(message: String) : ApiException(HttpStatusCode.Conflict, message)

@@ -5,7 +5,7 @@ import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTDecodeException
 import com.auth0.jwt.exceptions.JWTVerificationException
-import cz.martinforejt.piskvorky.server.core.utils.toUserIDCredential
+import cz.martinforejt.piskvorky.server.security.utils.toUserIDCredential
 import io.ktor.auth.jwt.*
 import java.util.*
 
@@ -31,6 +31,7 @@ class JwtConfig(
         .withIssuer(issuer)
         .withClaim("id", user.id)
         .withClaim("email", user.email)
+        .withClaim("admin", user.admin)
         .withExpiresAt(getExpiration())
         .sign(algorithm)
 

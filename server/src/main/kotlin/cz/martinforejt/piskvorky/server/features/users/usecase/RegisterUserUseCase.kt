@@ -40,6 +40,6 @@ class RegisterUserUseCase(
         }
         val hash = hashService.hashPassword(params.password)
         val id = runBlocking { usersRepository.createUser(params.toUserWithPassDO().copy(password = hash)) }
-        return Result(UserPrincipal(id, params.email))
+        return Result(UserPrincipal(id, params.email, false))
     }
 }

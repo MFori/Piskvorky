@@ -2,7 +2,8 @@ package cz.martinforejt.piskvorky.server.routing
 
 import cz.martinforejt.piskvorky.server.routing.exception.ApiException
 import cz.martinforejt.piskvorky.server.routing.utils.errorResponse
-import cz.martinforejt.piskvorky.server.security.JWT_AUTH_NAME
+import cz.martinforejt.piskvorky.server.security.JWT_AUTH_ADMIN
+import cz.martinforejt.piskvorky.server.security.JWT_AUTH_USER
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
@@ -20,10 +21,16 @@ const val API_VERSION = "/v1"
 
 fun Application.registerRoutes() {
     routing {
-        authenticate(JWT_AUTH_NAME) {
+        authenticate(JWT_AUTH_USER) {
             route(API_VERSION) {
                 profileRoutes()
                 exampleRoutes()
+            }
+        }
+
+        authenticate(JWT_AUTH_ADMIN) {
+            route(API_VERSION) {
+                adminRoutes()
             }
         }
 

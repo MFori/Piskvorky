@@ -9,6 +9,7 @@ import cz.martinforejt.piskvorky.server.features.users.mapper.asUserWithPassDO
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import java.time.LocalDateTime
 
 /**
  * Created by Martin Forejt on 26.12.2020.
@@ -38,12 +39,17 @@ class UsersRepositoryImpl : UsersRepository {
         Users.insertAndGetId {
             it[email] = user.email
             it[password] = user.password
+            it[created] = LocalDateTime.now()
+            it[admin] = false
+            it[active] = true
         }
     }.value
 
     override suspend fun updateUser(user: User): Unit = newSuspendedTransaction {
         Users.update({ Users.id eq user.id }) {
             it[email] = user.email
+            it[admin] = user.admin
+            it[active] = user.active
         }
     }
 

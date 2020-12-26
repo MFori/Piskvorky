@@ -18,5 +18,6 @@ data class UserCredential(
 @Serializable
 data class UserIdCredential(
     val id: Int,
-    val email: String
+    val email: String,
+    val admin: Boolean
 ) : Credential

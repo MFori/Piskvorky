@@ -25,6 +25,7 @@ import org.koin.ktor.ext.inject
 fun Route.profileRoutes() {
     val userAuthenticator by inject<IUserAuthenticator>()
 
+
     route("/profile") {
 
         get("/") {

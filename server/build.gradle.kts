@@ -24,6 +24,7 @@ dependencies {
     implementation(Exposed.core)
     implementation(Exposed.jbdc)
     implementation(Exposed.dao)
+    implementation(Exposed.time)
     implementation(Hikari.core)
     implementation(MysqlConnector.core)
 

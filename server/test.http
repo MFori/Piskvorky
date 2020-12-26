@@ -18,7 +18,7 @@ Content-Type: application/json
 ###
 GET http://localhost:9090/v1/profile
 Content-Type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImlkIjo3LCJleHAiOjE2MDg5NzkyOTAsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIn0.Y1H6kZ4FLImRno73CDXffCMPYqKuNU5yuJhE1Pa4JsI0pFTGKoJMUGzYudw5Rftjyk1Zb3yg_j-ytPY4UQiWKQ
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImFkbWluIjpmYWxzZSwiaWQiOjEsImV4cCI6MTYwOTAzNTAzOSwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20ifQ.vwYHMXsPvcs5LOOMZmMSRujPjE2J0LcpAP-VSsbz_4uKgHJO1iZr24HyfZLaXRbCd9QCQlKXFURcKWYXNS7oeQ
 
 ###
 POST http://localhost:9090/v1/profile/change-passwd
@@ -32,4 +32,6 @@ GET http://localhost:9090/hello
 
 
 ###
-GET http://localhost:8080/
+GET http://localhost:9090/v1/admin
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImFkbWluIjp0cnVlLCJpZCI6MSwiZXhwIjoxNjA5MDM1MzU3LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.95ca9rOVp_sFiHMptDuI1uvQMPCTkbEUukcOXGgTpkXQltjanfphP8oLlaaTKP3WOQ_gMMQ9-mLtXqeK0wCnfg

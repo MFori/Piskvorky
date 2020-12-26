@@ -21,13 +21,13 @@ class UserAuthenticator(
         val hash = hashService.hashPassword(credential.password)
 
         return if (hash == user.password) {
-            UserPrincipal(user.id, user.email)
+            UserPrincipal(user.id, user.email, user.admin)
         } else {
             null
         }
     }
 
     override fun authenticate(credential: UserIdCredential): UserPrincipal? {
-        return UserPrincipal(credential.id, credential.email)
+        return UserPrincipal(credential.id, credential.email, credential.admin)
     }
 }

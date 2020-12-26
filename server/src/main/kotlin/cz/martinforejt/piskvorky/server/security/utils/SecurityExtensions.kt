@@ -1,8 +1,7 @@
-package cz.martinforejt.piskvorky.server.core.utils
+package cz.martinforejt.piskvorky.server.security.utils
 
 import com.auth0.jwt.interfaces.Payload
 import cz.martinforejt.piskvorky.server.security.UserIdCredential
-import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import io.ktor.auth.jwt.*
 
 /**
@@ -30,8 +29,18 @@ fun Payload.asIntOrNull(name: String): Int? {
     }
 }
 
+fun Payload.asBoolOrNull(name: String): Boolean? {
+    val claim = this.getClaim(name)
+    return if (claim.isNull) {
+        null
+    } else {
+        claim.asBoolean()
+    }
+}
+
 fun JWTCredential.toUserIDCredential(): UserIdCredential? {
     val id = payload.asIntOrNull("id") ?: return null
     val email = payload.asStringOrNull("email") ?: return null
-    return UserIdCredential(id, email)
+    val admin = payload.asBoolOrNull("admin") ?: return null
+    return UserIdCredential(id, email, admin)
 }
