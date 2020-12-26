@@ -4,9 +4,11 @@ import cz.martinforejt.piskvorky.api.model.LoginRequest
 import cz.martinforejt.piskvorky.api.model.LoginResponse
 import cz.martinforejt.piskvorky.api.model.LostPasswordRequest
 import cz.martinforejt.piskvorky.api.model.RegisterRequest
+import cz.martinforejt.piskvorky.server.features.users.usecase.RegisterUserUseCase
+import cz.martinforejt.piskvorky.server.features.users.usecase.ValidateUserCredentialsUseCase
+import cz.martinforejt.piskvorky.server.routing.exception.ConflictApiException
 import cz.martinforejt.piskvorky.server.routing.exception.UnauthorizedApiException
 import cz.martinforejt.piskvorky.server.routing.utils.emptyResponse
-import cz.martinforejt.piskvorky.server.security.IUserAuthenticator
 import cz.martinforejt.piskvorky.server.security.JwtManager
 import cz.martinforejt.piskvorky.server.security.UserCredential
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
@@ -24,7 +26,8 @@ import org.koin.ktor.ext.inject
  */
 
 fun Route.securityRoutes(jwtManager: JwtManager) {
-    val userAuthenticator by inject<IUserAuthenticator>()
+    val validateCredentialsUSeCase by inject<ValidateUserCredentialsUseCase>()
+    val registerUserUseCase by inject<RegisterUserUseCase>()
 
     suspend fun ApplicationCall.createTokenResponse(principal: UserPrincipal) {
         val token = jwtManager.generateToken(principal)
@@ -33,17 +36,19 @@ fun Route.securityRoutes(jwtManager: JwtManager) {
 
     post("/login") {
         val request = call.receive<LoginRequest>()
-        val principal = userAuthenticator.authenticate(request.toCredentials()) ?: throw UnauthorizedApiException()
+        val principal = validateCredentialsUSeCase.execute(request.toCredentials()) ?: throw UnauthorizedApiException()
         application.environment.log.info("Logged user")
         call.createTokenResponse(principal)
     }
 
     post("/register") {
         val request = call.receive<RegisterRequest>()
-        // TODO validate email valid/exists password min. length
-        // TODO save user to db
-        val principal = userAuthenticator.authenticate(request.toCredentials()) ?: throw UnauthorizedApiException()
-        call.createTokenResponse(principal)
+        // TODO validate email valid, password min. length
+        val res = registerUserUseCase.execute(request)
+        if (res.isSuccessful.not()) {
+            throw ConflictApiException(res.error?.message ?: "Error occurred.")
+        }
+        call.createTokenResponse(res.data!!)
     }
 
     post("/lost-passwd") {
@@ -54,5 +59,3 @@ fun Route.securityRoutes(jwtManager: JwtManager) {
 }
 
 private fun LoginRequest.toCredentials() = UserCredential(email, password)
-
-private fun RegisterRequest.toCredentials() = UserCredential(email, password)

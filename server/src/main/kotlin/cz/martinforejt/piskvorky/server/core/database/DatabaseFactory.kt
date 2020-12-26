@@ -1,4 +1,4 @@
-package cz.martinforejt.piskvorky.server.database
+package cz.martinforejt.piskvorky.server.core.database
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource

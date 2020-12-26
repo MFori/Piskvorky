@@ -1,4 +1,4 @@
-package cz.martinforejt.piskvorky.server.database
+package cz.martinforejt.piskvorky.server.core.database
 
 import org.jetbrains.exposed.dao.id.IntIdTable
 

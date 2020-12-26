@@ -1,5 +1,9 @@
 package cz.martinforejt.piskvorky.server.security
 
+import cz.martinforejt.piskvorky.domain.repository.UsersRepository
+import cz.martinforejt.piskvorky.server.features.users.manager.HashService
+import kotlinx.coroutines.runBlocking
+
 
 /**
  * Created by Martin Forejt on 24.12.2020.
@@ -7,13 +11,20 @@ package cz.martinforejt.piskvorky.server.security
  *
  * @author Martin Forejt
  */
-class UserAuthenticator : IUserAuthenticator {
+class UserAuthenticator(
+    private val usersRepository: UsersRepository,
+    private val hashService: HashService
+) : IUserAuthenticator {
 
     override fun authenticate(credential: UserCredential): UserPrincipal? {
-        if (credential.email == "admin@admin.com" && credential.password == "pass123") {
-            return UserPrincipal(1, credential.email)
+        val user = runBlocking { usersRepository.getUserWithPasswordByEmail(credential.email) } ?: return null
+        val hash = hashService.hashPassword(credential.password)
+
+        return if (hash == user.password) {
+            UserPrincipal(user.id, user.email)
+        } else {
+            null
         }
-        return null
     }
 
     override fun authenticate(credential: UserIdCredential): UserPrincipal? {

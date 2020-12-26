@@ -2,7 +2,7 @@ package cz.martinforejt.piskvorky.server
 
 import cz.martinforejt.piskvorky.domain.core.di.initKoin
 import cz.martinforejt.piskvorky.server.core.di.serverModule
-import cz.martinforejt.piskvorky.server.database.DatabaseFactory
+import cz.martinforejt.piskvorky.server.core.database.DatabaseFactory
 import cz.martinforejt.piskvorky.server.routing.registerRoutes
 import cz.martinforejt.piskvorky.server.security.setUpSecurity
 import io.ktor.application.*
