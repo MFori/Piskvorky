@@ -10,6 +10,12 @@ Content-Type: application/json
 {"email":  "admin@admin.com", "password": "pass123"}
 
 ###
+POST http://localhost:9090/v1/register
+Content-Type: application/json
+
+{"email":  "v@adminsadmi.cz", "password": "pasffs"}
+
+###
 POST http://localhost:9090/v1/lost-passwd
 Content-Type: application/json
 
@@ -19,6 +25,11 @@ Content-Type: application/json
 GET http://localhost:9090/v1/profile
 Content-Type: application/json
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImFkbWluIjpmYWxzZSwiaWQiOjEsImV4cCI6MTYwOTAzNTAzOSwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20ifQ.vwYHMXsPvcs5LOOMZmMSRujPjE2J0LcpAP-VSsbz_4uKgHJO1iZr24HyfZLaXRbCd9QCQlKXFURcKWYXNS7oeQ
+
+###
+GET http://localhost:9090/v1/profile
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImFkbWluIjpmYWxzZSwiaWQiOjIsImV4cCI6MTYwOTAzNzM2NiwiZW1haWwiOiJ2QGFkbWluc2FkbWkuY3oifQ.ImbdRPyb6ycTPQ8V6q0xchiTaU4mrv8-UgZ3BFETMM4Ns_aB4f2t-17o7w9e3HNtR4p5dkj4O6a8TAPbOKb8_g
 
 ###
 POST http://localhost:9090/v1/profile/change-passwd

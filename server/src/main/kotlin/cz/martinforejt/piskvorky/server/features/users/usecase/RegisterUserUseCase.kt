@@ -6,6 +6,7 @@ import cz.martinforejt.piskvorky.domain.usecase.Error
 import cz.martinforejt.piskvorky.domain.usecase.Result
 import cz.martinforejt.piskvorky.domain.usecase.UseCase
 import cz.martinforejt.piskvorky.domain.usecase.UseCaseResult
+import cz.martinforejt.piskvorky.server.core.utils.isEmail
 import cz.martinforejt.piskvorky.server.features.users.manager.HashService
 import cz.martinforejt.piskvorky.server.features.users.mapper.toUserWithPassDO
 import cz.martinforejt.piskvorky.server.security.IUserAuthenticator
@@ -26,16 +27,26 @@ class RegisterUserUseCase(
 
     companion object {
         const val ERROR_EMAIL_EXISTS = 1
+        const val ERROR_EMAIL_INVALID = 2
+        const val ERROR_PASSWORD_LENGTH = 2
     }
 
     override fun execute(params: RegisterRequest): Result<UserPrincipal> {
+        if (params.email.isEmail().not()) {
+            return Result(
+                error = Error(ERROR_EMAIL_INVALID, "Invalid email format.")
+            )
+        }
+        if (params.password.length < 6) {
+            return Result(
+                error = Error(ERROR_PASSWORD_LENGTH, "Invalid password length (minimum = 6).")
+            )
+        }
+
         val user = runBlocking { usersRepository.getUserByEmail(params.email) }
         if (user != null) {
             return Result(
-                error = Error(
-                    ERROR_EMAIL_EXISTS,
-                    "User with this email already exists."
-                )
+                error = Error(ERROR_EMAIL_EXISTS, "User with this email already exists.")
             )
         }
         val hash = hashService.hashPassword(params.password)

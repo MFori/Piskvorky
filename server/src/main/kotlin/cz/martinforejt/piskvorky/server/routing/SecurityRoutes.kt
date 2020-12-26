@@ -43,7 +43,6 @@ fun Route.securityRoutes(jwtManager: JwtManager) {
 
     post("/register") {
         val request = call.receive<RegisterRequest>()
-        // TODO validate email valid, password min. length
         val res = registerUserUseCase.execute(request)
         if (res.isSuccessful.not()) {
             throw ConflictApiException(res.error?.message ?: "Error occurred.")
