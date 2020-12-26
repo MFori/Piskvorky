@@ -11,12 +11,34 @@ import io.ktor.routing.*
  * @author Martin Forejt
  */
 
-fun Route.adminRoutes() {
+fun Route.adminApiRoutes() {
 
     route("/admin") {
 
         get("/") {
             call.respond("Hello from admin")
+        }
+
+
+        get("/users") {
+
+        }
+
+    }
+
+}
+
+fun Route.adminWebRoutes() {
+
+    route("/admin") {
+
+        get("/") {
+            call.respond("Hello from admin")
+        }
+
+
+        get("/users") {
+
         }
 
     }

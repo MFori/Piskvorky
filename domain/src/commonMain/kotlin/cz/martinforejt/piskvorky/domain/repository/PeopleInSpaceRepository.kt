@@ -20,7 +20,7 @@ class PeopleInSpaceRepository() : KoinComponent {
     private val logger: Kermit by inject()
 
     private val coroutineScope: CoroutineScope = MainScope()
-    private val peopleInSpaceDatabase = createDb()
+   // private val peopleInSpaceDatabase = createDb()
   //  private val peopleInSpaceQueries = peopleInSpaceDatabase?.peopleInSpaceQueries
 
     var peopleJob: Job? = null
