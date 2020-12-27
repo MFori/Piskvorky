@@ -7,6 +7,7 @@ import cz.martinforejt.piskvorky.server.routing.registerRoutes
 import cz.martinforejt.piskvorky.server.security.setUpSecurity
 import io.ktor.application.*
 import io.ktor.features.*
+import io.ktor.http.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.serialization.*
 import io.ktor.server.netty.*
@@ -32,8 +33,19 @@ fun Application.module(testing: Boolean = false) {
     ).koin
 
     install(CORS) {
-        host("localhost:8080")
-        host("localhost:80")
+        method(HttpMethod.Options)
+        method(HttpMethod.Put)
+        method(HttpMethod.Delete)
+        method(HttpMethod.Patch)
+        header(HttpHeaders.Authorization)
+        allowCredentials = true
+        allowNonSimpleContentTypes = true
+        anyHost()
+
+        //host("localhost:8080")
+        //host("localhost:80")
+
+      //  anyHost()
     }
 
     install(ContentNegotiation) {

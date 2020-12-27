@@ -1,22 +1,24 @@
 package view
 
+import core.Api
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.rlogger
+import cz.martinforejt.piskvorky.api.model.LoginRequest
+import cz.martinforejt.piskvorky.api.model.ProfileInfo
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
+import kotlinx.coroutines.launch
 import kotlinx.html.id
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import org.koin.core.inject
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
-import react.*
+import react.RBuilder
+import react.RState
 import react.dom.*
 import react.router.dom.routeLink
-import core.component.logger
-import core.component.rlogger
-import cz.martinforejt.piskvorky.api.model.LoginRequest
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import react.setState
 
 /**
  * Created by Martin Forejt on 26.12.2020.
@@ -103,12 +105,14 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
     }
 
     private val handleSubmit: (Event) -> Unit = { event ->
-        rlogger().d { "email = ${this.state.email}" }
-        rlogger().d { "password = ${this.state.password}" }
         event.preventDefault()
         componentScope.launch {
             val res = authService.login(LoginRequest(state.email, state.password))
-            rlogger().d { "login success = ${res.isSuccessful}" }
+            rlogger().d { "login = $res" }
+            if(res.isSuccessful) {
+                val res2 = Api.get<ProfileInfo>("/profile", authService.getCurrentUser()!!.token)
+                rlogger().d { "profile = $res2" }
+            }
         }
         this.props.onSubmit?.invoke(this.state)
     }

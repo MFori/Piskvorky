@@ -17,6 +17,8 @@ dependencies {
     //implementation(npm("kotlin-css", "1.0.0-pre.133-kotlin-1.4.21"))
     //implementation(npm("react-router-dom", "5.2.0-pre.133-kotlin-1.4.21"))
 
+    implementation(Serialization.core)
+    //implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:${Versions.kotlinxSerializationRuntime}")
     implementation(project(":domain"))
 }
 

@@ -49,6 +49,7 @@ object Ktor {
 
 object Serialization {
     const val core = "org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.kotlinxSerialization}"
+    const val json = "org.jetbrains.kotlinx:kotlinx-serialization-json-jslegacy:1.0.1"
 }
 
 object Coroutines {

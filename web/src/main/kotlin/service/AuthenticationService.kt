@@ -1,12 +1,17 @@
 package service
 
+import core.Api
 import cz.martinforejt.piskvorky.api.model.LoginRequest
+import cz.martinforejt.piskvorky.api.model.LoginResponse
 import cz.martinforejt.piskvorky.api.model.RegisterRequest
 import cz.martinforejt.piskvorky.domain.model.UserWithToken
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import cz.martinforejt.piskvorky.domain.usecase.Error
 import cz.martinforejt.piskvorky.domain.usecase.Result
 import kotlinx.browser.localStorage
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 import org.w3c.dom.get
 import org.w3c.dom.set
 
@@ -19,19 +24,44 @@ import org.w3c.dom.set
 
 class AuthenticationServiceImpl : AuthenticationService {
 
+    private val format = Json { serializersModule = SerializersModule { } }
+
+    @ExperimentalSerializationApi
     override suspend fun login(request: LoginRequest): Result<UserWithToken> {
-        if(request.email == "admin@admin.com" && request.password == "pass123") {
-            val user = UserWithToken("admin@admin.com", "token123")
+        val res = Api.post<LoginResponse>("/login", format.encodeToString(LoginRequest.serializer(), request))
+        return if (res.isSuccess) {
+            val data = res.data!!
+            val user = UserWithToken(request.email, data.token)
             localStorage["user_email"] = user.email
             localStorage["user_token"] = user.token
-            return Result(user)
+            Result(user)
         } else {
-            return Result(error = cz.martinforejt.piskvorky.domain.usecase.Error(1, "invalid"))
+            logout()
+            val error = res.error!!
+            Result(
+                error = Error(
+                    error.code,
+                    error.message
+                )
+            )
         }
     }
 
+    @ExperimentalSerializationApi
     override suspend fun register(request: RegisterRequest): Result<UserWithToken> {
-        TODO("Not yet implemented")
+        val res = Api.post<LoginResponse>("/register", format.encodeToString(RegisterRequest.serializer(), request))
+        return if (res.isSuccess) {
+            val data = res.data!!
+            Result(UserWithToken(request.email, data.token))
+        } else {
+            val error = res.error!!
+            Result(
+                error = Error(
+                    error.code,
+                    error.message
+                )
+            )
+        }
     }
 
     override fun logout() {
