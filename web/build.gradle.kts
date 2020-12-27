@@ -10,10 +10,12 @@ dependencies {
 
     implementation("org.jetbrains:kotlin-react:17.0.0-pre.133-kotlin-1.4.21")
     implementation("org.jetbrains:kotlin-react-dom:17.0.0-pre.133-kotlin-1.4.21")
+    //implementation("org.jetbrains:kotlin-css:1.0.0-pre.133-kotlin-1.4.21")
     implementation("org.jetbrains:kotlin-react-router-dom:5.2.0-pre.133-kotlin-1.4.21")
     implementation(npm("react", "17.0.0"))
     implementation(npm("react-dom", "17.0.0"))
-    //implementation(npm("react-router-dom"))
+    //implementation(npm("kotlin-css", "1.0.0-pre.133-kotlin-1.4.21"))
+    //implementation(npm("react-router-dom", "5.2.0-pre.133-kotlin-1.4.21"))
 
     implementation(project(":domain"))
 }
