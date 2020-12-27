@@ -1,53 +1,54 @@
 package view
 
-import appContext
-import react.*
-import react.dom.*
-import kotlinx.coroutines.*
+import core.component.CoreComponent
+import core.component.CoreRProps
+import core.component.rlogger
+import react.RBuilder
+import react.RState
+import react.child
+import react.dom.div
 import react.router.dom.*
 
-external interface AppProps : RProps {
-    var coroutineScope: CoroutineScope
-}
+abstract class AppProps : CoreRProps()
 
-val AppComponent = functionalComponent<AppProps> { props ->
-    val context = useContext(appContext)
-    val coroutineContext = props.coroutineScope.coroutineContext
+class AppComponent : CoreComponent<AppProps, RState>() {
 
-    browserRouter {
-        switch {
-            route("/", exact = true) {
-                redirect(to = "lobby")
-            }
-            route("/lobby") {
-                routeLink("/login") {
-                    +"Login2"
+    override fun RBuilder.render() {
+        browserRouter {
+            switch {
+                route("/", exact = true) {
+                    redirect(to = "lobby")
                 }
+                route("/lobby") {
+                    routeLink("/login") {
+                        +"Login"
+                    }
 
-            }
-            route("/game") {
-                div { +"game" }
-            }
-            route("/login") {
-                child(Login::class) {
-                    attrs {
-                        onSubmit = {
-                            Application.logger.d { "login submitted" }
+                }
+                route("/game") {
+                    div { +"game" }
+                }
+                route("/login") {
+                    coreChild(Login::class) {
+                        attrs {
+                            onSubmit = {
+                                props.rlogger().d { "login submitted" }
+                            }
                         }
                     }
                 }
-            }
-            route("/register") {
-                child(Registration::class) {
-                    attrs {
-                        onSubmit = {
-                            Application.logger.d { "register submitted" }
+                route("/register") {
+                    coreChild(Registration::class) {
+                        attrs {
+                            onSubmit = {
+                                props.rlogger().d { "register submitted" }
+                            }
                         }
                     }
                 }
-            }
-            route("") {
-                child(NotFound)
+                route("") {
+                    child(NotFound)
+                }
             }
         }
     }

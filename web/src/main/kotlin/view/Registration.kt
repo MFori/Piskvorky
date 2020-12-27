@@ -1,6 +1,8 @@
 package view
 
-import Application
+import core.component.CoreComponent
+import core.component.CoreRProps
+import core.component.rlogger
 import kotlinx.html.id
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
@@ -17,7 +19,7 @@ import react.router.dom.routeLink
  * @author Martin Forejt
  */
 
-class RegisterFormProps : RProps {
+class RegisterFormProps : CoreRProps() {
     var onSubmit : ((RegisterFormState) -> Unit)? = null
 }
 
@@ -28,7 +30,7 @@ class RegisterFormState: RState {
     var error: String? = null
 }
 
-class Registration : RComponent<RegisterFormProps, RegisterFormState>() {
+class Registration : CoreComponent<RegisterFormProps, RegisterFormState>() {
 
     override fun RegisterFormState.init() {
         email = ""
@@ -115,9 +117,9 @@ class Registration : RComponent<RegisterFormProps, RegisterFormState>() {
     }
 
     private val handleSubmit: (Event) -> Unit = { event ->
-        Application.logger.d { "email = ${this.state.email}" }
-        Application.logger.d { "password = ${this.state.password}" }
-        Application.logger.d { "passwordConfirm = ${this.state.passwordConfirm}" }
+        rlogger().d { "email = ${this.state.email}" }
+        rlogger().d { "password = ${this.state.password}" }
+        rlogger().d { "passwordConfirm = ${this.state.passwordConfirm}" }
         event.preventDefault()
         this.props.onSubmit?.invoke(this.state)
     }

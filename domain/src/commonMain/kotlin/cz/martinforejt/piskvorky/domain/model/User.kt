@@ -9,3 +9,8 @@ package cz.martinforejt.piskvorky.domain.model
 expect class User
 
 expect class UserWithPassword
+
+data class UserWithToken(
+    val email: String,
+    val token: String
+)

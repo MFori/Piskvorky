@@ -1,15 +1,17 @@
 import co.touchlab.kermit.CommonLogger
 import co.touchlab.kermit.Kermit
+import core.component.AppContext
+import core.component.AppContextHolder
+import core.component.AppDependencies
+import core.di.webModule
 import cz.martinforejt.piskvorky.domain.core.di.initKoin
 import kotlinx.browser.document
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import org.koin.core.KoinComponent
+import org.koin.core.inject
 import react.child
-import react.createContext
 import react.dom.render
+import react.useContext
 import view.AppComponent
-import kotlin.coroutines.CoroutineContext
 
 /**
  * Created by Martin Forejt on 27.12.2020.
@@ -18,30 +20,24 @@ import kotlin.coroutines.CoroutineContext
  * @author Martin Forejt
  */
 
-object AppDependencies : KoinComponent {
-    //  val repository: PeopleInSpaceRepository
-
-    init {
-        initKoin()
-        //repository = get()
-    }
+object Dependencies : AppDependencies {
+    override val logger: Kermit = Kermit(CommonLogger())
 }
 
-val appContext = createContext<AppDependencies>()
+lateinit var appContext: AppContext
 
-class Application : CoroutineScope {
-
-    companion object {
-        val logger: Kermit = Kermit(CommonLogger())
-    }
-
-    override val coroutineContext: CoroutineContext = Job()
+class Application : KoinComponent {
 
     fun start() {
+        initKoin(listOf(webModule))
+
+        val appContextHolder by inject<AppContextHolder>()
+        appContext = appContextHolder.appContext
+
         render(document.getElementById("root")) {
-            appContext.Provider(AppDependencies) {
-                child(AppComponent) {
-                    attrs.coroutineScope = this@Application
+            appContext.Provider(Dependencies) {
+                child(AppComponent::class) {
+                    attrs { context = Dependencies }
                 }
             }
         }
