@@ -2,55 +2,64 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
-import core.component.rlogger
+import cz.martinforejt.piskvorky.domain.service.AuthenticationService
+import org.koin.core.inject
 import react.RBuilder
 import react.RState
+import react.ReactElement
 import react.child
-import react.dom.div
 import react.router.dom.*
 
 abstract class AppProps : CoreRProps()
 
 class AppComponent : CoreComponent<AppProps, RState>() {
 
+    private val authService by inject<AuthenticationService>()
+
     override fun RBuilder.render() {
         browserRouter {
             switch {
                 route("/", exact = true) {
-                    redirect(to = "lobby")
+                    redirect(to = "/lobby")
                 }
-                route("/lobby") {
+                privateRoute("/lobby") {
                     routeLink("/login") {
                         +"Login"
                     }
-
                 }
-                route("/game") {
-                    div { +"game" }
+                privateRoute("/game") {
+                    routeLink("/logout") {
+                        +"Logout"
+                    }
                 }
                 route("/login") {
-                    coreChild(Login::class) {
-                        attrs {
-                            onSubmit = {
-                                props.rlogger().d { "login submitted" }
-                            }
-                        }
-                    }
+                    coreChild(Login::class)
+                }
+                route("/logout") {
+                    authService.logout()
+                    redirect(to = "/login")
                 }
                 route("/register") {
-                    coreChild(Registration::class) {
-                        attrs {
-                            onSubmit = {
-                                props.rlogger().d { "register submitted" }
-                            }
-                        }
-                    }
+                    coreChild(Registration::class)
                 }
                 route("") {
                     child(NotFound)
                 }
             }
         }
+    }
+
+    private fun RBuilder.privateRoute(
+        path: String,
+        exact: Boolean = false,
+        strict: Boolean = false,
+        render: () -> ReactElement?
+    ): ReactElement {
+        authService.getCurrentUser()
+            ?: return route(path, exact, strict) {
+                redirect(to = "/login")
+            }
+        return route(path, exact, strict, render)
     }
 }
 

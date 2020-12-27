@@ -19,7 +19,7 @@ import org.w3c.dom.set
 
 class AuthenticationServiceImpl : AuthenticationService {
 
-    override fun login(request: LoginRequest): Result<UserWithToken> {
+    override suspend fun login(request: LoginRequest): Result<UserWithToken> {
         if(request.email == "admin@admin.com" && request.password == "pass123") {
             val user = UserWithToken("admin@admin.com", "token123")
             localStorage["user_email"] = user.email
@@ -30,7 +30,7 @@ class AuthenticationServiceImpl : AuthenticationService {
         }
     }
 
-    override fun register(request: RegisterRequest): Result<UserWithToken> {
+    override suspend fun register(request: RegisterRequest): Result<UserWithToken> {
         TODO("Not yet implemented")
     }
 

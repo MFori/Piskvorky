@@ -27,14 +27,16 @@ class AppContextHolder(val appContext: AppContext)
 
 abstract class CoreRProps : RProps, KoinComponent {
     var context: AppDependencies? = null
+    var location: String = ""
 }
 
 abstract class CoreComponent<P : CoreRProps, S : RState> : RComponent<P, S>(), KoinComponent, CoroutineScope {
-    override val coroutineContext: CoroutineContext = Job()
+    final override val coroutineContext: CoroutineContext = Job()
+    val componentScope = CoroutineScope(coroutineContext)
 
     fun <P : CoreRProps> RBuilder.coreChild(
         klazz: KClass<out CoreComponent<P, *>>,
-        handler: RHandler<P>
+        handler: RHandler<P> = {}
     ): ReactElement {
         return klazz.rClass.invoke {
             attrs {

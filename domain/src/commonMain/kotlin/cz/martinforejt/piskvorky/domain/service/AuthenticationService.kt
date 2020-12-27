@@ -14,11 +14,11 @@ import cz.martinforejt.piskvorky.domain.usecase.Result
 
 interface AuthenticationService {
 
-    fun login(request: LoginRequest) : Result<UserWithToken>
+    suspend fun login(request: LoginRequest): Result<UserWithToken>
 
-    fun register(request: RegisterRequest) : Result<UserWithToken>
+    suspend fun register(request: RegisterRequest): Result<UserWithToken>
 
     fun logout()
 
-    fun getCurrentUser() : UserWithToken?
+    fun getCurrentUser(): UserWithToken?
 }

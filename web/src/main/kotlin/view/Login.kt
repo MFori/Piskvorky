@@ -14,6 +14,9 @@ import react.dom.*
 import react.router.dom.routeLink
 import core.component.logger
 import core.component.rlogger
+import cz.martinforejt.piskvorky.api.model.LoginRequest
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * Created by Martin Forejt on 26.12.2020.
@@ -34,7 +37,7 @@ class LoginFormState: RState {
 
 class Login : CoreComponent<LoginFormProps, LoginFormState>() {
 
-    val authService by inject<AuthenticationService>()
+    private val authService by inject<AuthenticationService>()
 
     override fun LoginFormState.init() {
         email = ""
@@ -103,6 +106,10 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
         rlogger().d { "email = ${this.state.email}" }
         rlogger().d { "password = ${this.state.password}" }
         event.preventDefault()
+        componentScope.launch {
+            val res = authService.login(LoginRequest(state.email, state.password))
+            rlogger().d { "login success = ${res.isSuccessful}" }
+        }
         this.props.onSubmit?.invoke(this.state)
     }
 }
