@@ -32,8 +32,7 @@ class AuthenticationServiceImpl : AuthenticationService {
         return if (res.isSuccess) {
             val data = res.data!!
             val user = UserWithToken(request.email, data.token)
-            localStorage["user_email"] = user.email
-            localStorage["user_token"] = user.token
+            store(user.email, user.token)
             Result(user)
         } else {
             logout()
@@ -52,7 +51,9 @@ class AuthenticationServiceImpl : AuthenticationService {
         val res = Api.post<LoginResponse>("/register", format.encodeToString(RegisterRequest.serializer(), request))
         return if (res.isSuccess) {
             val data = res.data!!
-            Result(UserWithToken(request.email, data.token))
+            val user = UserWithToken(request.email, data.token)
+            store(user.email, user.token)
+            Result(user)
         } else {
             val error = res.error!!
             Result(
@@ -62,6 +63,11 @@ class AuthenticationServiceImpl : AuthenticationService {
                 )
             )
         }
+    }
+
+    private fun store(email: String, token: String) {
+        localStorage["user_email"] = email
+        localStorage["user_token"] = token
     }
 
     override fun logout() {

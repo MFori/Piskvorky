@@ -2,15 +2,24 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
-import core.component.rlogger
+import cz.martinforejt.piskvorky.api.model.RegisterRequest
+import cz.martinforejt.piskvorky.domain.service.AuthenticationService
+import kotlinx.browser.document
+import kotlinx.coroutines.launch
+import kotlinx.html.ButtonType
+import kotlinx.html.InputType
 import kotlinx.html.id
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
+import org.koin.core.inject
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
-import react.*
+import react.RBuilder
+import react.RState
 import react.dom.*
+import react.router.dom.redirect
 import react.router.dom.routeLink
+import react.setState
 
 /**
  * Created by Martin Forejt on 26.12.2020.
@@ -19,108 +28,151 @@ import react.router.dom.routeLink
  * @author Martin Forejt
  */
 
-class RegisterFormProps : CoreRProps() {
-    var onSubmit : ((RegisterFormState) -> Unit)? = null
-}
+class RegisterFormProps : CoreRProps()
 
-class RegisterFormState: RState {
+class RegisterFormState : RState {
     var email: String = ""
     var password: String = ""
     var passwordConfirm: String = ""
     var error: String? = null
+    var signed = false
 }
 
 class Registration : CoreComponent<RegisterFormProps, RegisterFormState>() {
+
+    private val authService by inject<AuthenticationService>()
+
+    override fun componentDidMount() {
+        document.title = "Piskvorky | Registration"
+    }
 
     override fun RegisterFormState.init() {
         email = ""
         password = ""
         passwordConfirm = ""
+        error = null
+        signed = false
     }
 
     override fun RBuilder.render() {
-        div {
-            form {
-                div(classes = "form-group") {
-                    label {
-                        attrs {
-                            htmlFor = "email"
-                        }
-                        +"Email"
+        if (state.signed || authService.hasUser()) {
+            redirect(to = "/lobby")
+            return
+        }
+        div("text-center register-root") {
+            form(classes = "form-signin") {
+                img(classes = "mg-4", src = "/images/logo2.png", alt = "logo") {}
+                h1("h3 mb-3") {
+                    +"Registration"
+                }
+                state.error?.let {
+                    div("alert alert-danger") {
+                        +it
                     }
-                    input(classes = "form-control") {
-                        attrs {
-                            id = "email"
-                            name = "email"
-                            value = state.email
-                            onChangeFunction = {
-                                setState {
-                                    email = (it.target as HTMLInputElement).value
-                                }
+                }
+                label("sr-only") {
+                    attrs {
+                        htmlFor = "email"
+                    }
+                    +"Email"
+                }
+                input(type = InputType.email, classes = "form-control") {
+                    attrs {
+                        id = "email"
+                        name = "email"
+                        value = state.email
+                        placeholder = "Email address"
+                        required = true
+                        autoFocus = true
+                        onChangeFunction = {
+                            setState {
+                                email = (it.target as HTMLInputElement).value
                             }
                         }
                     }
                 }
-                div(classes = "form-group") {
-                    label {
-                        attrs {
-                            htmlFor = "password"
-                        }
-                        +"Password"
+                label("sr-only") {
+                    attrs {
+                        htmlFor = "password"
                     }
-                    input(classes = "form-control") {
-                        attrs {
-                            id = "password"
-                            name = "password"
-                            value = state.password
-                            onChangeFunction = {
-                                setState {
-                                    password = (it.target as HTMLInputElement).value
-                                }
+                    +"Password"
+                }
+                input(type = InputType.password, classes = "form-control") {
+                    attrs {
+                        id = "password"
+                        name = "password"
+                        value = state.password
+                        placeholder = "Password"
+                        required = true
+                        onChangeFunction = {
+                            setState {
+                                password = (it.target as HTMLInputElement).value
                             }
                         }
                     }
                 }
-                div(classes = "form-group") {
-                    label {
-                        attrs {
-                            htmlFor = "password-confirm"
-                        }
-                        +"Password Confirm"
+                label("sr-only") {
+                    attrs {
+                        htmlFor = "password-confirm"
                     }
-                    input(classes = "form-control") {
-                        attrs {
-                            id = "password-confirm"
-                            name = "password-confirm"
-                            value = state.passwordConfirm
-                            onChangeFunction = {
-                                setState {
-                                    passwordConfirm = (it.target as HTMLInputElement).value
-                                }
+                    +"Password confirm"
+                }
+                input(type = InputType.password, classes = "form-control") {
+                    attrs {
+                        id = "password-confirm"
+                        name = "password-confirm"
+                        value = state.passwordConfirm
+                        placeholder = "Password confirm"
+                        required = true
+                        onChangeFunction = {
+                            setState {
+                                passwordConfirm = (it.target as HTMLInputElement).value
                             }
                         }
                     }
                 }
-                div(classes = "form-group") {
-                    button(classes = "form-control") {
-                        attrs {
-                            onClickFunction = handleSubmit
-                        }
-                        +"Register"
+                button(type = ButtonType.submit, classes = "btn btn-lg btn-block") {
+                    attrs {
+                        onClickFunction = handleSubmit
+                    }
+                    +"Register"
+                }
+                div {
+                    +"Already have account? "
+                    routeLink("/login") {
+                        +"Login"
                     }
                 }
-            }
-            routeLink("/login") {
-                +"Login"
+                div("mt-5 mb-3 text-mutes") {
+                    +"@ 2020 "
+                    a(href = "https://martinforejt.cz", target = "_blank") {
+                        +"Martin Forejt"
+                    }
+                }
             }
         }
     }
 
     private val handleSubmit: (Event) -> Unit = { event ->
-        rlogger().d { "email = ${this.state.email}" }
-        rlogger().d { "password = ${this.state.password}" }
-        rlogger().d { "passwordConfirm = ${this.state.passwordConfirm}" }
         event.preventDefault()
-        this.props.onSubmit?.invoke(this.state)
+        if (state.password != state.passwordConfirm) {
+            setState { error = "Passwords do not match." }
+        } else {
+            componentScope.launch {
+                val res = authService.register(RegisterRequest(state.email, state.password))
+                if (!res.isSuccessful) {
+                    setState {
+                        error = when (res.error?.code) {
+                            409 -> res.error!!.message
+                            else -> "Some error occurred, try it later."
+                        }
+                    }
+                } else {
+                    setState {
+                        signed = true
+                    }
+                }
+            }
+        }
     }
 }

@@ -21,4 +21,6 @@ interface AuthenticationService {
     fun logout()
 
     fun getCurrentUser(): UserWithToken?
+
+    fun hasUser() = getCurrentUser() != null
 }

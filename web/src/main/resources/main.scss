@@ -1,0 +1,86 @@
+$background-color: #354661;
+
+body, html {
+  background: $background-color;
+  color: #ffffff;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
+.login-root, .register-root {
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  justify-content: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.form-signin {
+  width: 100%;
+  background: white;
+  max-width: 330px;
+  margin: 0 auto;
+  padding: 15px;
+  color: #1f1f1f;
+  -webkit-box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.75);
+  box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.75);
+
+  img {
+    width: 120px;
+    height: 120px;
+  }
+
+  a {
+    color: $background-color;
+  }
+
+  .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  input[type="email"] {
+    margin-bottom: 10px;
+    //border-bottom-right-radius: 0;
+    //border-bottom-left-radius: 0;
+  }
+
+  input[type="password"] {
+    margin-bottom: 10px;
+    //border-top-left-radius: 0;
+    //border-top-right-radius: 0;
+  }
+
+  button {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background: $background-color;
+    color: white;
+
+    &:hover {
+      color: white;
+      background: #495d7e;
+    }
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  -webkit-clip-path: inset(50%);
+  clip-path: inset(50%);
+  border: 0;
+}

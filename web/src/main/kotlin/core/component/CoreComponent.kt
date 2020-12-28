@@ -1,6 +1,7 @@
 package core.component
 
 import co.touchlab.kermit.Kermit
+import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import org.koin.core.KoinComponent
@@ -27,7 +28,7 @@ class AppContextHolder(val appContext: AppContext)
 
 abstract class CoreRProps : RProps, KoinComponent {
     var context: AppDependencies? = null
-    var location: String = ""
+    //var location: String = ""
 }
 
 abstract class CoreComponent<P : CoreRProps, S : RState> : RComponent<P, S>(), KoinComponent, CoroutineScope {

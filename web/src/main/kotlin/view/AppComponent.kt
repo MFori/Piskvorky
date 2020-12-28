@@ -8,6 +8,7 @@ import react.RBuilder
 import react.RState
 import react.ReactElement
 import react.child
+import react.dom.div
 import react.router.dom.*
 
 abstract class AppProps : CoreRProps()
@@ -23,9 +24,7 @@ class AppComponent : CoreComponent<AppProps, RState>() {
                     redirect(to = "/lobby")
                 }
                 privateRoute("/lobby") {
-                    routeLink("/login") {
-                        +"Login"
-                    }
+                    coreChild(Lobby::class)
                 }
                 privateRoute("/game") {
                     routeLink("/logout") {
@@ -55,10 +54,14 @@ class AppComponent : CoreComponent<AppProps, RState>() {
         strict: Boolean = false,
         render: () -> ReactElement?
     ): ReactElement {
-        authService.getCurrentUser()
-            ?: return route(path, exact, strict) {
+        if (!authService.hasUser()) {
+            console.log("redirect 1 $path")
+            return route(path, exact, strict) {
+                // TODO FIX
+                console.log("redirect $path")
                 redirect(to = "/login")
             }
+        }
         return route(path, exact, strict, render)
     }
 }

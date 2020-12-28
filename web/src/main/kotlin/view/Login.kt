@@ -1,13 +1,13 @@
 package view
 
-import core.Api
 import core.component.CoreComponent
 import core.component.CoreRProps
-import core.component.rlogger
 import cz.martinforejt.piskvorky.api.model.LoginRequest
-import cz.martinforejt.piskvorky.api.model.ProfileInfo
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
+import kotlinx.browser.document
 import kotlinx.coroutines.launch
+import kotlinx.html.ButtonType
+import kotlinx.html.InputType
 import kotlinx.html.id
 import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
@@ -17,6 +17,7 @@ import org.w3c.dom.events.Event
 import react.RBuilder
 import react.RState
 import react.dom.*
+import react.router.dom.redirect
 import react.router.dom.routeLink
 import react.setState
 
@@ -27,79 +28,108 @@ import react.setState
  * @author Martin Forejt
  */
 
-class LoginFormProps : CoreRProps() {
-    var onSubmit : ((LoginFormState) -> Unit)? = null
-}
+class LoginFormProps : CoreRProps()
 
-class LoginFormState: RState {
-    var email: String = ""
-    var password: String = ""
+class LoginFormState : RState {
+    var email = ""
+    var password = ""
     var error: String? = null
+    var signed = false
+    var redirected = false
 }
 
 class Login : CoreComponent<LoginFormProps, LoginFormState>() {
 
     private val authService by inject<AuthenticationService>()
 
+    override fun componentDidMount() {
+        document.title = "Piskvorky | Login"
+    }
+
     override fun LoginFormState.init() {
         email = ""
         password = ""
+        error = null
+        signed = false
+        redirected = false
     }
 
     override fun RBuilder.render() {
-        div {
-            form {
-                div(classes = "form-group") {
-                    label {
-                        attrs {
-                            htmlFor = "email"
-                        }
-                        +"Email"
+        if (!state.redirected && (state.signed || authService.hasUser())) {
+            redirect(to = "/lobby")
+            state.redirected = true
+            return
+        }
+        div("text-center login-root") {
+            form(classes = "form-signin") {
+                img(classes = "mg-4", src = "/images/logo2.png", alt = "logo") {}
+                h1("h3 mb-3") {
+                    +"Login"
+                }
+                state.error?.let {
+                    div("alert alert-danger") {
+                        +it
                     }
-                    input(classes = "form-control") {
-                        attrs {
-                            id = "email"
-                            name = "email"
-                            value = state.email
-                            onChangeFunction = {
-                                setState {
-                                    email = (it.target as HTMLInputElement).value
-                                }
+                }
+                label("sr-only") {
+                    attrs {
+                        htmlFor = "email"
+                    }
+                    +"Email"
+                }
+                input(type = InputType.email, classes = "form-control") {
+                    attrs {
+                        id = "email"
+                        name = "email"
+                        value = state.email
+                        placeholder = "Email address"
+                        required = true
+                        autoFocus = true
+                        onChangeFunction = {
+                            setState {
+                                email = (it.target as HTMLInputElement).value
                             }
                         }
                     }
                 }
-                div(classes = "form-group") {
-                    label {
-                        attrs {
-                            htmlFor = "password"
-                        }
-                        +"Password"
+                label("sr-only") {
+                    attrs {
+                        htmlFor = "password"
                     }
-                    input(classes = "form-control") {
-                        attrs {
-                            id = "password"
-                            name = "password"
-                            value = state.password
-                            onChangeFunction = {
-                                setState {
-                                    password = (it.target as HTMLInputElement).value
-                                }
+                    +"Password"
+                }
+                input(type = InputType.password, classes = "form-control") {
+                    attrs {
+                        id = "password"
+                        name = "password"
+                        value = state.password
+                        placeholder = "Password"
+                        required = true
+                        onChangeFunction = {
+                            setState {
+                                password = (it.target as HTMLInputElement).value
                             }
                         }
                     }
                 }
-                div(classes = "form-group") {
-                    button(classes = "form-control") {
-                        attrs {
-                            onClickFunction = handleSubmit
-                        }
-                        +"Login"
+                button(type = ButtonType.submit, classes = "btn btn-lg btn-block") {
+                    attrs {
+                        onClickFunction = handleSubmit
+                    }
+                    +"Login"
+                }
+                div {
+                    +"Dont have account? "
+                    routeLink("/register") {
+                        +"Register now"
                     }
                 }
-            }
-            routeLink("/register") {
-                +"Register"
+                div("mt-5 mb-3 text-mutes") {
+                    +"@ 2020 "
+                    a(href = "https://martinforejt.cz", target = "_blank") {
+                        +"Martin Forejt"
+                    }
+                }
             }
         }
     }
@@ -108,12 +138,18 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
         event.preventDefault()
         componentScope.launch {
             val res = authService.login(LoginRequest(state.email, state.password))
-            rlogger().d { "login = $res" }
-            if(res.isSuccessful) {
-                val res2 = Api.get<ProfileInfo>("/profile", authService.getCurrentUser()!!.token)
-                rlogger().d { "profile = $res2" }
+            if (!res.isSuccessful) {
+                setState {
+                    error = when (res.error?.code) {
+                        401 -> "Invalid email and/or password."
+                        else -> "Some error occurred, try it later."
+                    }
+                }
+            } else {
+                setState {
+                    signed = true
+                }
             }
         }
-        this.props.onSubmit?.invoke(this.state)
     }
 }
