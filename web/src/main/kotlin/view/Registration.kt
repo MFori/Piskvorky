@@ -5,6 +5,7 @@ import core.component.CoreRProps
 import cz.martinforejt.piskvorky.api.model.RegisterRequest
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlinx.coroutines.launch
 import kotlinx.html.ButtonType
 import kotlinx.html.InputType
@@ -55,7 +56,11 @@ class Registration : CoreComponent<RegisterFormProps, RegisterFormState>() {
     }
 
     override fun RBuilder.render() {
-        if (state.signed || authService.hasUser()) {
+        val hasUser = !state.signed && authService.hasUser()
+        if (state.signed || hasUser) {
+            if (hasUser) {
+                window.alert("Already logged in. Redirecting...")
+            }
             redirect(to = "/lobby")
             return
         }

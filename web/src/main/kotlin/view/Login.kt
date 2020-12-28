@@ -5,6 +5,8 @@ import core.component.CoreRProps
 import cz.martinforejt.piskvorky.api.model.LoginRequest
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import kotlinx.browser.document
+import kotlinx.browser.localStorage
+import kotlinx.browser.window
 import kotlinx.coroutines.launch
 import kotlinx.html.ButtonType
 import kotlinx.html.InputType
@@ -14,6 +16,7 @@ import kotlinx.html.js.onClickFunction
 import org.koin.core.inject
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
+import org.w3c.dom.get
 import react.RBuilder
 import react.RState
 import react.dom.*
@@ -35,7 +38,6 @@ class LoginFormState : RState {
     var password = ""
     var error: String? = null
     var signed = false
-    var redirected = false
 }
 
 class Login : CoreComponent<LoginFormProps, LoginFormState>() {
@@ -47,17 +49,19 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
     }
 
     override fun LoginFormState.init() {
-        email = ""
+        email = localStorage["last_user"] ?: ""
         password = ""
         error = null
         signed = false
-        redirected = false
     }
 
     override fun RBuilder.render() {
-        if (!state.redirected && (state.signed || authService.hasUser())) {
+        val hasUser = !state.signed && authService.hasUser()
+        if (state.signed || hasUser) {
+            if(hasUser) {
+                window.alert("Already logged in. Redirecting...")
+            }
             redirect(to = "/lobby")
-            state.redirected = true
             return
         }
         div("text-center login-root") {
@@ -119,7 +123,7 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
                     +"Login"
                 }
                 div {
-                    +"Dont have account? "
+                    +"Don't have account? "
                     routeLink("/register") {
                         +"Register now"
                     }

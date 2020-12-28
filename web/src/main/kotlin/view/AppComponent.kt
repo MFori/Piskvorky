@@ -31,8 +31,7 @@ class AppComponent : CoreComponent<AppProps, RState>() {
                     coreChild(Login::class)
                 }
                 route("/logout") {
-                    authService.logout()
-                    redirect(to = "/login")
+                    coreChild(Logout::class)
                 }
                 route("/register") {
                     coreChild(Registration::class)
