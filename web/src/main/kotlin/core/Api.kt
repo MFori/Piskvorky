@@ -70,7 +70,7 @@ suspend inline fun <reified T> requestAndParseResult(
     body: dynamic,
     token: String?
 ): ApiResult<T> {
-    val response = window.fetch(url, object : RequestInit {
+    val responsePromise = window.fetch(url, object : RequestInit {
         override var method: String? = method
         override var body: dynamic = body
         override var credentials: RequestCredentials? = "same-origin".asDynamic()
@@ -79,11 +79,22 @@ suspend inline fun <reified T> requestAndParseResult(
             "Accept" to "application/json",
             "Content-Type" to "application/json",
         )
-    }).await()
+    })
 
+    val response = try {
+        responsePromise.await()
+    } catch (e: Throwable) {
+        return ApiResult(
+            data = null,
+            error = Error(0, "Server error"),
+            code = 0
+        )
+    }
+
+    val json = response.json().await()
     return ApiResult(
-        data = if (response.ok) parseResponse<T>(response.json().await()) else null,
-        error = if (response.ok) null else parseResponse<Error>(response.json().await()),
+        data = if (response.ok) parseResponse<T>(json) else null,
+        error = if (response.ok) null else parseResponse<Error>(json),
         code = response.status.toInt()
     )
 }
