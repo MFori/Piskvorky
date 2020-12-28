@@ -22,7 +22,6 @@ class Logout : CoreComponent<CoreRProps, RState>() {
     private val authService by inject<AuthenticationService>()
 
     override fun componentDidMount() {
-        val user = authService.getCurrentUser()
         user?.let {
             localStorage["last_user"] = it.email
         }

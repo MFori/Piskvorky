@@ -1,0 +1,46 @@
+@import "dimens";
+
+#lobby_root {
+  position: relative;
+  min-height: 100%;
+  @media (min-width: 576px) {
+    height: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  #lobby_content {
+    position: relative;
+    $offset: $header_height + $footer_height + 20;
+    min-height: -moz-calc(100vh - #{$offset});
+    min-height: -webkit-calc(100vh - #{$offset});
+    min-height: calc(100vh - #{$offset});
+    height: auto;
+    @media (min-width: 576px) {
+      height: -moz-calc(100vh - #{$offset + 20});
+      height: -webkit-calc(100vh - #{$offset + 20});
+      height: calc(100vh - #{$offset + 20});
+      min-height: auto;
+    }
+
+    #lobby_online {
+      height: 100%;
+      .panel-box {
+        @media (min-width: 576px) {
+          margin-right: 5px;
+        }
+      }
+    }
+
+    #lobby_friends {
+      height: 100%;
+      .panel-box {
+        margin-top: 10px;
+        @media (min-width: 576px) {
+          margin-left: 5px;
+          margin-top: 0;
+        }
+      }
+    }
+  }
+}

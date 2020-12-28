@@ -56,16 +56,15 @@ class Registration : CoreComponent<RegisterFormProps, RegisterFormState>() {
     }
 
     override fun RBuilder.render() {
-        val hasUser = !state.signed && authService.hasUser()
         if (state.signed || hasUser) {
-            if (hasUser) {
+            if (!state.signed) {
                 window.alert("Already logged in. Redirecting...")
             }
             redirect(to = "/lobby")
             return
         }
         div("text-center register-root") {
-            form(classes = "form-signin") {
+            form(classes = "form-signin panel-box") {
                 img(classes = "mg-4", src = "/images/logo2.png", alt = "logo") {}
                 h1("h3 mb-3") {
                     +"Registration"

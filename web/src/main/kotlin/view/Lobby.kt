@@ -2,6 +2,7 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import kotlinx.html.id
 import react.RBuilder
 import react.RState
 import react.dom.div
@@ -22,16 +23,21 @@ class LobbyState : RState {
 class Lobby : CoreComponent<LobbyProps, LobbyState>() {
 
     override fun RBuilder.render() {
-        div {
-            routeLink("/login") {
-                +"Login"
+        div("container") {
+            attrs.id = "lobby_root"
+            coreChild(Header::class)
+            div("row") {
+                attrs.id = "lobby_content"
+                div("col-sm") {
+                    attrs.id = "lobby_online"
+                    coreChild(OnlineUsersPanel::class)
+                }
+                div("col-sm") {
+                    attrs.id = "lobby_friends"
+                    coreChild(FriendsPanel::class)
+                }
             }
-            routeLink("/logout") {
-                +"Logout"
-            }
-            routeLink("/game") {
-                +"Game"
-            }
+            coreChild(Footer::class)
         }
     }
 }

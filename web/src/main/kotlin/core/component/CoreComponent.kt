@@ -1,10 +1,12 @@
 package core.component
 
 import co.touchlab.kermit.Kermit
+import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import org.koin.core.KoinComponent
+import org.koin.core.inject
 import react.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
@@ -34,6 +36,7 @@ abstract class CoreRProps : RProps, KoinComponent {
 abstract class CoreComponent<P : CoreRProps, S : RState> : RComponent<P, S>(), KoinComponent, CoroutineScope {
     final override val coroutineContext: CoroutineContext = Job()
     val componentScope = CoroutineScope(coroutineContext)
+    private val authService by inject<AuthenticationService>()
 
     fun <P : CoreRProps> RBuilder.coreChild(
         klazz: KClass<out CoreComponent<P, *>>,
@@ -46,6 +49,11 @@ abstract class CoreComponent<P : CoreRProps, S : RState> : RComponent<P, S>(), K
             handler(this)
         }
     }
+
+    val hasUser
+        get() = authService.hasUser()
+    val user
+        get() = authService.getCurrentUser()
 }
 
 fun <P : CoreRProps> coreFunctionalComponent(

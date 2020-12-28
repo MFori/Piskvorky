@@ -11,8 +11,6 @@ abstract class AppProps : CoreRProps()
 
 class AppComponent : CoreComponent<AppProps, RState>() {
 
-    private val authService by inject<AuthenticationService>()
-
     override fun RBuilder.render() {
         browserRouter {
             switch {
@@ -50,7 +48,7 @@ class AppComponent : CoreComponent<AppProps, RState>() {
         render: () -> ReactElement?
     ): ReactElement {
         return route(path, exact, strict) {
-            if(authService.hasUser()) {
+            if(hasUser) {
                 child<RouteProps<RProps>, RouteComponent<RProps>> {
                     attrs {
                         this.path = path
