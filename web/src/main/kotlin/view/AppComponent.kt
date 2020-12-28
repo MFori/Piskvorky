@@ -4,11 +4,7 @@ import core.component.CoreComponent
 import core.component.CoreRProps
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import org.koin.core.inject
-import react.RBuilder
-import react.RState
-import react.ReactElement
-import react.child
-import react.dom.div
+import react.*
 import react.router.dom.*
 
 abstract class AppProps : CoreRProps()
@@ -54,15 +50,20 @@ class AppComponent : CoreComponent<AppProps, RState>() {
         strict: Boolean = false,
         render: () -> ReactElement?
     ): ReactElement {
-        if (!authService.hasUser()) {
-            console.log("redirect 1 $path")
-            return route(path, exact, strict) {
-                // TODO FIX
-                console.log("redirect $path")
-                redirect(to = "/login")
+        return route(path, exact, strict) {
+            if(authService.hasUser()) {
+                child<RouteProps<RProps>, RouteComponent<RProps>> {
+                    attrs {
+                        this.path = path
+                        this.exact = exact
+                        this.strict = strict
+                        this.render = { render() }
+                    }
+                }
+            } else {
+                redirect(path, "/login")
             }
         }
-        return route(path, exact, strict, render)
     }
 }
 
