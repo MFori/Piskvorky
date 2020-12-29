@@ -12,6 +12,7 @@ object Versions {
     const val junit = "4.13"
     const val hikari = "3.4.5"
     const val mysqlConnector = "8.0.22"
+    const val redis = "2.10.2"
 }
 
 object Deps {
@@ -73,4 +74,8 @@ object Hikari {
 
 object MysqlConnector {
     const val core = "mysql:mysql-connector-java:${Versions.mysqlConnector}"
+}
+
+object Redis {
+    const val jedis = "redis.clients:jedis:${Versions.redis}"
 }
