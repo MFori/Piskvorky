@@ -27,6 +27,7 @@ dependencies {
     implementation(Exposed.time)
     implementation(Hikari.core)
     implementation(MysqlConnector.core)
+    implementation(Redis.jedis)
 
     implementation(project(":domain"))
 }

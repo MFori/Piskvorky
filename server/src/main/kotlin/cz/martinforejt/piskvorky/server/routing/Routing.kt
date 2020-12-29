@@ -37,6 +37,7 @@ fun Application.registerRoutes() {
         }
 
         route(API_VERSION) {
+            lobbyRoutes()
             gameRoutes()
         }
     }

@@ -2,7 +2,10 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import cz.martinforejt.piskvorky.api.model.AuthorizeSocketApiMessage
+import cz.martinforejt.piskvorky.api.model.SocketApi
 import kotlinx.html.id
+import org.w3c.dom.WebSocket
 import react.RBuilder
 import react.RState
 import react.dom.div
@@ -21,6 +24,24 @@ class LobbyState : RState {
 }
 
 class Lobby : CoreComponent<LobbyProps, LobbyState>() {
+
+    private val client : WebSocket = WebSocket("ws://localhost:9090/v1/lobby")
+
+    override fun componentWillMount() {
+        client.onopen = {
+            console.log("lobby socket open")
+        }
+        client.onmessage = {
+            console.log("lobby socket message ${it.data}")
+            client.send(SocketApi.encode(AuthorizeSocketApiMessage(user!!.token)))
+        }
+        client.onerror = {
+            console.log("lobby socket error")
+        }
+        client.onclose = {
+            console.log("lobby socket close")
+        }
+    }
 
     override fun RBuilder.render() {
         div("container") {
