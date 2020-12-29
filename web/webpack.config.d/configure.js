@@ -1,5 +1,8 @@
 config.devServer.historyApiFallback = true;
 
+//config.devServer.host = '0.0.0.0';//your ip address
+//    config.devServer.port = 8080;
+//    config.devServer.disableHostCheck= true;
 
 module.exports = {
    // devServer.historyApiFallback = true;

@@ -2,6 +2,7 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import cz.martinforejt.piskvorky.domain.model.PublicUser
 import react.RBuilder
 import react.RState
 import react.dom.div
@@ -13,14 +14,18 @@ import react.dom.div
  * @author Martin Forejt
  */
 
-class OnlineUsersPanel : CoreComponent<CoreRProps, RState>() {
+class OnlineUsersPanelProps : CoreRProps() {
+    var users = mutableListOf<PublicUser>()
+}
+
+class OnlineUsersPanel : CoreComponent<OnlineUsersPanelProps, RState>() {
 
     override fun RBuilder.render() {
         div("panel-box") {
             div("font-weight-bold") { +"Online users" }
-            for (i in 0..5) {
+            for (user in props.users) {
                 div {
-                    +"User $i"
+                    +user.email
                 }
             }
         }

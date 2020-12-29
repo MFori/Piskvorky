@@ -1,6 +1,8 @@
 package cz.martinforejt.piskvorky.server.core.di
 
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
+import cz.martinforejt.piskvorky.server.core.database.RedisDatabase
+import cz.martinforejt.piskvorky.server.core.database.RedisDatabaseImpl
 import cz.martinforejt.piskvorky.server.features.users.manager.HashService
 import cz.martinforejt.piskvorky.server.features.users.manager.Sha256HashService
 import cz.martinforejt.piskvorky.server.features.users.repository.UsersRepositoryImpl
@@ -33,6 +35,10 @@ fun serverModule(app: Application) = module {
         JwtConfig(jwtIssuer, jwtSecret, jwtRealm, jwtValidity, authenticator = get())
     }
 
+    single<RedisDatabase> {
+        RedisDatabaseImpl()
+    }
+
     single<IUserAuthenticator> {
         UserAuthenticator(
             usersRepository = get(),
@@ -41,7 +47,9 @@ fun serverModule(app: Application) = module {
     }
 
     single<UsersRepository> {
-        UsersRepositoryImpl()
+        UsersRepositoryImpl(
+            redis = get()
+        )
     }
 
     single<HashService> {

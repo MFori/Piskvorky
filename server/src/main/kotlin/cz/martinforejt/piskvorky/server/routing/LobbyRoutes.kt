@@ -1,18 +1,22 @@
 package cz.martinforejt.piskvorky.server.routing
 
-import cz.martinforejt.piskvorky.api.model.AuthorizeSocketApiMessage
 import cz.martinforejt.piskvorky.api.model.SocketApi
-import cz.martinforejt.piskvorky.api.model.SocketApiAction
+import cz.martinforejt.piskvorky.api.model.SocketApiException
+import cz.martinforejt.piskvorky.domain.repository.UsersRepository
+import cz.martinforejt.piskvorky.server.features.lobby.LobbySession
 import cz.martinforejt.piskvorky.server.security.JwtManager
+import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.http.cio.websocket.*
+import io.ktor.request.*
 import io.ktor.routing.*
+import io.ktor.sessions.*
+import io.ktor.util.*
 import io.ktor.websocket.*
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.channels.consumeEach
 import org.koin.ktor.ext.inject
+import java.time.Duration
 
 /**
  * Created by Martin Forejt on 24.12.2020.
@@ -21,50 +25,53 @@ import org.koin.ktor.ext.inject
  * @author Martin Forejt
  */
 
+@KtorExperimentalAPI
 fun Route.lobbyRoutes() {
 
     val jwtManager by inject<JwtManager>()
+    val usersRepository by inject<UsersRepository>()
+
+    install(Sessions) {
+        cookie<LobbyCookieSession>("LOBBY_SESSION")
+    }
+
+    intercept(ApplicationCallPipeline.Features) {
+        if (call.sessions.get<LobbyCookieSession>() == null) {
+            call.sessions.set(LobbyCookieSession(generateNonce()))
+        }
+    }
 
     webSocket("/lobby") {
-        var userId: Int? = null
-        println("onConnect")
+        this.pingInterval = Duration.ofSeconds(5)
+        val cookieSession = call.sessions.get<LobbyCookieSession>()
+        if (cookieSession == null) {
+            close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session"))
+            return@webSocket
+        }
+
+        val session = LobbySession(cookieSession.id, this, jwtManager, usersRepository)
+
+        println("onOpen ${cookieSession.id}")
         try {
-            GlobalScope.launch {
-                while(this.isActive) {
-                    delay(1000)
-                    outgoing.send(Frame.Text("From server ${System.currentTimeMillis()}"))
-                }
-            }
-            for (frame in incoming){
-                val text = (frame as Frame.Text).readText()
-                val message = SocketApi.decode(text)
-                when (message.action) {
-                    SocketApiAction.AUTHORIZE -> {
-                        val token = (message.data as AuthorizeSocketApiMessage).token
-                        println("authorize token: $token")
-                        val principal = jwtManager.validateToken(token)
-                        println("authorized: $principal")
+            incoming.consumeEach { frame ->
+                if (frame is Frame.Text) {
+                    try {
+                        session.receivedMessage(frame.readText())
+                    } catch (socketException: SocketApiException) {
+                        socketException.buildMessage()?.let { outgoing.send(Frame.Text(SocketApi.encode(it))) }
                     }
-                }
-
-              //  Json.decodeFromString(SocketMessage.serializer(String.serializer()), text)
-             //   val message = Json.parse<SocketMessage<String>>(text)
-                if(userId == null) {
-                    val principal = jwtManager.validateToken(text)
-                    userId = principal?.id
-                }
-
-                outgoing.send(Frame.Text("YOU ($userId) SAID $text"))
-                if (text.equals("bye", ignoreCase = true)) {
-                    close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
                 }
             }
         } catch (e: ClosedReceiveChannelException) {
             println("onClose ${closeReason.await()}")
         } catch (e: Throwable) {
             println("onError ${closeReason.await()}")
-            //e.printStackTrace()
+        } finally {
+            println("lobby end")
+            session.left()
         }
     }
 
 }
+
+data class LobbyCookieSession(val id: String)

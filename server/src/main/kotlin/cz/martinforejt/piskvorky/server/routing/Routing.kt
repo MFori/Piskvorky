@@ -10,6 +10,7 @@ import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.routing.*
+import io.ktor.util.*
 
 /**
  * Created by Martin Forejt on 23.12.2020.
@@ -20,6 +21,7 @@ import io.ktor.routing.*
 
 const val API_VERSION = "/v1"
 
+@KtorExperimentalAPI
 fun Application.registerRoutes() {
     routing {
         authenticate(JWT_AUTH_USER) {

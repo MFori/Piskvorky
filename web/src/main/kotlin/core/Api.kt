@@ -1,6 +1,10 @@
 package core
 
 import cz.martinforejt.piskvorky.api.model.Error
+import io.ktor.client.*
+import io.ktor.client.features.websocket.*
+import io.ktor.client.request.*
+import io.ktor.util.*
 import kotlinx.browser.window
 import kotlinx.coroutines.await
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -19,8 +23,17 @@ import kotlin.js.json
 
 object Api {
 
-    const val BASE_URL = "http://localhost:9090"
-    const val API_VERSION = "v1"
+    //const val BASE_URL = "http://http://192.168.0.104/:9090"
+    private const val REST_SCHEMA = "http"
+    private const val WS_SCHEMA = "ws"
+    private const val BASE_URL = "localhost"
+    private const val PORT = "9090"
+    private const val API_VERSION = "v1"
+
+    @KtorExperimentalAPI
+    val client = HttpClient {
+        install(WebSockets)
+    }
 
     @ExperimentalSerializationApi
     suspend inline fun <reified T : Any> get(url: String, token: String? = null): ApiResult<T> {
@@ -33,7 +46,20 @@ object Api {
         return postAndParseResult(url.apiUrl(), body, token)
     }
 
-    fun String.apiUrl() = "$BASE_URL/$API_VERSION$this"
+    fun String.apiUrl() = "$REST_SCHEMA://$BASE_URL:$PORT/$API_VERSION$this"
+
+    fun String.wsUrl() = "$WS_SCHEMA://$BASE_URL:$PORT/$API_VERSION$this"
+
+    @KtorExperimentalAPI
+    suspend fun webSocket(url: String, block: suspend DefaultClientWebSocketSession.() -> Unit) {
+        client.webSocket(url.wsUrl(), {}, block)
+    }
+
+    object EP {
+        const val LOGIN = "/login"
+        const val REGISTER = "/register"
+        const val LOBBY = "/lobby"
+    }
 }
 
 data class ApiResult<T>(

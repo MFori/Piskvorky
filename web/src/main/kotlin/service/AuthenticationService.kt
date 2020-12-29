@@ -28,7 +28,7 @@ class AuthenticationServiceImpl : AuthenticationService {
 
     @ExperimentalSerializationApi
     override suspend fun login(request: LoginRequest): Result<UserWithToken> {
-        val res = Api.post<LoginResponse>("/login", format.encodeToString(LoginRequest.serializer(), request))
+        val res = Api.post<LoginResponse>(Api.EP.LOGIN, format.encodeToString(LoginRequest.serializer(), request))
         return if (res.isSuccess) {
             val data = res.data!!
             val user = UserWithToken(request.email, data.token)
@@ -48,7 +48,7 @@ class AuthenticationServiceImpl : AuthenticationService {
 
     @ExperimentalSerializationApi
     override suspend fun register(request: RegisterRequest): Result<UserWithToken> {
-        val res = Api.post<LoginResponse>("/register", format.encodeToString(RegisterRequest.serializer(), request))
+        val res = Api.post<LoginResponse>(Api.EP.REGISTER, format.encodeToString(RegisterRequest.serializer(), request))
         return if (res.isSuccess) {
             val data = res.data!!
             val user = UserWithToken(request.email, data.token)

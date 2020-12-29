@@ -2,6 +2,7 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import cz.martinforejt.piskvorky.domain.model.PublicUser
 import react.RBuilder
 import react.RState
 import react.dom.div
@@ -13,16 +14,20 @@ import react.dom.div
  * @author Martin Forejt
  */
 
-class FriendsPanel : CoreComponent<CoreRProps, RState>() {
+class FriendsPanelProps : CoreRProps() {
+    var users = mutableListOf<PublicUser>()
+}
+
+class FriendsPanel : CoreComponent<FriendsPanelProps, RState>() {
 
     override fun RBuilder.render() {
         div("panel-box") {
             div("font-weight-bold") { +"Friends" }
-            for (i in 0..5) {
-                div {
-                    +"User $i"
-                }
-            }
+           for (user in props.users) {
+               div {
+                   +user.email
+               }
+           }
         }
     }
 

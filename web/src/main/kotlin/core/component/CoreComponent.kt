@@ -8,6 +8,7 @@ import kotlinx.coroutines.Job
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import react.*
+import react.router.dom.redirect
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
@@ -37,6 +38,25 @@ abstract class CoreComponent<P : CoreRProps, S : RState> : RComponent<P, S>(), K
     final override val coroutineContext: CoroutineContext = Job()
     val componentScope = CoroutineScope(coroutineContext)
     private val authService by inject<AuthenticationService>()
+    private var logout = false
+
+    val hasUser
+        get() = authService.hasUser()
+    val user
+        get() = authService.getCurrentUser()
+
+    override fun render() = buildElements {
+        if(logout) {
+            redirect(to = "/logout")
+            return@buildElements
+        }
+        render()
+    }
+
+    fun logout() {
+        logout = true
+        setState {  }
+    }
 
     fun <P : CoreRProps> RBuilder.coreChild(
         klazz: KClass<out CoreComponent<P, *>>,
@@ -49,11 +69,6 @@ abstract class CoreComponent<P : CoreRProps, S : RState> : RComponent<P, S>(), K
             handler(this)
         }
     }
-
-    val hasUser
-        get() = authService.hasUser()
-    val user
-        get() = authService.getCurrentUser()
 }
 
 fun <P : CoreRProps> coreFunctionalComponent(

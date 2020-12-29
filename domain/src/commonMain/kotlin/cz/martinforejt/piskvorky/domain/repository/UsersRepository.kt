@@ -1,5 +1,6 @@
 package cz.martinforejt.piskvorky.domain.repository
 
+import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.domain.model.User
 import cz.martinforejt.piskvorky.domain.model.UserWithPassword
 
@@ -24,5 +25,11 @@ interface UsersRepository {
     suspend fun updateUser(user: User)
 
     suspend fun updateUserPassword(id: Int, passwordHash: String)
+
+    suspend fun setOnline(user: PublicUser, online: Boolean)
+
+    suspend fun getOnlineUsers() : List<PublicUser>
+
+    suspend fun getFriends(userId: Int) : List<PublicUser>
 
 }
