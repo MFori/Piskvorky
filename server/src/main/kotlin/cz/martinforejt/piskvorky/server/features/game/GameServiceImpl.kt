@@ -1,4 +1,4 @@
-package cz.martinforejt.piskvorky.server.features.lobby
+package cz.martinforejt.piskvorky.server.features.game
 
 import cz.martinforejt.piskvorky.server.core.service.SocketServiceSession
 import cz.martinforejt.piskvorky.server.core.service.SocketServiceSessionFactory
@@ -8,14 +8,14 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
- * Created by Martin Forejt on 30.12.2020.
+ * Created by Martin Forejt on 31.12.2020.
  * me@martinforejt.cz
  *
  * @author Martin Forejt
  */
-class LobbyServiceImpl(
+class GameServiceImpl(
     socketServicesManager: SocketServicesManager
-) : LobbyService(socketServicesManager) {
+) : GameService(socketServicesManager) {
 
     override val sessions: MutableMap<String, MutableList<SocketServiceSession>> =
         ConcurrentHashMap<String, MutableList<SocketServiceSession>>()

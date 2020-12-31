@@ -4,6 +4,8 @@ import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.domain.repository.FriendsRepository
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
+import cz.martinforejt.piskvorky.server.core.service.SocketBroadcaster
+import cz.martinforejt.piskvorky.server.core.service.SocketServiceSession
 import cz.martinforejt.piskvorky.server.security.JwtManager
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import io.ktor.http.cio.websocket.*
@@ -16,25 +18,20 @@ import org.koin.core.inject
  *
  * @author Martin Forejt
  */
-object LobbySessionFactory {
-    fun getSession(sessionId: String, lobbySendManager: LobbySendManager, connection: WebSocketSession): LobbySession {
-        return LobbySessionImpl(sessionId, lobbySendManager, connection)
-    }
-}
-
 class LobbySessionImpl(
     sessionId: String,
-    sendManager: LobbySendManager,
+    channel: String,
+    broadcaster: SocketBroadcaster,
     private val connection: WebSocketSession
-) : LobbySession(sessionId, sendManager), KoinComponent {
+) : LobbySession(sessionId, channel, broadcaster) {
 
     private val usersRepository by inject<UsersRepository>()
     private val friendsRepository by inject<FriendsRepository>()
     private val jwtManager by inject<JwtManager>()
 
-    private var user: UserPrincipal? = null
-    private val authorized
-        get() = user != null
+    //private var user: UserPrincipal? = null
+    //private val authorized
+    //    get() = user != null
 
     @Throws(SocketApiException::class)
     override suspend fun receivedMessage(data: String) {
@@ -75,7 +72,7 @@ class LobbySessionImpl(
         user?.let {
             usersRepository.setOnline(PublicUser(it.id, it.email, online), online)
             val message = SocketApi.encode(onlineUsersMessage())
-            sendManager.sendBroadcast(message)
+            broadcaster.sendBroadcast(message)
         }
     }
 

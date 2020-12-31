@@ -4,6 +4,8 @@ import cz.martinforejt.piskvorky.domain.repository.FriendsRepository
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
 import cz.martinforejt.piskvorky.server.core.database.RedisDatabase
 import cz.martinforejt.piskvorky.server.core.database.RedisDatabaseImpl
+import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
+import cz.martinforejt.piskvorky.server.core.service.SocketServicesManagerImpl
 import cz.martinforejt.piskvorky.server.features.lobby.LobbyService
 import cz.martinforejt.piskvorky.server.features.lobby.LobbyServiceImpl
 import cz.martinforejt.piskvorky.server.features.users.manager.HashService
@@ -62,8 +64,8 @@ fun serverModule(app: Application) = module {
         )
     }
 
-    single<LobbyService> {
-        LobbyServiceImpl()
+    single<SocketServicesManager> {
+        SocketServicesManagerImpl()
     }
 
     single<HashService> {
