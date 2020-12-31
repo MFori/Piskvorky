@@ -15,6 +15,11 @@ private const val REDIS_DB_NAME = "piskvorky_redis"
 interface RedisDatabase {
     val client: Jedis
     val dbName: String
+
+    companion object {
+        const val OnlineUsersKey = "$REDIS_DB_NAME:online_users"
+
+    }
 }
 
 class RedisDatabaseImpl : RedisDatabase {

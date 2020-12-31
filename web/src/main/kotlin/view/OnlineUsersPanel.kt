@@ -15,20 +15,25 @@ import react.dom.div
  */
 
 class OnlineUsersPanelProps : CoreRProps() {
-    var users = mutableListOf<PublicUser>()
+    var users: MutableList<PublicUser>? = null
+    var onAction: ((PlayerListItem.Action, PlayerVO) -> Unit)? = null
 }
 
 class OnlineUsersPanel : CoreComponent<OnlineUsersPanelProps, RState>() {
 
     override fun RBuilder.render() {
         div("panel-box") {
-            div("font-weight-bold") { +"Online users" }
-            for (user in props.users) {
-                div {
-                    +user.email
+            div("panel-title") { +"Online users" }
+            if (props.users == null) {
+                loading()
+            } else {
+                for (user in props.users!!) {
+                    playerListItem(this@OnlineUsersPanel, user.toPlayerVO(), props.onAction)
                 }
             }
         }
     }
+
+    private fun PublicUser.toPlayerVO() = PlayerVO(id, email, online, false)
 
 }

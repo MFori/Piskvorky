@@ -1,10 +1,14 @@
 package cz.martinforejt.piskvorky.server.core.di
 
+import cz.martinforejt.piskvorky.domain.repository.FriendsRepository
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
 import cz.martinforejt.piskvorky.server.core.database.RedisDatabase
 import cz.martinforejt.piskvorky.server.core.database.RedisDatabaseImpl
+import cz.martinforejt.piskvorky.server.features.lobby.LobbyService
+import cz.martinforejt.piskvorky.server.features.lobby.LobbyServiceImpl
 import cz.martinforejt.piskvorky.server.features.users.manager.HashService
 import cz.martinforejt.piskvorky.server.features.users.manager.Sha256HashService
+import cz.martinforejt.piskvorky.server.features.users.repository.FriendsRepositoryImpl
 import cz.martinforejt.piskvorky.server.features.users.repository.UsersRepositoryImpl
 import cz.martinforejt.piskvorky.server.features.users.usecase.RegisterUserUseCase
 import cz.martinforejt.piskvorky.server.features.users.usecase.ValidateUserCredentialsUseCase
@@ -50,6 +54,16 @@ fun serverModule(app: Application) = module {
         UsersRepositoryImpl(
             redis = get()
         )
+    }
+
+    single<FriendsRepository> {
+        FriendsRepositoryImpl(
+            usersRepository = get()
+        )
+    }
+
+    single<LobbyService> {
+        LobbyServiceImpl()
     }
 
     single<HashService> {

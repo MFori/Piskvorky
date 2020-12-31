@@ -3,7 +3,7 @@
 #lobby_root {
   position: relative;
   min-height: 100%;
-  @media (min-width: 576px) {
+  @media (min-width: 768px) {
     height: 100%;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -16,7 +16,7 @@
     min-height: -webkit-calc(100vh - #{$offset});
     min-height: calc(100vh - #{$offset});
     height: auto;
-    @media (min-width: 576px) {
+    @media (min-width: 768px) {
       height: -moz-calc(100vh - #{$offset + 20});
       height: -webkit-calc(100vh - #{$offset + 20});
       height: calc(100vh - #{$offset + 20});
@@ -26,7 +26,7 @@
     #lobby_online {
       height: 100%;
       .panel-box {
-        @media (min-width: 576px) {
+        @media (min-width: 768px) {
           margin-right: 5px;
         }
       }
@@ -36,11 +36,69 @@
       height: 100%;
       .panel-box {
         margin-top: 10px;
-        @media (min-width: 576px) {
+        @media (min-width: 768px) {
           margin-left: 5px;
           margin-top: 0;
         }
       }
     }
   }
+
+  .player-list-item {
+    border-bottom: 1px solid #dad2d2;
+    margin-top: 2px;
+    position: relative;
+    height: 32px;
+
+    .player-name {
+      position: absolute;
+      height: 27px;
+      top: 0;
+      bottom: 0;
+      left: 20px;
+      margin: auto;
+    }
+
+    .btn-player {
+      position: absolute;
+      height: 30px;
+      width: 30px;
+      padding: 0;
+      border: 0;
+      background: 0;
+    }
+    .btn-add {
+      right: 35px;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+    }
+    .btn-play {
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+    }
+
+  }
+}
+
+.status-dot {
+  height: 12px;
+  width: 12px;
+  background-color: #bbbbbb;
+  border-radius: 50%;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.status-offline {
+  background-color: #bbbbbb;
+}
+
+.status-online {
+  background-color: #3f9f29;
 }

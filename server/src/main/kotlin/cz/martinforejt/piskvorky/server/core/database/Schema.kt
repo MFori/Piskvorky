@@ -1,8 +1,15 @@
 package cz.martinforejt.piskvorky.server.core.database
 
+import org.jetbrains.exposed.dao.Entity
+import org.jetbrains.exposed.dao.EntityClass
+import org.jetbrains.exposed.dao.IntEntity
+import org.jetbrains.exposed.dao.IntEntityClass
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.ColumnType
 import org.jetbrains.exposed.sql.`java-time`.datetime
+import org.jetbrains.exposed.sql.vendors.currentDialect
 
 /**
  * Created by Martin Forejt on 25.12.2020.
@@ -19,17 +26,6 @@ object Users : IntIdTable(name = "users") {
     val active = bool("active")
 }
 
-object Friendships : Table(name = "friendships") {
-    val user1 = reference("user_1", Users.id)
-    val user2 = reference("user_2", Users.id)
-    val created = datetime("created")
-    val author = integer("author")
-    val pending = bool("pending")
-
-    override val primaryKey = PrimaryKey(user1, user2)
-}
-
-/*
 class FriendshipId(
     val id1: Int,
     val id2: Int
@@ -71,8 +67,7 @@ object Friendships : IdTable<FriendshipId>(name = "friendships") {
     val author = integer("author")
     val pending = bool("pending")
 
-    override val id: Column<EntityID<FriendshipId>>
-        get() = registerColumn("id", FriendshipIdColumnType())
+    override val id = registerColumn<FriendshipId>("id", FriendshipIdColumnType()).entityId()
     override val primaryKey = PrimaryKey(user1, user2)
 }
 
@@ -80,11 +75,11 @@ object Friendships : IdTable<FriendshipId>(name = "friendships") {
 class FriendshipEntity(id: EntityID<FriendshipId>) : Entity<FriendshipId>(id) {
     companion object : EntityClass<FriendshipId, FriendshipEntity>(Friendships)
 
-    val user1 by UserEntity referrersOn Friendships.user1
-    val user2 by UserEntity referrersOn Friendships.user2
-    val created by Friendships.created
-    val author by Friendships.author
-    val pending by Friendships.pending
+    var user1 by UserEntity referencedOn Friendships.user1
+    var user2 by UserEntity referencedOn Friendships.user2
+    var created by Friendships.created
+    var author by Friendships.author
+    var pending by Friendships.pending
 }
 
 class UserEntity(id: EntityID<Int>) : IntEntity(id) {
@@ -96,7 +91,23 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id) {
     var admin by Users.admin
     var active by Users.active
 
-    val friends by FriendshipEntity via Friendships.user1
-    val friends1 by FriendshipEntity referrersOn Friendships.user1
-    val friends2 by FriendshipEntity referrersOn Friendships.user2
-}*/
+    private val friends1 by FriendshipEntity referrersOn Friendships.user1
+    private val friends2 by FriendshipEntity referrersOn Friendships.user2
+
+    val friends: List<UserEntity>
+        get() {
+              return friends1.map { it.getFriend(id.value) }
+                .toMutableList().apply {
+                    addAll(
+                        friends2.map { it.getFriend(id.value) }.toList()
+                    )
+                }.toList()
+        }
+}
+
+private fun FriendshipEntity.getFriend(userId: Int): UserEntity =
+    if (user1.id.value == userId) {
+        user2
+    } else {
+        user1
+    }

@@ -1,8 +1,10 @@
 package cz.martinforejt.piskvorky.server.features.users.mapper
 
 import cz.martinforejt.piskvorky.api.model.RegisterRequest
+import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.domain.model.User
 import cz.martinforejt.piskvorky.domain.model.UserWithPassword
+import cz.martinforejt.piskvorky.server.core.database.UserEntity
 import cz.martinforejt.piskvorky.server.core.database.Users
 import org.jetbrains.exposed.sql.ResultRow
 import java.time.LocalDateTime
@@ -38,4 +40,10 @@ fun RegisterRequest.toUserWithPassDO() = UserWithPassword(
     admin = false,
     active = true,
     password = this.password
+)
+
+fun UserEntity.asPublicUser(isOnline: Boolean = false) = PublicUser(
+    id = this.id.value,
+    email = this.email,
+    online = isOnline
 )

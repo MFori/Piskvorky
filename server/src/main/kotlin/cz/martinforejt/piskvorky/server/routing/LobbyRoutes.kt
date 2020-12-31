@@ -1,10 +1,7 @@
 package cz.martinforejt.piskvorky.server.routing
 
-import cz.martinforejt.piskvorky.api.model.SocketApi
 import cz.martinforejt.piskvorky.api.model.SocketApiException
-import cz.martinforejt.piskvorky.domain.repository.UsersRepository
-import cz.martinforejt.piskvorky.server.features.lobby.LobbySession
-import cz.martinforejt.piskvorky.server.security.JwtManager
+import cz.martinforejt.piskvorky.server.features.lobby.LobbyService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.cio.websocket.*
@@ -28,8 +25,7 @@ import java.time.Duration
 @KtorExperimentalAPI
 fun Route.lobbyRoutes() {
 
-    val jwtManager by inject<JwtManager>()
-    val usersRepository by inject<UsersRepository>()
+    val lobbyService by inject<LobbyService>()
 
     install(Sessions) {
         cookie<LobbyCookieSession>("LOBBY_SESSION")
@@ -48,17 +44,17 @@ fun Route.lobbyRoutes() {
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session"))
             return@webSocket
         }
-
-        val session = LobbySession(cookieSession.id, this, jwtManager, usersRepository)
-
         println("onOpen ${cookieSession.id}")
+
+        val session = lobbyService.newConnection(cookieSession.id, this)
+
         try {
             incoming.consumeEach { frame ->
                 if (frame is Frame.Text) {
                     try {
                         session.receivedMessage(frame.readText())
                     } catch (socketException: SocketApiException) {
-                        socketException.buildMessage()?.let { outgoing.send(Frame.Text(SocketApi.encode(it))) }
+                        socketException.buildMessage()?.let { session.send(it) }
                     }
                 }
             }
@@ -68,7 +64,7 @@ fun Route.lobbyRoutes() {
             println("onError ${closeReason.await()}")
         } finally {
             println("lobby end")
-            session.left()
+            lobbyService.disconnect(session)
         }
     }
 

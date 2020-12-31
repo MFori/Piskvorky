@@ -32,9 +32,14 @@ body, html {
   -webkit-box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.75);
   box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.75);
+
+  .panel-title {
+    font-weight: bold;
+    font-size: 22px;
+  }
 }
 
-.container{
+.container, .container-md {
   padding-left: 0;
   padding-right: 0;
  // overflow: hidden;
@@ -45,7 +50,7 @@ body, html {
   margin-left: 0;
 }
 
-.col, .col-sm {
+.col, .col-sm, .col-md {
   padding-right: 0;
   padding-left: 0;
 }

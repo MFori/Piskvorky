@@ -9,6 +9,8 @@ import cz.martinforejt.piskvorky.domain.model.PublicUser
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.util.*
+import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
@@ -28,8 +30,8 @@ import react.setState
 class LobbyProps : CoreRProps()
 
 class LobbyState : RState {
-    var onlineUsers = mutableListOf<PublicUser>()
-    var friends = mutableListOf<PublicUser>()
+    var onlineUsers: MutableList<PublicUser>? = null
+    var friends: MutableList<PublicUser>? = null
 }
 
 class Lobby : CoreComponent<LobbyProps, LobbyState>() {
@@ -37,37 +39,42 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
     private var connection: WebSocketSession? = null
 
     override fun LobbyState.init() {
-        onlineUsers = mutableListOf()
-        friends = mutableListOf()
+        onlineUsers = null
+        friends = null
     }
 
     @KtorExperimentalAPI
     override fun componentDidMount() {
-        componentScope.launch {
-            initWebSocket()
-        }
+        document.title = "Piskvorky | Lobby"
+        state.onlineUsers = mutableListOf()
+        state.friends = mutableListOf()
+        reconnect()
     }
 
     override fun componentWillUnmount() {
-
+        componentScope.launch {
+            connection?.close(CloseReason(CloseReason.Codes.NORMAL, ""))
+        }
     }
 
     override fun RBuilder.render() {
-        div("container") {
+        div("container-md") {
             attrs.id = "lobby_root"
             coreChild(Header::class)
             div("row") {
                 attrs.id = "lobby_content"
-                div("col-sm") {
+                div("col-md") {
                     attrs.id = "lobby_online"
                     coreChild(OnlineUsersPanel::class) {
                         attrs.users = state.onlineUsers
+                        attrs.onAction = playerAction
                     }
                 }
-                div("col-sm") {
+                div("col-md") {
                     attrs.id = "lobby_friends"
                     coreChild(FriendsPanel::class) {
-                       attrs.users = state.friends
+                        attrs.users = state.friends
+                        attrs.onAction = playerAction
                     }
                 }
             }
@@ -88,33 +95,63 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
                             try {
                                 receivedMessage(frame.readText())
                             } catch (socketException: SocketApiException) {
-                                // TODO show connection error dialog
-                                close()
+                                disconnectOnError()
                             }
                         }
                     }
                 } catch (e: ClosedReceiveChannelException) {
+                    connectionClosed(closeReason.await())
                     println("onClose ${closeReason.await()}")
                 } catch (e: Throwable) {
+                    connectionClosed(closeReason.await())
                     println("onError ${closeReason.await()}")
                 } finally {
                     connection = null
-                    println("lobby connection end")
                 }
             }
         } catch (e: WebSocketException) {
-            println("cant connect")
+            showConnectionErrorDialog()
+        }
+    }
+
+    @KtorExperimentalAPI
+    private fun reconnect() {
+        componentScope.launch {
+            initWebSocket()
+        }
+    }
+
+    private fun connectionClosed(closeReason: CloseReason?) {
+        if (closeReason?.code != CloseReason.Codes.NORMAL.code) {
+            showConnectionErrorDialog()
+        }
+    }
+
+    private fun showConnectionErrorDialog() {
+
+    }
+
+    private fun disconnectOnError() {
+        componentScope.launch {
+            connection?.close(CloseReason(CloseReason.Codes.INTERNAL_ERROR, ""))
+        }
+    }
+
+    val playerAction: (PlayerListItem.Action, PlayerVO) -> Unit = { action, playerVO ->
+        window.alert("player action $playerVO")
+        when (action) {
+            PlayerListItem.Action.ADD_FRIEND -> TODO()
+            PlayerListItem.Action.REMOVE_FRIEND -> TODO()
+            PlayerListItem.Action.PLAY -> TODO()
         }
     }
 
     private fun refresh() {
-        refreshFriends()
         refreshOnline()
     }
 
     private fun refreshFriends() {
         componentScope.launch {
-            println("send friends " + (connection != null))
             connection?.send(SocketApi.encode(SocketApiAction.FRIENDS))
         }
     }
@@ -132,9 +169,8 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
             SocketApiAction.AUTHORIZE -> authorize(message)
             SocketApiAction.ONLINE_USERS -> onlineUsers(message.data as OnlineUsersSocketApiMessage)
             SocketApiAction.FRIENDS -> friends(message.data as FriendsSocketApiMessage)
-            //SocketApiAction.ERROR -> errorMessage()
             else -> {
-                //throw InvalidSocketMessageException()
+                disconnectOnError()
             }
         }
     }
@@ -144,7 +180,7 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
     }
 
     private fun authorize(message: SocketApiMessage<*>) {
-        if(message.error?.code == SocketApiCode.OK.value) {
+        if (message.error?.code == SocketApiCode.OK.value) {
             onSockedAuthorized()
         } else {
             logout()
@@ -152,14 +188,17 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
     }
 
     private fun onlineUsers(message: OnlineUsersSocketApiMessage) {
+        refreshFriends()
         setState {
-            onlineUsers.clearAndFill(message.users)
+            onlineUsers?.clearAndFill(message.users.filter { it.email != user!!.email })
+            friends?.let { onlineUsers?.removeAll(it) }
         }
     }
 
     private fun friends(message: FriendsSocketApiMessage) {
         setState {
-            friends.clearAndFill(message.users)
+            friends?.clearAndFill(message.users)
+            friends?.let { onlineUsers?.removeAll(it) }
         }
     }
 }

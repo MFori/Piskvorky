@@ -30,6 +30,6 @@ interface UsersRepository {
 
     suspend fun getOnlineUsers() : List<PublicUser>
 
-    suspend fun getFriends(userId: Int) : List<PublicUser>
+    suspend fun isOnline(user: PublicUser) : Boolean
 
 }

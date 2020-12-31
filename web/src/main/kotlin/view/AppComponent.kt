@@ -2,14 +2,19 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
-import cz.martinforejt.piskvorky.domain.service.AuthenticationService
-import org.koin.core.inject
+import kotlinx.browser.window
 import react.*
 import react.router.dom.*
 
 abstract class AppProps : CoreRProps()
 
 class AppComponent : CoreComponent<AppProps, RState>() {
+
+    override fun componentDidMount() {
+        window.addEventListener("storage", {
+            setState { }
+        }, false)
+    }
 
     override fun RBuilder.render() {
         browserRouter {

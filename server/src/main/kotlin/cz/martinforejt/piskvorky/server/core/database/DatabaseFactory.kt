@@ -18,7 +18,10 @@ object DatabaseFactory {
         Database.connect(hikariSource())
 
         transaction {
-            SchemaUtils.create(Users)
+            SchemaUtils.create(
+                Users,
+                Friendships
+            )
 
             /*Users.insert {
                 it[email] = "admin@admin.com"

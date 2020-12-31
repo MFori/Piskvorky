@@ -57,7 +57,7 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
 
     override fun RBuilder.render() {
         if (state.signed || hasUser) {
-            if(!state.signed) {
+            if(!state.signed && hasFocus()) {
                 window.alert("Already logged in. Redirecting...")
             }
             redirect(to = "/lobby")
@@ -154,5 +154,9 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
                 }
             }
         }
+    }
+
+    override fun onFocus() {
+        setState {  }
     }
 }

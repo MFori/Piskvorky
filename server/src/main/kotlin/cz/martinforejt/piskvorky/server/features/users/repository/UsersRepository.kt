@@ -26,8 +26,6 @@ class UsersRepositoryImpl(
     private val redis: RedisDatabase
 ) : UsersRepository {
 
-    private val onlineUsersKey = "${redis.dbName}:online_users"
-
     override suspend fun getUserById(id: Int): User? = newSuspendedTransaction {
         Users.select { (Users.id eq id) }.mapNotNull { it.asUserDO() }.singleOrNull()
     }
@@ -70,20 +68,20 @@ class UsersRepositoryImpl(
 
     override suspend fun setOnline(user: PublicUser, online: Boolean) {
         if (online) {
-            redis.client.sadd(onlineUsersKey, user.toOnlineJson())
+            redis.client.sadd(RedisDatabase.OnlineUsersKey, user.toOnlineJson())
         } else {
-            redis.client.srem(onlineUsersKey, user.toOnlineJson())
+            redis.client.srem(RedisDatabase.OnlineUsersKey, user.toOnlineJson())
         }
     }
 
     override suspend fun getOnlineUsers(): List<PublicUser> {
-        return redis.client.smembers(onlineUsersKey).map {
+        return redis.client.smembers(RedisDatabase.OnlineUsersKey).map {
             it.toOnlineUser()
         }.toList()
     }
 
-    override suspend fun getFriends(userId: Int): List<PublicUser> {
-        return emptyList()
+    override suspend fun isOnline(user: PublicUser): Boolean {
+        return redis.client.sismember(RedisDatabase.OnlineUsersKey, user.toOnlineJson())
     }
 
     private fun PublicUser.toOnlineJson() = Json.encodeToString(PublicUser.serializer(), this.copy(online = true))

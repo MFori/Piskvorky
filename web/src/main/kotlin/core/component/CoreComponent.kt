@@ -3,11 +3,16 @@ package core.component
 import co.touchlab.kermit.Kermit
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.html.role
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import org.w3c.dom.events.Event
 import react.*
+import react.dom.div
+import react.dom.span
 import react.router.dom.redirect
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
@@ -38,36 +43,73 @@ abstract class CoreComponent<P : CoreRProps, S : RState> : RComponent<P, S>(), K
     final override val coroutineContext: CoroutineContext = Job()
     val componentScope = CoroutineScope(coroutineContext)
     private val authService by inject<AuthenticationService>()
-    private var logout = false
-
+    var mayLogout = false
     val hasUser
         get() = authService.hasUser()
     val user
         get() = authService.getCurrentUser()
 
+    open val customLogout = false
     override fun render() = buildElements {
-        if(logout) {
+        if (mayLogout && !customLogout) {
             redirect(to = "/logout")
+            mayLogout = false
             return@buildElements
         }
         render()
     }
 
     fun logout() {
-        logout = true
-        setState {  }
+        if (mayLogout) return
+        mayLogout = true
+        setState { }
     }
 
     fun <P : CoreRProps> RBuilder.coreChild(
         klazz: KClass<out CoreComponent<P, *>>,
         handler: RHandler<P> = {}
     ): ReactElement {
-        return klazz.rClass.invoke {
-            attrs {
-                this.context = props.context
+        return coreChild(this@CoreComponent, klazz, handler)
+    }
+
+    fun RBuilder.loading(classes: String? = null) {
+        div("text-center ${classes ?: ""}") {
+            div("spinner-border text-dark") {
+                attrs.role = "status"
+                span("sr-only") {
+                    +"Loading..."
+                }
             }
-            handler(this)
         }
+    }
+
+    fun hasFocus() = document.hasFocus()
+
+    open fun onFocus() {}
+
+    private val visibilityChangeCallback: ((Event) -> Unit) = {
+        onFocus()
+    }
+
+    override fun componentDidMount() {
+        window.addEventListener("focus", visibilityChangeCallback, false)
+    }
+
+    override fun componentWillUnmount() {
+        window.removeEventListener("focus", visibilityChangeCallback, false)
+    }
+}
+
+fun <P : CoreRProps> RBuilder.coreChild(
+    parent: CoreComponent<*, *>,
+    klazz: KClass<out CoreComponent<P, *>>,
+    handler: RHandler<P> = {}
+): ReactElement {
+    return klazz.rClass.invoke {
+        attrs {
+            this.context = parent.props.context
+        }
+        handler(this)
     }
 }
 

@@ -15,7 +15,8 @@ import react.dom.div
  */
 
 class FriendsPanelProps : CoreRProps() {
-    var users = mutableListOf<PublicUser>()
+    var users: List<PublicUser>? = null
+    var onAction: ((PlayerListItem.Action, PlayerVO) -> Unit)? = null
 }
 
 class FriendsPanel : CoreComponent<FriendsPanelProps, RState>() {
@@ -23,12 +24,16 @@ class FriendsPanel : CoreComponent<FriendsPanelProps, RState>() {
     override fun RBuilder.render() {
         div("panel-box") {
             div("font-weight-bold") { +"Friends" }
-           for (user in props.users) {
-               div {
-                   +user.email
-               }
-           }
+            if (props.users == null) {
+                loading()
+            } else {
+                for (user in props.users!!) {
+                    playerListItem(this@FriendsPanel, user.toPlayerVO(), props.onAction)
+                }
+            }
         }
     }
+
+    private fun PublicUser.toPlayerVO() = PlayerVO(id, email, online, true)
 
 }
