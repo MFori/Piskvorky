@@ -4,6 +4,7 @@ import core.component.CoreComponent
 import core.component.CoreRProps
 import kotlinx.browser.window
 import react.*
+import react.dom.em
 import react.router.dom.*
 
 abstract class AppProps : CoreRProps()
@@ -22,6 +23,9 @@ class AppComponent : CoreComponent<AppProps, RState>() {
                 route("/", exact = true) {
                     redirect(to = "/lobby")
                 }
+                privateRoute("/profile") {
+                    coreChild(Profile::class)
+                }
                 privateRoute("/lobby") {
                     coreChild(Lobby::class)
                 }
@@ -33,11 +37,22 @@ class AppComponent : CoreComponent<AppProps, RState>() {
                 route("/login") {
                     coreChild(Login::class)
                 }
+                route("/register") {
+                    coreChild(Registration::class)
+                }
                 route("/logout") {
                     coreChild(Logout::class)
                 }
-                route("/register") {
-                    coreChild(Registration::class)
+                route("/lost-password") {
+                    coreChild(LostPassword::class)
+                }
+                route<ResetPasswordProps>("/reset-password/:email/:hash") { rprops->
+                    coreChild(ResetPassword::class) {
+                        attrs {
+                            email = rprops.match.params.email
+                            hash = rprops.match.params.hash
+                        }
+                    }
                 }
                 route("") {
                     child(NotFound)
@@ -68,6 +83,7 @@ class AppComponent : CoreComponent<AppProps, RState>() {
         }
     }
 }
+
 
 /*
 val App = functionalComponent<RProps> { _ ->

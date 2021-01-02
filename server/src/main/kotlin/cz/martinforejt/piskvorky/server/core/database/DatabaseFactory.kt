@@ -2,6 +2,9 @@ package cz.martinforejt.piskvorky.server.core.database
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import cz.martinforejt.piskvorky.server.core.database.schema.Friendships
+import cz.martinforejt.piskvorky.server.core.database.schema.LostPasswords
+import cz.martinforejt.piskvorky.server.core.database.schema.Users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -20,7 +23,8 @@ object DatabaseFactory {
         transaction {
             SchemaUtils.create(
                 Users,
-                Friendships
+                Friendships,
+                LostPasswords
             )
 
             /*Users.insert {

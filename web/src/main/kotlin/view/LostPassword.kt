@@ -3,6 +3,7 @@ package view
 import core.component.CoreComponent
 import core.component.CoreRProps
 import cz.martinforejt.piskvorky.api.model.LoginRequest
+import cz.martinforejt.piskvorky.api.model.LostPasswordRequest
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import kotlinx.browser.document
 import kotlinx.browser.localStorage
@@ -31,46 +32,39 @@ import react.setState
  * @author Martin Forejt
  */
 
-class LoginFormProps : CoreRProps()
-
-class LoginFormState : RState {
+class LostPasswdFormState : RState {
     var email = ""
-    var password = ""
     var error: String? = null
-    var signed = false
+    var ok: String? = null
 }
 
-class Login : CoreComponent<LoginFormProps, LoginFormState>() {
+class LostPassword : CoreComponent<CoreRProps, LostPasswdFormState>() {
 
     private val authService by inject<AuthenticationService>()
 
     override fun componentDidMount() {
-        document.title = "Piskvorky | Login"
+        document.title = "Piskvorky | Lost password"
     }
 
-    override fun LoginFormState.init() {
-        email = localStorage["last_user"] ?: ""
-        password = ""
+    override fun LostPasswdFormState.init() {
+        email = ""
         error = null
-        signed = false
+        ok = null
     }
 
     override fun RBuilder.render() {
-        if (state.signed || hasUser) {
-            if(!state.signed && hasFocus()) {
-                window.alert("Already logged in. Redirecting...")
-            }
-            redirect(to = "/lobby")
-            return
-        }
         div("text-center login-root") {
             form(classes = "form-core form-signin panel-box") {
-                img(classes = "mg-4", src = "/images/logo2.png", alt = "logo") {}
-                h1("h3 mb-3") {
-                    +"Login"
+                h1("h3 mt-2 mb-4") {
+                    +"Lost password"
                 }
                 state.error?.let {
                     div("alert alert-danger") {
+                        +it
+                    }
+                }
+                state.ok?.let {
+                    div("alert alert-success") {
                         +it
                     }
                 }
@@ -95,47 +89,15 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
                         }
                     }
                 }
-                label("sr-only") {
-                    attrs {
-                        htmlFor = "password"
-                    }
-                    +"Password"
-                }
-                input(type = InputType.password, classes = "form-control") {
-                    attrs {
-                        id = "password"
-                        name = "password"
-                        value = state.password
-                        placeholder = "Password"
-                        required = true
-                        onChangeFunction = {
-                            setState {
-                                password = (it.target as HTMLInputElement).value
-                            }
-                        }
-                    }
-                }
                 button(type = ButtonType.submit, classes = "btn btn-lg btn-block") {
                     attrs {
                         onClickFunction = handleSubmit
                     }
-                    +"Login"
+                    +"Submit"
                 }
-                div {
-                    +"Don't have account? "
-                    routeLink("/register") {
-                        +"Register now"
-                    }
-                }
-                div {
-                    routeLink("/lost-password") {
-                        +"Lost password"
-                    }
-                }
-                div("mt-5 mb-3 text-mutes") {
-                    +"@ 2020 "
-                    a(href = "https://martinforejt.cz", target = "_blank") {
-                        +"Martin Forejt"
+                div("mb-3") {
+                    routeLink("/login") {
+                        +"Back to Login"
                     }
                 }
             }
@@ -145,7 +107,7 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
     private val handleSubmit: (Event) -> Unit = { event ->
         event.preventDefault()
         componentScope.launch {
-            val res = authService.login(LoginRequest(state.email, state.password))
+            val res = authService.lostPassword(LostPasswordRequest(state.email))
             if (!res.isSuccessful) {
                 setState {
                     error = when (res.error?.code) {
@@ -155,13 +117,12 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
                 }
             } else {
                 setState {
-                    signed = true
+                    ok = "Email with instructions sent."
+                    error = null
+                    email = ""
                 }
             }
         }
     }
 
-    override fun onFocus() {
-        setState {  }
-    }
 }

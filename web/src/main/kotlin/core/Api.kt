@@ -3,13 +3,13 @@ package core
 import cz.martinforejt.piskvorky.api.model.Error
 import io.ktor.client.*
 import io.ktor.client.features.websocket.*
-import io.ktor.client.request.*
 import io.ktor.util.*
 import kotlinx.browser.window
 import kotlinx.coroutines.await
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromDynamic
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import org.w3c.fetch.RequestCredentials
 import org.w3c.fetch.RequestInit
 import kotlin.js.json
@@ -58,6 +58,9 @@ object Api {
     object EP {
         const val LOGIN = "/login"
         const val REGISTER = "/register"
+        const val LOST_PASSWORD = "/lost-passwd"
+        const val RESET_PASSWORD = "/reset-passwd"
+        const val CHANGE_PASSWORD = "/profile/change-passwd"
         const val LOBBY = "/lobby"
     }
 }
@@ -117,10 +120,17 @@ suspend inline fun <reified T> requestAndParseResult(
         )
     }
 
-    val json = response.json().await()
+    var ok = response.ok
+    val json = try {
+        response.json().await()
+    } catch (e: Throwable) {
+        ok = T::class == Unit::class
+        JsonObject(emptyMap())
+    }
+
     return ApiResult(
-        data = if (response.ok) parseResponse<T>(json) else null,
-        error = if (response.ok) null else parseResponse<Error>(json),
+        data = if (ok) parseResponse<T>(json) else null,
+        error = if (ok) null else parseResponse<Error>(json),
         code = response.status.toInt()
     )
 }

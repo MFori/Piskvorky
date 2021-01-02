@@ -2,12 +2,10 @@ package cz.martinforejt.piskvorky.server.routing
 
 import cz.martinforejt.piskvorky.api.model.ChangePasswordRequest
 import cz.martinforejt.piskvorky.api.model.ProfileInfo
+import cz.martinforejt.piskvorky.server.features.users.usecase.ChangePasswordUseCase
 import cz.martinforejt.piskvorky.server.routing.exception.ConflictApiException
-import cz.martinforejt.piskvorky.server.routing.exception.UnauthorizedApiException
 import cz.martinforejt.piskvorky.server.routing.utils.currentUser
 import cz.martinforejt.piskvorky.server.routing.utils.emptyResponse
-import cz.martinforejt.piskvorky.server.security.IUserAuthenticator
-import cz.martinforejt.piskvorky.server.security.UserCredential
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import io.ktor.application.*
 import io.ktor.request.*
@@ -23,8 +21,7 @@ import org.koin.ktor.ext.inject
  */
 
 fun Route.profileRoutes() {
-    val userAuthenticator by inject<IUserAuthenticator>()
-
+    val changePasswordUseCase by inject<ChangePasswordUseCase>()
 
     route("/profile") {
 
@@ -34,9 +31,12 @@ fun Route.profileRoutes() {
 
         post("/change-passwd") {
             val request = call.receive<ChangePasswordRequest>()
-            userAuthenticator.authenticate(request.toCurrentCredentials())
-                ?: throw ConflictApiException("Current password is invalid.")
-            // TODO change password
+            val res = changePasswordUseCase.execute(
+                ChangePasswordUseCase.Params(currentUser, request)
+            )
+            if (res.isSuccessful.not()) {
+                throw ConflictApiException(res.error?.message ?: "Error occurred.")
+            }
             call.emptyResponse()
         }
     }
@@ -44,5 +44,3 @@ fun Route.profileRoutes() {
 }
 
 private fun UserPrincipal.toProfileInfo() = ProfileInfo(email)
-
-private fun ChangePasswordRequest.toCurrentCredentials() = UserCredential(email, passwordCurrent)

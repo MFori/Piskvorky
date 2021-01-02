@@ -24,11 +24,15 @@ class Header : CoreComponent<CoreRProps, RState>() {
             attrs {
                 id = "header"
             }
-            img(classes = "mg-4", src = "/images/logo2.png", alt = "logo") {}
+            routeLink("/lobby") {
+                img(classes = "mg-4", src = "/images/logo2.png", alt = "logo") {}
+            }
 
             div {
                 attrs.id = "user-box"
-                span { +(user?.email ?: "") }
+                routeLink("/profile") {
+                    span { +(user?.email ?: "") }
+                }
                 +" | "
                 routeLink("/logout") {+"logout"}
             }

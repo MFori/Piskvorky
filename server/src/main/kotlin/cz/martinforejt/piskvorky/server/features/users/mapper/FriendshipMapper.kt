@@ -1,7 +1,7 @@
 package cz.martinforejt.piskvorky.server.features.users.mapper
 
 import cz.martinforejt.piskvorky.domain.model.Friendship
-import cz.martinforejt.piskvorky.server.core.database.Friendships
+import cz.martinforejt.piskvorky.server.core.database.schema.Friendships
 import org.jetbrains.exposed.sql.ResultRow
 
 /**

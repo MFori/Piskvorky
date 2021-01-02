@@ -1,19 +1,20 @@
 package cz.martinforejt.piskvorky.server.core.di
 
 import cz.martinforejt.piskvorky.domain.repository.FriendsRepository
+import cz.martinforejt.piskvorky.domain.repository.LostPasswordRepository
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
+import cz.martinforejt.piskvorky.domain.service.EmailService
 import cz.martinforejt.piskvorky.server.core.database.RedisDatabase
 import cz.martinforejt.piskvorky.server.core.database.RedisDatabaseImpl
+import cz.martinforejt.piskvorky.server.core.service.EmailServiceImpl
 import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
 import cz.martinforejt.piskvorky.server.core.service.SocketServicesManagerImpl
-import cz.martinforejt.piskvorky.server.features.lobby.LobbyService
-import cz.martinforejt.piskvorky.server.features.lobby.LobbyServiceImpl
 import cz.martinforejt.piskvorky.server.features.users.manager.HashService
 import cz.martinforejt.piskvorky.server.features.users.manager.Sha256HashService
 import cz.martinforejt.piskvorky.server.features.users.repository.FriendsRepositoryImpl
+import cz.martinforejt.piskvorky.server.features.users.repository.LostPasswordRepositoryImpl
 import cz.martinforejt.piskvorky.server.features.users.repository.UsersRepositoryImpl
-import cz.martinforejt.piskvorky.server.features.users.usecase.RegisterUserUseCase
-import cz.martinforejt.piskvorky.server.features.users.usecase.ValidateUserCredentialsUseCase
+import cz.martinforejt.piskvorky.server.features.users.usecase.*
 import cz.martinforejt.piskvorky.server.security.IUserAuthenticator
 import cz.martinforejt.piskvorky.server.security.JwtConfig
 import cz.martinforejt.piskvorky.server.security.JwtManager
@@ -64,12 +65,20 @@ fun serverModule(app: Application) = module {
         )
     }
 
+    single<LostPasswordRepository> {
+        LostPasswordRepositoryImpl()
+    }
+
     single<SocketServicesManager> {
         SocketServicesManagerImpl()
     }
 
     single<HashService> {
         Sha256HashService()
+    }
+
+    single<EmailService> {
+        EmailServiceImpl()
     }
 
     factory {
@@ -81,6 +90,30 @@ fun serverModule(app: Application) = module {
     factory {
         RegisterUserUseCase(
             usersRepository = get(),
+            hashService = get()
+        )
+    }
+
+    factory {
+        ChangePasswordUseCase(
+            usersRepository = get(),
+            authenticator = get(),
+            hashService = get()
+        )
+    }
+
+    factory {
+        LostPasswordUseCase(
+            usersRepository = get(),
+            lostPasswordRepository = get(),
+            emailService = get()
+        )
+    }
+
+    factory {
+        ResetPasswordUseCase(
+            usersRepository = get(),
+            lostPasswordRepository = get(),
             hashService = get()
         )
     }

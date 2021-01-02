@@ -1,4 +1,5 @@
 $background-color: #354661;
+@import "dimens";
 
 body, html {
   background: $background-color;
@@ -43,6 +44,11 @@ body, html {
   padding-left: 0;
   padding-right: 0;
  // overflow: hidden;
+
+  @media (min-width: 768px) {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
 }
 
 .row {
@@ -53,6 +59,21 @@ body, html {
 .col, .col-sm, .col-md {
   padding-right: 0;
   padding-left: 0;
+}
+
+.core-dialog {
+  display: block;
+  color: black;
+  margin-top: 50px;
+}
+
+.stretch-content {
+  position: relative;
+  $offset: $header_height + $footer_height + 40;
+  min-height: -moz-calc(100vh - #{$offset});
+  min-height: -webkit-calc(100vh - #{$offset});
+  min-height: calc(100vh - #{$offset});
+  height: auto;
 }
 
 @import "header", "footer";

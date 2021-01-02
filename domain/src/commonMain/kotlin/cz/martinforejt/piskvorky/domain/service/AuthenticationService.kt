@@ -1,7 +1,6 @@
 package cz.martinforejt.piskvorky.domain.service
 
-import cz.martinforejt.piskvorky.api.model.LoginRequest
-import cz.martinforejt.piskvorky.api.model.RegisterRequest
+import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.model.UserWithToken
 import cz.martinforejt.piskvorky.domain.usecase.Result
 
@@ -17,6 +16,12 @@ interface AuthenticationService {
     suspend fun login(request: LoginRequest): Result<UserWithToken>
 
     suspend fun register(request: RegisterRequest): Result<UserWithToken>
+
+    suspend fun changePassword(request: ChangePasswordRequest, token: String): Result<Unit>
+
+    suspend fun lostPassword(request: LostPasswordRequest): Result<Unit>
+
+    suspend fun resetPassword(request: ResetPasswordRequest): Result<Unit>
 
     fun logout()
 

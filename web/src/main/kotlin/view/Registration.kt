@@ -64,7 +64,7 @@ class Registration : CoreComponent<RegisterFormProps, RegisterFormState>() {
             return
         }
         div("text-center register-root") {
-            form(classes = "form-signin panel-box") {
+            form(classes = "form-core form-signin panel-box") {
                 img(classes = "mg-4", src = "/images/logo2.png", alt = "logo") {}
                 h1("h3 mb-3") {
                     +"Registration"

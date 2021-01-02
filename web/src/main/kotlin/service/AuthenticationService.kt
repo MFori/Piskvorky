@@ -1,9 +1,8 @@
 package service
 
 import core.Api
-import cz.martinforejt.piskvorky.api.model.LoginRequest
-import cz.martinforejt.piskvorky.api.model.LoginResponse
-import cz.martinforejt.piskvorky.api.model.RegisterRequest
+import core.ApiResult
+import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.model.UserWithToken
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import cz.martinforejt.piskvorky.domain.usecase.Error
@@ -36,13 +35,7 @@ class AuthenticationServiceImpl : AuthenticationService {
             Result(user)
         } else {
             logout()
-            val error = res.error!!
-            Result(
-                error = Error(
-                    error.code,
-                    error.message
-                )
-            )
+            res.toErrorResult()
         }
     }
 
@@ -55,14 +48,52 @@ class AuthenticationServiceImpl : AuthenticationService {
             store(user.email, user.token)
             Result(user)
         } else {
-            val error = res.error!!
-            Result(
-                error = Error(
-                    error.code,
-                    error.message
-                )
-            )
+            res.toErrorResult()
         }
+    }
+
+    @ExperimentalSerializationApi
+    override suspend fun changePassword(request: ChangePasswordRequest, token: String): Result<Unit> {
+        val res = Api.post<Unit>(
+            Api.EP.CHANGE_PASSWORD,
+            format.encodeToString(ChangePasswordRequest.serializer(), request),
+            token
+        )
+        return if (res.isSuccess) {
+            Result(Unit)
+        } else {
+            res.toErrorResult()
+        }
+    }
+
+    @ExperimentalSerializationApi
+    override suspend fun lostPassword(request: LostPasswordRequest): Result<Unit> {
+        val res = Api.post<Unit>(Api.EP.LOST_PASSWORD, format.encodeToString(LostPasswordRequest.serializer(), request))
+        return if (res.isSuccess) {
+            Result(Unit)
+        } else {
+            res.toErrorResult()
+        }
+    }
+
+    @ExperimentalSerializationApi
+    override suspend fun resetPassword(request: ResetPasswordRequest): Result<Unit> {
+        val res = Api.post<Unit>(Api.EP.RESET_PASSWORD, format.encodeToString(ResetPasswordRequest.serializer(), request))
+        return if (res.isSuccess) {
+            Result(Unit)
+        } else {
+            res.toErrorResult()
+        }
+    }
+
+    private fun <T : Any> ApiResult<*>.toErrorResult(): Result<T> {
+        val error = error!!
+        return Result(
+            error = Error(
+                error.code,
+                error.message
+            )
+        )
     }
 
     private fun store(email: String, token: String) {

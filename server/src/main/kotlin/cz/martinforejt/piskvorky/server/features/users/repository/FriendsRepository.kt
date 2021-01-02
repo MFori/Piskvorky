@@ -4,8 +4,8 @@ import cz.martinforejt.piskvorky.domain.model.Friendship
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.domain.repository.FriendsRepository
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
-import cz.martinforejt.piskvorky.server.core.database.Friendships
-import cz.martinforejt.piskvorky.server.core.database.UserEntity
+import cz.martinforejt.piskvorky.server.core.database.schema.Friendships
+import cz.martinforejt.piskvorky.server.core.database.schema.UserEntity
 import cz.martinforejt.piskvorky.server.features.users.mapper.asFriendshipDO
 import cz.martinforejt.piskvorky.server.features.users.mapper.asPublicUser
 import org.jetbrains.exposed.sql.and

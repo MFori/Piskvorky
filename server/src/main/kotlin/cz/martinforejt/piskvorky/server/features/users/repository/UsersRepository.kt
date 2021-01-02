@@ -5,7 +5,7 @@ import cz.martinforejt.piskvorky.domain.model.User
 import cz.martinforejt.piskvorky.domain.model.UserWithPassword
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
 import cz.martinforejt.piskvorky.server.core.database.RedisDatabase
-import cz.martinforejt.piskvorky.server.core.database.Users
+import cz.martinforejt.piskvorky.server.core.database.schema.Users
 import cz.martinforejt.piskvorky.server.features.users.mapper.asUserDO
 import cz.martinforejt.piskvorky.server.features.users.mapper.asUserWithPassDO
 import kotlinx.serialization.json.Json

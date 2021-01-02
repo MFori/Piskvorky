@@ -4,8 +4,8 @@ import cz.martinforejt.piskvorky.api.model.RegisterRequest
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.domain.model.User
 import cz.martinforejt.piskvorky.domain.model.UserWithPassword
-import cz.martinforejt.piskvorky.server.core.database.UserEntity
-import cz.martinforejt.piskvorky.server.core.database.Users
+import cz.martinforejt.piskvorky.server.core.database.schema.UserEntity
+import cz.martinforejt.piskvorky.server.core.database.schema.Users
 import org.jetbrains.exposed.sql.ResultRow
 import java.time.LocalDateTime
 

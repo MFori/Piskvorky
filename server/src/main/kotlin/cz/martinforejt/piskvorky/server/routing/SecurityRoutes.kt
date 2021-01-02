@@ -1,10 +1,9 @@
 package cz.martinforejt.piskvorky.server.routing
 
-import cz.martinforejt.piskvorky.api.model.LoginRequest
-import cz.martinforejt.piskvorky.api.model.LoginResponse
-import cz.martinforejt.piskvorky.api.model.LostPasswordRequest
-import cz.martinforejt.piskvorky.api.model.RegisterRequest
+import cz.martinforejt.piskvorky.api.model.*
+import cz.martinforejt.piskvorky.server.features.users.usecase.LostPasswordUseCase
 import cz.martinforejt.piskvorky.server.features.users.usecase.RegisterUserUseCase
+import cz.martinforejt.piskvorky.server.features.users.usecase.ResetPasswordUseCase
 import cz.martinforejt.piskvorky.server.features.users.usecase.ValidateUserCredentialsUseCase
 import cz.martinforejt.piskvorky.server.routing.exception.ConflictApiException
 import cz.martinforejt.piskvorky.server.routing.exception.UnauthorizedApiException
@@ -16,6 +15,7 @@ import io.ktor.application.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.util.*
 import org.koin.ktor.ext.inject
 
 /**
@@ -25,9 +25,13 @@ import org.koin.ktor.ext.inject
  * @author Martin Forejt
  */
 
+@KtorExperimentalAPI
 fun Route.securityRoutes(jwtManager: JwtManager) {
+
     val validateCredentialsUSeCase by inject<ValidateUserCredentialsUseCase>()
     val registerUserUseCase by inject<RegisterUserUseCase>()
+    val lostPasswordUseCase by inject<LostPasswordUseCase>()
+    val resetPasswordUseCase by inject<ResetPasswordUseCase>()
 
     suspend fun ApplicationCall.createTokenResponse(principal: UserPrincipal) {
         val token = jwtManager.generateToken(principal)
@@ -52,7 +56,20 @@ fun Route.securityRoutes(jwtManager: JwtManager) {
 
     post("/lost-passwd") {
         val request = call.receive<LostPasswordRequest>()
-        // TODO find user and send email
+        val webUrl = application.environment.config.property("web_url").getString()
+        val res = lostPasswordUseCase.execute(LostPasswordUseCase.Params(request, webUrl))
+        if (res.isSuccessful.not()) {
+            throw ConflictApiException(res.error?.message ?: "Error occurred.")
+        }
+        call.emptyResponse()
+    }
+
+    post("/reset-passwd") {
+        val request = call.receive<ResetPasswordRequest>()
+        val res = resetPasswordUseCase.execute(request)
+        if (res.isSuccessful.not()) {
+            throw ConflictApiException(res.error?.message ?: "Error occurred.")
+        }
         call.emptyResponse()
     }
 }

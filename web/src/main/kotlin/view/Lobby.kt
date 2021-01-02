@@ -3,7 +3,9 @@ package view
 import core.Api
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.dialogBuilder
 import core.utils.clearAndFill
+import core.utils.connectionErrorDialog
 import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import io.ktor.client.features.websocket.*
@@ -17,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.html.id
 import react.RBuilder
 import react.RState
+import react.dom.dialog
 import react.dom.div
 import react.setState
 
@@ -32,6 +35,8 @@ class LobbyProps : CoreRProps()
 class LobbyState : RState {
     var onlineUsers: MutableList<PublicUser>? = null
     var friends: MutableList<PublicUser>? = null
+    var loading = false
+    var showErrorDialog = false
 }
 
 class Lobby : CoreComponent<LobbyProps, LobbyState>() {
@@ -39,15 +44,15 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
     private var connection: WebSocketSession? = null
 
     override fun LobbyState.init() {
-        onlineUsers = null
-        friends = null
+        onlineUsers = mutableListOf()
+        friends = mutableListOf()
+        showErrorDialog = false
+        loading = true
     }
 
     @KtorExperimentalAPI
     override fun componentDidMount() {
         document.title = "Piskvorky | Lobby"
-        state.onlineUsers = mutableListOf()
-        state.friends = mutableListOf()
         reconnect()
     }
 
@@ -57,6 +62,7 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
         }
     }
 
+    @KtorExperimentalAPI
     override fun RBuilder.render() {
         div("container-md") {
             attrs.id = "lobby_root"
@@ -66,19 +72,28 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
                 div("col-md") {
                     attrs.id = "lobby_online"
                     coreChild(OnlineUsersPanel::class) {
-                        attrs.users = state.onlineUsers
+                        attrs.users = if (state.loading) null else state.onlineUsers
                         attrs.onAction = playerAction
                     }
                 }
                 div("col-md") {
                     attrs.id = "lobby_friends"
                     coreChild(FriendsPanel::class) {
-                        attrs.users = state.friends
+                        attrs.users = if (state.loading) null else state.friends
                         attrs.onAction = playerAction
                     }
                 }
             }
             coreChild(Footer::class)
+            if (state.showErrorDialog) {
+                connectionErrorDialog {
+                    setState {
+                        showErrorDialog = false
+                        loading = true
+                    }
+                    reconnect()
+                }
+            }
         }
     }
 
@@ -128,7 +143,12 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
     }
 
     private fun showConnectionErrorDialog() {
-
+        setState {
+            loading = false
+            showErrorDialog = true
+            if (onlineUsers == null) onlineUsers = mutableListOf()
+            if (friends == null) friends = mutableListOf()
+        }
     }
 
     private fun disconnectOnError() {
@@ -190,6 +210,7 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
     private fun onlineUsers(message: OnlineUsersSocketApiMessage) {
         refreshFriends()
         setState {
+            loading = false
             onlineUsers?.clearAndFill(message.users.filter { it.email != user!!.email })
             friends?.let { onlineUsers?.removeAll(it) }
         }
@@ -197,6 +218,7 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
 
     private fun friends(message: FriendsSocketApiMessage) {
         setState {
+            loading = false
             friends?.clearAndFill(message.users)
             friends?.let { onlineUsers?.removeAll(it) }
         }

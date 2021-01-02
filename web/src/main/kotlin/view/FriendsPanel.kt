@@ -23,7 +23,7 @@ class FriendsPanel : CoreComponent<FriendsPanelProps, RState>() {
 
     override fun RBuilder.render() {
         div("panel-box") {
-            div("font-weight-bold") { +"Friends" }
+            div("panel-title") { +"Friends" }
             if (props.users == null) {
                 loading()
             } else {
