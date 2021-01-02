@@ -292,6 +292,7 @@ components:
 
     Friend:
       type: object
+      required: [id, email, online, inGame]
       properties:
         id:
           type: integer
@@ -303,6 +304,7 @@ components:
           type: boolean
     FriendsListResponse:
       type: object
+      required: [friends]
       properties:
         friends:
           type: array
@@ -310,6 +312,7 @@ components:
             $ref: "#/components/schemas/Friend"
     FriendRequest:
       type: object
+      required: [userId, email, created]
       properties:
         userId:
           type: integer
@@ -320,6 +323,7 @@ components:
           format: date-time
     FriendsRequestsResponse:
       type: object
+      required: [requests]
       properties:
         requests:
           type: array
@@ -327,11 +331,13 @@ components:
             $ref: "#/components/schemas/FriendRequest"
     CreateFriendshipRequest:
       type: object
+      required: [userId]
       properties:
         userId:
           type: integer
     CancelFriendshipRequest:
       type: object
+      required: [userId]
       properties:
         userId:
           type: integer

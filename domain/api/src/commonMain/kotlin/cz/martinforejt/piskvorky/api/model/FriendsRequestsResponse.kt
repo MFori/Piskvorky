@@ -22,6 +22,6 @@ import kotlinx.serialization.internal.CommonEnumSerializer
  */
 @Serializable
 data class FriendsRequestsResponse (
-    @SerialName(value = "requests") val requests: kotlin.collections.List<FriendRequest>? = null
+    @SerialName(value = "requests") @Required val requests: kotlin.collections.List<FriendRequest>
 )
 

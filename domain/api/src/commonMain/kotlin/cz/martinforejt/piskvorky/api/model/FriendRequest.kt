@@ -23,8 +23,8 @@ import kotlinx.serialization.internal.CommonEnumSerializer
  */
 @Serializable
 data class FriendRequest (
-    @SerialName(value = "userId") val userId: kotlin.Int? = null,
-    @SerialName(value = "email") val email: kotlin.Int? = null,
-    @SerialName(value = "created") val created: kotlin.String? = null
+    @SerialName(value = "userId") @Required val userId: kotlin.Int,
+    @SerialName(value = "email") @Required val email: kotlin.Int,
+    @SerialName(value = "created") @Required val created: kotlin.String
 )
 

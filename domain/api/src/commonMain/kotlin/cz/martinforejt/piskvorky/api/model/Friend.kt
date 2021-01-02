@@ -24,9 +24,9 @@ import kotlinx.serialization.internal.CommonEnumSerializer
  */
 @Serializable
 data class Friend (
-    @SerialName(value = "id") val id: kotlin.Int? = null,
-    @SerialName(value = "email") val email: kotlin.String? = null,
-    @SerialName(value = "online") val online: kotlin.Boolean? = null,
-    @SerialName(value = "inGame") val inGame: kotlin.Boolean? = null
+    @SerialName(value = "id") @Required val id: kotlin.Int,
+    @SerialName(value = "email") @Required val email: kotlin.String,
+    @SerialName(value = "online") @Required val online: kotlin.Boolean,
+    @SerialName(value = "inGame") @Required val inGame: kotlin.Boolean
 )
 
