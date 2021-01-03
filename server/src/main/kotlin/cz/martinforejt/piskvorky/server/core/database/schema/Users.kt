@@ -34,10 +34,20 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id) {
 
     val friends: List<UserEntity>
         get() {
-            return friends1.map { it.getFriend(id.value) }
+            return friends1.filter { it.pending.not() }.map { it.getFriend(id.value) }
                 .toMutableList().apply {
                     addAll(
-                        friends2.map { it.getFriend(id.value) }.toList()
+                        friends2.filter { it.pending.not() }.map { it.getFriend(id.value) }.toList()
+                    )
+                }.toList()
+        }
+
+    val friendRequests: List<UserEntity>
+        get() {
+            return friends1.filter { it.pending }.map { it.getFriend(id.value) }
+                .toMutableList().apply {
+                    addAll(
+                        friends2.filter { it.pending }.map { it.getFriend(id.value) }.toList()
                     )
                 }.toList()
         }

@@ -21,5 +21,6 @@ data class UserWithToken(
 data class PublicUser(
     val id: Int,
     val email: String,
-    val online: Boolean
+    val online: Boolean,
+    val inGame: Boolean
 )

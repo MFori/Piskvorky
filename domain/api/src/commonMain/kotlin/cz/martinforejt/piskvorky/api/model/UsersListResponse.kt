@@ -11,17 +11,17 @@
 */
 package cz.martinforejt.piskvorky.api.model
 
-import cz.martinforejt.piskvorky.api.model.Friend
+import cz.martinforejt.piskvorky.api.model.ApiUser
 
 import kotlinx.serialization.*
 import kotlinx.serialization.internal.CommonEnumSerializer
 
 /**
  * 
- * @param friends 
+ * @param users 
  */
 @Serializable
-data class FriendsListResponse (
-    @SerialName(value = "friends") @Required val friends: kotlin.collections.List<Friend>
+data class UsersListResponse (
+    @SerialName(value = "users") @Required val users: kotlin.collections.List<ApiUser>
 )
 

@@ -4,11 +4,10 @@ import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.domain.model.User
 import cz.martinforejt.piskvorky.domain.model.UserWithPassword
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
-import cz.martinforejt.piskvorky.server.core.database.RedisDatabase
 import cz.martinforejt.piskvorky.server.core.database.schema.Users
+import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
 import cz.martinforejt.piskvorky.server.features.users.mapper.asUserDO
 import cz.martinforejt.piskvorky.server.features.users.mapper.asUserWithPassDO
-import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
@@ -23,7 +22,7 @@ import java.time.LocalDateTime
  * @author Martin Forejt
  */
 class UsersRepositoryImpl(
-    private val redis: RedisDatabase
+    private val socketServicesManager: SocketServicesManager
 ) : UsersRepository {
 
     override suspend fun getUserById(id: Int): User? = newSuspendedTransaction {
@@ -66,6 +65,16 @@ class UsersRepositoryImpl(
         }
     }
 
+    override suspend fun getOnlineUsers(): List<PublicUser> {
+        return socketServicesManager.getOnlineUsers()
+    }
+
+    override suspend fun isOnline(userId: Int): Boolean {
+        return socketServicesManager.isOnline(userId)
+    }
+
+
+    /*
     override suspend fun setOnline(user: PublicUser, online: Boolean) {
         if (online) {
             redis.client.sadd(RedisDatabase.OnlineUsersKey, user.toOnlineJson())
@@ -87,4 +96,5 @@ class UsersRepositoryImpl(
     private fun PublicUser.toOnlineJson() = Json.encodeToString(PublicUser.serializer(), this.copy(online = true))
 
     private fun String.toOnlineUser() = Json.decodeFromString(PublicUser.serializer(), this).copy(online = true)
+*/
 }

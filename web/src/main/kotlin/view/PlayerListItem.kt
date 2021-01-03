@@ -3,13 +3,14 @@ package view
 import core.component.CoreComponent
 import core.component.CoreRProps
 import core.component.coreChild
-import cz.martinforejt.piskvorky.domain.model.PublicUser
 import kotlinx.html.js.onClickFunction
-import kotlinx.html.onClick
 import kotlinx.html.title
 import react.RBuilder
 import react.RState
-import react.dom.*
+import react.dom.button
+import react.dom.div
+import react.dom.img
+import react.dom.span
 
 /**
  * Created by Martin Forejt on 28.12.2020.
@@ -22,6 +23,7 @@ data class PlayerVO(
     val id: Int,
     val email: String,
     val online: Boolean,
+    val inGame: Boolean,
     val friend: Boolean
 )
 
@@ -53,17 +55,19 @@ class PlayerListItem : CoreComponent<PlayerListItemProps, RState>() {
                     }
                 }
             }
-            button(classes = "btn-player btn-play") {
-                img("add", src = "/icons/play-fill.svg") {
-                    attrs {
-                        width = "28"
-                        height = "28"
-                        title = "Play"
+            if(player.online && !player.inGame){
+                button(classes = "btn-player btn-play") {
+                    img("add", src = "/icons/play-fill.svg") {
+                        attrs {
+                            width = "28"
+                            height = "28"
+                            title = "Play"
+                        }
                     }
-                }
-                attrs {
-                    onClickFunction = {
-                        props.onAction?.invoke(Action.PLAY, player)
+                    attrs {
+                        onClickFunction = {
+                            props.onAction?.invoke(Action.PLAY, player)
+                        }
                     }
                 }
             }

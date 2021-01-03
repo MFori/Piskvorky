@@ -1,5 +1,6 @@
 package cz.martinforejt.piskvorky.server.features.users.mapper
 
+import cz.martinforejt.piskvorky.api.model.ApiUser
 import cz.martinforejt.piskvorky.api.model.RegisterRequest
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.domain.model.User
@@ -45,5 +46,31 @@ fun RegisterRequest.toUserWithPassDO() = UserWithPassword(
 fun UserEntity.asPublicUser(isOnline: Boolean = false) = PublicUser(
     id = this.id.value,
     email = this.email,
-    online = isOnline
+    online = isOnline,
+    inGame = false
 )
+
+fun UserEntity.asApiUser(isOnline: Boolean = false, inGame: Boolean = false) = ApiUser(
+    id = this.id.value,
+    email = this.email,
+    online = isOnline,
+    inGame = inGame
+)
+
+fun ApiUser.asPublicUser() = PublicUser(
+    id = this.id,
+    email = this.email,
+    online = this.online,
+    inGame = this.inGame
+)
+
+fun List<ApiUser>.asPublicUsers() = this.map { it.asPublicUser() }.toList()
+
+fun PublicUser.asApiUser() = ApiUser(
+    id = this.id,
+    email = this.email,
+    online = this.online,
+    inGame = this.inGame
+)
+
+fun List<PublicUser>.asApiUsers() = this.map { it.asApiUser() }.toList()

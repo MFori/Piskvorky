@@ -62,6 +62,11 @@ object Api {
         const val RESET_PASSWORD = "/reset-passwd"
         const val CHANGE_PASSWORD = "/profile/change-passwd"
         const val LOBBY = "/lobby"
+
+        const val FRIENDS_LIST = "/friends"
+        const val ADD_FRIEND = "/friends/add"
+        const val CANCEL_FRIEND = "/friends/cancel"
+        const val FRIEND_REQUESTS = "/friend/requests"
     }
 }
 

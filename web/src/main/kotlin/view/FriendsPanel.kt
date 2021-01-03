@@ -34,6 +34,6 @@ class FriendsPanel : CoreComponent<FriendsPanelProps, RState>() {
         }
     }
 
-    private fun PublicUser.toPlayerVO() = PlayerVO(id, email, online, true)
+    private fun PublicUser.toPlayerVO() = PlayerVO(id, email, online, inGame,true)
 
 }

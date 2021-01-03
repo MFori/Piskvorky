@@ -27,6 +27,7 @@ fun Application.registerRoutes() {
         authenticate(JWT_AUTH_USER) {
             route(API_VERSION) {
                 profileRoutes()
+                friendsRoutes()
                 exampleRoutes()
             }
         }
@@ -49,6 +50,7 @@ fun Application.registerRoutes() {
             call.errorResponse(cause)
         }
         exception<Throwable> { cause ->
+            cause.printStackTrace()
             call.errorResponse(cause, HttpStatusCode.InternalServerError)
         }
     }

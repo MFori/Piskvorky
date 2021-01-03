@@ -12,24 +12,22 @@ import cz.martinforejt.piskvorky.domain.model.UserWithPassword
  */
 interface UsersRepository {
 
-    suspend fun getUserById(id: Int) : User?
+    suspend fun getUserById(id: Int): User?
 
     suspend fun getUserByEmail(email: String): User?
 
     suspend fun getUserWithPasswordByEmail(email: String): UserWithPassword?
 
-    suspend fun getUsers() : List<User>
+    suspend fun getUsers(): List<User>
 
-    suspend fun createUser(user: UserWithPassword) : Int
+    suspend fun createUser(user: UserWithPassword): Int
 
     suspend fun updateUser(user: User)
 
     suspend fun updateUserPassword(id: Int, passwordHash: String)
 
-    suspend fun setOnline(user: PublicUser, online: Boolean)
+    suspend fun getOnlineUsers(): List<PublicUser>
 
-    suspend fun getOnlineUsers() : List<PublicUser>
-
-    suspend fun isOnline(user: PublicUser) : Boolean
+    suspend fun isOnline(userId: Int): Boolean
 
 }

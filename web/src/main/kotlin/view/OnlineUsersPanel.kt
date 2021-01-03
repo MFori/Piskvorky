@@ -34,6 +34,6 @@ class OnlineUsersPanel : CoreComponent<OnlineUsersPanelProps, RState>() {
         }
     }
 
-    private fun PublicUser.toPlayerVO() = PlayerVO(id, email, online, false)
+    private fun PublicUser.toPlayerVO() = PlayerVO(id, email, online, inGame,false)
 
 }

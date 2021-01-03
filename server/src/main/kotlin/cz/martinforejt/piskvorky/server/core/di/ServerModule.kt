@@ -4,8 +4,6 @@ import cz.martinforejt.piskvorky.domain.repository.FriendsRepository
 import cz.martinforejt.piskvorky.domain.repository.LostPasswordRepository
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
 import cz.martinforejt.piskvorky.domain.service.EmailService
-import cz.martinforejt.piskvorky.server.core.database.RedisDatabase
-import cz.martinforejt.piskvorky.server.core.database.RedisDatabaseImpl
 import cz.martinforejt.piskvorky.server.core.service.EmailServiceImpl
 import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
 import cz.martinforejt.piskvorky.server.core.service.SocketServicesManagerImpl
@@ -42,10 +40,6 @@ fun serverModule(app: Application) = module {
         JwtConfig(jwtIssuer, jwtSecret, jwtRealm, jwtValidity, authenticator = get())
     }
 
-    single<RedisDatabase> {
-        RedisDatabaseImpl()
-    }
-
     single<IUserAuthenticator> {
         UserAuthenticator(
             usersRepository = get(),
@@ -55,7 +49,7 @@ fun serverModule(app: Application) = module {
 
     single<UsersRepository> {
         UsersRepositoryImpl(
-            redis = get()
+            socketServicesManager = get()
         )
     }
 
@@ -115,6 +109,20 @@ fun serverModule(app: Application) = module {
             usersRepository = get(),
             lostPasswordRepository = get(),
             hashService = get()
+        )
+    }
+
+    factory {
+        AddFriendUseCase(
+            friendsRepository = get(),
+            socketServicesManager = get()
+        )
+    }
+
+    factory {
+        CancelFriendUseCase(
+            friendsRepository = get(),
+            socketServicesManager = get()
         )
     }
 }

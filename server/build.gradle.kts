@@ -27,8 +27,6 @@ dependencies {
     implementation(Exposed.time)
     implementation(Hikari.core)
     implementation(MysqlConnector.core)
-    implementation(Redis.jedis)
-
     implementation("org.apache.commons:commons-email:1.5")
 
 

@@ -4,7 +4,6 @@ import core.component.CoreComponent
 import core.component.CoreRProps
 import kotlinx.browser.window
 import react.*
-import react.dom.em
 import react.router.dom.*
 
 abstract class AppProps : CoreRProps()
@@ -30,9 +29,7 @@ class AppComponent : CoreComponent<AppProps, RState>() {
                     coreChild(Lobby::class)
                 }
                 privateRoute("/game") {
-                    routeLink("/logout") {
-                        +"Logout"
-                    }
+                    coreChild(Game::class)
                 }
                 route("/login") {
                     coreChild(Login::class)
@@ -46,7 +43,7 @@ class AppComponent : CoreComponent<AppProps, RState>() {
                 route("/lost-password") {
                     coreChild(LostPassword::class)
                 }
-                route<ResetPasswordProps>("/reset-password/:email/:hash") { rprops->
+                route<ResetPasswordProps>("/reset-password/:email/:hash") { rprops ->
                     coreChild(ResetPassword::class) {
                         attrs {
                             email = rprops.match.params.email
@@ -68,7 +65,7 @@ class AppComponent : CoreComponent<AppProps, RState>() {
         render: () -> ReactElement?
     ): ReactElement {
         return route(path, exact, strict) {
-            if(hasUser) {
+            if (hasUser) {
                 child<RouteProps<RProps>, RouteComponent<RProps>> {
                     attrs {
                         this.path = path
@@ -83,23 +80,3 @@ class AppComponent : CoreComponent<AppProps, RState>() {
         }
     }
 }
-
-
-/*
-val App = functionalComponent<RProps> { _ ->
-    val appDependencies = useContext(AppDependenciesContext)
-    //val repository = appDependencies.repository
-
-    val (people, setPeople) = useState(emptyList<Assignment>())
-
-    useEffectWithCleanup(dependencies = listOf()) {
-        val mainScope = MainScope()
-
-        mainScope.launch {
-            // setPeople(repository.fetchPeople())
-        }
-
-        return@useEffectWithCleanup { mainScope.cancel() }
-    }
-
-}*/

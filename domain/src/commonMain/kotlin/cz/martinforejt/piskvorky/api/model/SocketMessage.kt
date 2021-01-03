@@ -28,13 +28,16 @@ enum class SocketApiAction {
     ERROR,
     AUTHORIZE,
     ONLINE_USERS,
-    FRIENDS
+    FRIENDS,
+    FRIENDSHIP_REQUEST,
+    FRIENDSHIP_CANCELLED
 }
 
 enum class SocketApiCode(val value: Int) {
     OK(200),
     UNAUTHORIZED(401),
-    UNKNOWN_ERROR(0)
+    UNKNOWN_ERROR(0),
+    ALREADY_CONNECTED(600)
 }
 
 /////////////// Data class for each SocketApiAction
@@ -57,6 +60,20 @@ data class FriendsSocketApiMessage(
     val users: List<PublicUser>
 ) : SocketApiMessageData
 
+@Serializable
+data class FriendShipRequestSocketApiMessage(
+    val userId: Int,
+    val email: String,
+    val request: Boolean,
+    val confirm: Boolean
+) : SocketApiMessageData
+
+@Serializable
+data class FriendshipCancelledSocketApiMessage(
+    val userId: Int,
+    val email: String
+) : SocketApiMessageData
+
 /////////////// Serializer mappers
 
 @Throws(InvalidSocketMessageException::class)
@@ -66,6 +83,8 @@ fun SocketApiMessageData.getAction(): SocketApiAction {
         is AuthorizeSocketApiMessage -> SocketApiAction.AUTHORIZE
         is OnlineUsersSocketApiMessage -> SocketApiAction.ONLINE_USERS
         is FriendsSocketApiMessage -> SocketApiAction.FRIENDS
+        is FriendShipRequestSocketApiMessage -> SocketApiAction.FRIENDSHIP_REQUEST
+        is FriendshipCancelledSocketApiMessage -> SocketApiAction.FRIENDSHIP_CANCELLED
         else -> throw InvalidSocketMessageException()
     }
 }
@@ -78,5 +97,7 @@ fun <T : SocketApiMessageData> SocketApiAction.serializer(): KSerializer<T> {
         SocketApiAction.AUTHORIZE -> AuthorizeSocketApiMessage.serializer()
         SocketApiAction.ONLINE_USERS -> OnlineUsersSocketApiMessage.serializer()
         SocketApiAction.FRIENDS -> FriendsSocketApiMessage.serializer()
+        SocketApiAction.FRIENDSHIP_REQUEST -> FriendShipRequestSocketApiMessage.serializer()
+        SocketApiAction.FRIENDSHIP_CANCELLED -> FriendshipCancelledSocketApiMessage.serializer()
     } as? KSerializer<T> ?: throw InvalidSocketMessageException()
 }

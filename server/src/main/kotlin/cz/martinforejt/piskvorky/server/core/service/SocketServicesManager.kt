@@ -1,5 +1,8 @@
 package cz.martinforejt.piskvorky.server.core.service
 
+import cz.martinforejt.piskvorky.api.model.SocketApi
+import cz.martinforejt.piskvorky.api.model.SocketApiMessageData
+import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.server.features.game.GameServiceImpl
 import cz.martinforejt.piskvorky.server.features.game.GameSessionImpl
 import cz.martinforejt.piskvorky.server.features.lobby.LobbyServiceImpl
@@ -14,9 +17,9 @@ import io.ktor.http.cio.websocket.*
  */
 class SocketServicesManagerImpl : SocketServicesManager {
 
-    private val services = mutableMapOf<String, ISocketService>()
+    private val services = mutableMapOf<String, SocketService>()
 
-    override fun getService(channel: String): ISocketService {
+    override fun getService(channel: String): SocketService {
         if (!services.containsKey(channel)) {
             services[channel] = SocketServiceFactory.getService(channel, this)
         }
@@ -27,11 +30,63 @@ class SocketServicesManagerImpl : SocketServicesManager {
     override fun channels(): List<String> {
         return services.keys.toList()
     }
+
+    override fun getOnlineUsers(): List<PublicUser> {
+        val users = mutableListOf<PublicUser>()
+        services.forEach { (channel, service) ->
+            service.sessions.forEach { (_, sessions) ->
+                sessions.firstOrNull()?.user?.let {
+                    users.add(PublicUser(it.id, it.email, online = true, inGame = channel == "game"))
+                }
+            }
+        }
+        return users
+    }
+
+    override fun isOnline(userId: Int, sessionId: String?): Boolean {
+        services.forEach { (_, service) ->
+            service.sessions.forEach { (sId, sessions) ->
+                if (sId != sessionId) {
+                    sessions.firstOrNull()?.user?.let {
+                        if (it.id == userId) {
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    override fun isInGame(userId: Int): Boolean {
+        services["game"]?.sessions?.forEach { (_, sessions) ->
+            sessions.firstOrNull()?.user?.let {
+                if (it.id == userId) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    override suspend fun sendMessageTo(userId: Int, message: String) {
+        services.forEach { (_, service) ->
+            service.sessions.forEach { (_, sessions) ->
+                if (sessions.firstOrNull()?.user?.id == userId) {
+                    sessions.forEach { it.send(message) }
+                }
+            }
+        }
+    }
+
+    override suspend fun sendMessageTo(userId: Int, message: SocketApiMessageData) {
+        sendMessageTo(userId, SocketApi.encode(message))
+    }
 }
 
 object SocketServiceFactory {
 
-    fun getService(channel: String, manager: SocketServicesManager): ISocketService {
+    fun getService(channel: String, manager: SocketServicesManager): SocketService {
         return when (channel) {
             "lobby" -> {
                 LobbyServiceImpl(manager)

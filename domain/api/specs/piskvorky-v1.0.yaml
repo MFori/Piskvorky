@@ -160,7 +160,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FriendsListResponse"
+                $ref: "#/components/schemas/UsersListResponse"
         default:
           description: unexpected error
           content:
@@ -221,6 +221,24 @@ paths:
       responses:
         '200':
           description: Request created
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /online-users:
+    get:
+      summary: List of online users
+      tags:
+        - friends
+      responses:
+        '200':
+          description: Online users list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersListResponse"
         default:
           description: unexpected error
           content:
@@ -290,7 +308,7 @@ components:
         passwordCurrent:
           type: string
 
-    Friend:
+    ApiUser:
       type: object
       required: [id, email, online, inGame]
       properties:
@@ -302,14 +320,14 @@ components:
           type: boolean
         inGame:
           type: boolean
-    FriendsListResponse:
+    UsersListResponse:
       type: object
-      required: [friends]
+      required: [users]
       properties:
-        friends:
+        users:
           type: array
           items:
-            $ref: "#/components/schemas/Friend"
+            $ref: "#/components/schemas/ApiUser"
     FriendRequest:
       type: object
       required: [userId, email, created]
@@ -317,7 +335,7 @@ components:
         userId:
           type: integer
         email:
-          type: integer
+          type: string
         created:
           type: string
           format: date-time

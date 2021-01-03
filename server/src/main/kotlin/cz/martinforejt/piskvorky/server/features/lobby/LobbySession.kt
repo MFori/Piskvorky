@@ -1,15 +1,12 @@
 package cz.martinforejt.piskvorky.server.features.lobby
 
 import cz.martinforejt.piskvorky.api.model.*
-import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.domain.repository.FriendsRepository
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
 import cz.martinforejt.piskvorky.server.core.service.SocketBroadcaster
-import cz.martinforejt.piskvorky.server.core.service.SocketServiceSession
+import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
 import cz.martinforejt.piskvorky.server.security.JwtManager
-import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import io.ktor.http.cio.websocket.*
-import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 /**
@@ -28,10 +25,7 @@ class LobbySessionImpl(
     private val usersRepository by inject<UsersRepository>()
     private val friendsRepository by inject<FriendsRepository>()
     private val jwtManager by inject<JwtManager>()
-
-    //private var user: UserPrincipal? = null
-    //private val authorized
-    //    get() = user != null
+    private val socketServicesManager by inject<SocketServicesManager>()
 
     @Throws(SocketApiException::class)
     override suspend fun receivedMessage(data: String) {
@@ -59,6 +53,17 @@ class LobbySessionImpl(
     private suspend fun authorize(message: AuthorizeSocketApiMessage) {
         val principal = jwtManager.validateToken(message.token)
         if (principal != null) {
+            if (socketServicesManager.isOnline(principal.id, sessionId)) {
+                // already connected in other device
+                send(
+                    SocketApi.encode(
+                        SocketApiAction.ERROR,
+                        Error(SocketApiCode.ALREADY_CONNECTED.value, "Already connected")
+                    )
+                )
+                connection.close()
+                return
+            }
             user = principal
             send(SocketApi.encode(SocketApiAction.AUTHORIZE, Error(SocketApiCode.OK.value, "Successfully authorized.")))
             setUserOnline(true)
@@ -68,9 +73,9 @@ class LobbySessionImpl(
         }
     }
 
+
     private suspend fun setUserOnline(online: Boolean) {
         user?.let {
-            usersRepository.setOnline(PublicUser(it.id, it.email, online), online)
             val message = SocketApi.encode(onlineUsersMessage())
             broadcaster.sendBroadcast(message)
         }

@@ -2,6 +2,7 @@ package cz.martinforejt.piskvorky.server.core.service
 
 import cz.martinforejt.piskvorky.api.model.SocketApiMessage
 import cz.martinforejt.piskvorky.api.model.SocketApiMessageData
+import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import io.ktor.http.cio.websocket.*
 import org.koin.core.KoinComponent
@@ -48,6 +49,17 @@ interface SocketServicesManager {
     fun getService(channel: String): ISocketService
 
     fun channels(): List<String>
+
+    fun getOnlineUsers(): List<PublicUser>
+
+    fun isOnline(userId: Int, sessionId: String? = null): Boolean
+
+    fun isInGame(userId: Int): Boolean
+
+    suspend fun sendMessageTo(userId: Int, message: String)
+
+    suspend fun sendMessageTo(userId: Int, message: SocketApiMessageData)
+
 }
 
 abstract class SocketService(

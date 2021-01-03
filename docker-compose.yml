@@ -8,9 +8,6 @@ services:
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: password
 
-  redis:
-    image: redis:6-alpine
-
   server:
     container_name: server
     build: ./server

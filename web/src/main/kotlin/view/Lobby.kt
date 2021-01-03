@@ -3,11 +3,11 @@ package view
 import core.Api
 import core.component.CoreComponent
 import core.component.CoreRProps
-import core.component.dialogBuilder
 import core.utils.clearAndFill
 import core.utils.connectionErrorDialog
 import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.model.PublicUser
+import cz.martinforejt.piskvorky.domain.service.FriendsService
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.util.*
@@ -17,9 +17,9 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import kotlinx.html.id
+import org.koin.core.inject
 import react.RBuilder
 import react.RState
-import react.dom.dialog
 import react.dom.div
 import react.setState
 
@@ -42,6 +42,7 @@ class LobbyState : RState {
 class Lobby : CoreComponent<LobbyProps, LobbyState>() {
 
     private var connection: WebSocketSession? = null
+    private val friendsService by inject<FriendsService>()
 
     override fun LobbyState.init() {
         onlineUsers = mutableListOf()
@@ -158,15 +159,16 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
     }
 
     val playerAction: (PlayerListItem.Action, PlayerVO) -> Unit = { action, playerVO ->
-        window.alert("player action $playerVO")
         when (action) {
-            PlayerListItem.Action.ADD_FRIEND -> TODO()
-            PlayerListItem.Action.REMOVE_FRIEND -> TODO()
-            PlayerListItem.Action.PLAY -> TODO()
+            PlayerListItem.Action.ADD_FRIEND -> addFriend(playerVO.id, playerVO.email)
+            PlayerListItem.Action.REMOVE_FRIEND -> removeFriend(playerVO.id, playerVO.email)
+            PlayerListItem.Action.PLAY -> gameRequest(playerVO.id, playerVO.email)
         }
     }
 
     private fun refresh() {
+        state.onlineUsers = mutableListOf()
+        state.friends = mutableListOf()
         refreshOnline()
     }
 
@@ -189,7 +191,13 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
             SocketApiAction.AUTHORIZE -> authorize(message)
             SocketApiAction.ONLINE_USERS -> onlineUsers(message.data as OnlineUsersSocketApiMessage)
             SocketApiAction.FRIENDS -> friends(message.data as FriendsSocketApiMessage)
+            SocketApiAction.FRIENDSHIP_REQUEST -> friendRequest(message.data as FriendShipRequestSocketApiMessage)
+            SocketApiAction.FRIENDSHIP_CANCELLED -> refresh()
             else -> {
+                if(message.error?.code == SocketApiCode.ALREADY_CONNECTED.value) {
+                    window.alert("Already connected on other device.")
+                    logout()
+                }
                 disconnectOnError()
             }
         }
@@ -221,6 +229,52 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
             loading = false
             friends?.clearAndFill(message.users)
             friends?.let { onlineUsers?.removeAll(it) }
+        }
+    }
+
+    private fun friendRequest(message: FriendShipRequestSocketApiMessage) {
+        if (message.request) {
+            if (window.confirm("Friendship request from ${message.email}. Add friend?")) {
+                componentScope.launch {
+                    friendsService.addFriend(CreateFriendshipRequest(message.userId), user!!.token)
+                }
+            } else {
+                componentScope.launch {
+                    friendsService.removeFriend(CancelFriendshipRequest(message.userId), user!!.token)
+                }
+            }
+        } else if (message.confirm) {
+            refresh()
+        }
+    }
+
+    private fun addFriend(id: Int, email: String) {
+        componentScope.launch {
+            val res = friendsService.addFriend(CreateFriendshipRequest(id), user!!.token)
+            if (res.isSuccessful) {
+                window.alert("Friendship request send to $email")
+                refresh()
+            } else {
+                window.alert("Friendship request failed. Try it later.")
+            }
+        }
+    }
+
+    private fun removeFriend(id: Int, email: String) {
+        componentScope.launch {
+            val res = friendsService.removeFriend(CancelFriendshipRequest(id), user!!.token)
+            if (res.isSuccessful) {
+                window.alert("Friendship with $email cancelled.")
+                refresh()
+            } else {
+                window.alert("Friendship cancel request failed. Try it later.")
+            }
+        }
+    }
+
+    private fun gameRequest(id: Int, email: String) {
+        componentScope.launch {
+            // TODO send game request
         }
     }
 }
