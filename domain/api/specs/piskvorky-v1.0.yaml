@@ -220,7 +220,7 @@ paths:
               $ref: "#/components/schemas/CancelFriendshipRequest"
       responses:
         '200':
-          description: Request created
+          description: Request cancelled
         default:
           description: unexpected error
           content:
@@ -239,6 +239,83 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UsersListResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /game/invite/list:
+    get:
+      summary: List of valid game invitations
+      tags:
+        - game-invitation
+      responses:
+        '200':
+          description: Game invitations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameInvitationsResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /game/invite/join:
+    post:
+      summary: Create/accept game invitation
+      tags:
+        - game-invitation
+      requestBody:
+        description: User id
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGameRequest"
+      responses:
+        '200':
+          description: Invitation created/accepted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /game/invite/cancel:
+    post:
+      summary: Cancel game invitation
+      tags:
+        - game-invitation
+      requestBody:
+        description: User id
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CancelGameRequest"
+      responses:
+        '200':
+          description: Invitation cancelled
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /game:
+    get:
+      summary: Get current game
+      tags:
+        - game
+      responses:
+        '200':
+          description: Invitation cancelled
         default:
           description: unexpected error
           content:
@@ -356,6 +433,38 @@ components:
     CancelFriendshipRequest:
       type: object
       required: [userId]
+      properties:
+        userId:
+          type: integer
+
+    GameInvitation:
+      type: object
+      required: [userId, email, created]
+      properties:
+        userId:
+          type: integer
+        email:
+          type: string
+        created:
+          type: string
+          format: date-time
+    GameInvitationsResponse:
+      type: object
+      required: [invitations]
+      properties:
+        invitations:
+          type: array
+          items:
+            $ref: "#/components/schemas/GameInvitation"
+    CreateGameRequest:
+      type: object
+      required: [userId]
+      properties:
+        userId:
+          type: integer
+    CancelGameRequest:
+      type: object
+      required: [ userId ]
       properties:
         userId:
           type: integer
