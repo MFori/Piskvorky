@@ -4,10 +4,12 @@ import core.component.AppContextHolder
 import core.component.AppDependencies
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import cz.martinforejt.piskvorky.domain.service.FriendsService
+import cz.martinforejt.piskvorky.domain.service.GameService
 import org.koin.dsl.module
 import react.createContext
 import service.AuthenticationServiceImpl
 import service.FriendsServiceImpl
+import service.GameServiceImpl
 
 /**
  * Created by Martin Forejt on 27.12.2020.
@@ -24,6 +26,10 @@ val webModule = module {
 
     single<FriendsService> {
         FriendsServiceImpl()
+    }
+
+    single<GameService> {
+        GameServiceImpl()
     }
 
     single<AppContextHolder> {

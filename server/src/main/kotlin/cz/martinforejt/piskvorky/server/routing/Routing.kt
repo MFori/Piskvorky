@@ -29,6 +29,8 @@ fun Application.registerRoutes() {
                 profileRoutes()
                 friendsRoutes()
                 exampleRoutes()
+                gameCreationRoutes()
+                gameRoutes()
             }
         }
 
@@ -41,7 +43,7 @@ fun Application.registerRoutes() {
 
         route(API_VERSION) {
             lobbyRoutes()
-            gameRoutes()
+            gamePublicRoutes()
         }
     }
 

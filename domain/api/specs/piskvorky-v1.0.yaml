@@ -315,7 +315,46 @@ paths:
         - game
       responses:
         '200':
-          description: Invitation cancelled
+          description: Current game
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameSnap"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /game/play:
+    post:
+      summary: Make game move
+      tags:
+        - game
+      requestBody:
+        description: Move
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Move"
+      responses:
+        '200':
+          description: Move played successfully
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /game/giveup:
+    post:
+      summary: Give up game
+      tags:
+        - game
+      responses:
+        '200':
+          description: Game giveup successfully
         default:
           description: unexpected error
           content:
@@ -467,6 +506,63 @@ components:
       required: [ userId ]
       properties:
         userId:
+          type: integer
+
+    GameSnap:
+      type: object
+      required: [ status, board, cross, nought, winner, current ]
+      properties:
+        status:
+          type: string
+          enum: [running, end]
+        board:
+          $ref: "#/components/schemas/Board"
+        cross:
+          $ref: "#/components/schemas/Player"
+        nought:
+          $ref: "#/components/schemas/Player"
+        current:
+          $ref: "#/components/schemas/BoardValue"
+        winner:
+          $ref: "#/components/schemas/BoardValue"
+    Board:
+      type: object
+      required: [ cells ]
+      properties:
+        cells:
+          type: array
+          items:
+            $ref: "#/components/schemas/BoardCell"
+    BoardCell:
+      type: object
+      required: [ x, y, value ]
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+        value:
+          $ref: "#/components/schemas/BoardValue"
+    BoardValue:
+      type: string
+      enum: [none, cross, nought]
+    Player:
+      type: object
+      required: [id, email, cross]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        cross:
+          type: boolean
+    Move:
+      type: object
+      required: [x, y]
+      properties:
+        x:
+          type: integer
+        y:
           type: integer
 
     Error:

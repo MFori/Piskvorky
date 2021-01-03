@@ -1,47 +1,59 @@
 package cz.martinforejt.piskvorky.server.routing
 
-import cz.martinforejt.piskvorky.server.security.JwtManager
+import cz.martinforejt.piskvorky.api.model.Move
+import cz.martinforejt.piskvorky.domain.model.toSnap
+import cz.martinforejt.piskvorky.domain.repository.GameRepository
+import cz.martinforejt.piskvorky.server.features.game.usecase.GiveUpGameUseCase
+import cz.martinforejt.piskvorky.server.features.game.usecase.PlayMoveUseCase
+import cz.martinforejt.piskvorky.server.routing.exception.ConflictApiException
+import cz.martinforejt.piskvorky.server.routing.utils.currentUser
+import cz.martinforejt.piskvorky.server.routing.utils.emptyResponse
 import io.ktor.application.*
-import io.ktor.http.cio.websocket.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import io.ktor.websocket.*
-import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import org.koin.ktor.ext.inject
 
 /**
- * Created by Martin Forejt on 24.12.2020.
+ * Created by Martin Forejt on 03.01.2021.
  * me@martinforejt.cz
  *
  * @author Martin Forejt
  */
 
 fun Route.gameRoutes() {
+    val gameRepository by inject<GameRepository>()
+    val playMoveUseCase by inject<PlayMoveUseCase>()
+    val giveUpUseCase by inject<GiveUpGameUseCase>()
 
-    val jwtManager by inject<JwtManager>()
+    route("/game") {
 
-    webSocket("/game") {
-        var userId: Int? = null
-        println("onConnect")
-        try {
-            for (frame in incoming){
-                val text = (frame as Frame.Text).readText()
-                if(userId == null) {
-                    val principal = jwtManager.validateToken(text)
-                    userId = principal?.id
-                }
-
-                outgoing.send(Frame.Text("YOU ($userId) SAID $text"))
-                if (text.equals("bye", ignoreCase = true)) {
-                    close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
-                }
+        get("/") {
+            val game = gameRepository.getGame(currentUser.id)
+            if(game != null) {
+                call.respond(game.toSnap())
+            } else {
+                throw ConflictApiException("Not in game.")
             }
-        } catch (e: ClosedReceiveChannelException) {
-            println("onClose ${closeReason.await()}")
-        } catch (e: Throwable) {
-            println("onError ${closeReason.await()}")
-            //e.printStackTrace()
         }
+
+        post("/play") {
+            val request = call.receive<Move>()
+            val res = playMoveUseCase.execute(PlayMoveUseCase.Params(currentUser, request))
+            if (res.isSuccessful.not()) {
+                throw ConflictApiException(res.error?.message ?: "Error occurred.")
+            }
+            call.emptyResponse()
+        }
+
+        post("/giveup") {
+            val res = giveUpUseCase.execute(GiveUpGameUseCase.Params(currentUser))
+            if (res.isSuccessful.not()) {
+                throw ConflictApiException(res.error?.message ?: "Error occurred.")
+            }
+            call.emptyResponse()
+        }
+
     }
 
 }

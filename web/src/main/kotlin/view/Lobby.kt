@@ -9,6 +9,7 @@ import cz.martinforejt.piskvorky.api.Api
 import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.domain.service.FriendsService
+import cz.martinforejt.piskvorky.domain.service.GameService
 import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.util.*
@@ -22,6 +23,7 @@ import org.koin.core.inject
 import react.RBuilder
 import react.RState
 import react.dom.div
+import react.router.dom.redirect
 import react.setState
 
 /**
@@ -38,18 +40,21 @@ class LobbyState : RState {
     var friends: MutableList<PublicUser>? = null
     var loading = false
     var showErrorDialog = false
+    var inGame = false
 }
 
 class Lobby : CoreComponent<LobbyProps, LobbyState>() {
 
     private var connection: WebSocketSession? = null
     private val friendsService by inject<FriendsService>()
+    private val gameService by inject<GameService>()
 
     override fun LobbyState.init() {
         onlineUsers = mutableListOf()
         friends = mutableListOf()
         showErrorDialog = false
         loading = true
+        inGame = false
     }
 
     @KtorExperimentalAPI
@@ -66,6 +71,9 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
 
     @KtorExperimentalAPI
     override fun RBuilder.render() {
+        if(state.inGame) {
+            redirect("/lobby", "/game")
+        }
         div("container-md") {
             attrs.id = "lobby_root"
             coreChild(Header::class)
@@ -194,6 +202,8 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
             SocketApiAction.FRIENDS -> friends(message.data as FriendsSocketApiMessage)
             SocketApiAction.FRIENDSHIP_REQUEST -> friendRequest(message.data as FriendShipRequestSocketApiMessage)
             SocketApiAction.FRIENDSHIP_CANCELLED -> refresh()
+            SocketApiAction.GAME_UPDATE -> gameUpdate(message.data as GameUpdateSocketApiMessage)
+            SocketApiAction.GAME_REQUEST -> receivedGameRequest(message.data as GameRequestSocketApiMessage)
             else -> {
                 if(message.error?.code == SocketApiCode.ALREADY_CONNECTED.value) {
                     window.alert("Already connected on other device.")
@@ -249,6 +259,22 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
         }
     }
 
+    private fun receivedGameRequest(message: GameRequestSocketApiMessage) {
+        if(window.confirm("Game request from ${message.email}. Are you ready to play?")) {
+            componentScope.launch {
+                gameService.createInvitation(CreateGameRequest(message.userId), user!!.token)
+            }
+        }
+    }
+
+    private fun gameUpdate(message: GameUpdateSocketApiMessage) {
+        if(message.game.status == GameSnap.Status.running) {
+            setState {
+                inGame = true
+            }
+        }
+    }
+
     private fun addFriend(id: Int, email: String) {
         componentScope.launch {
             val res = friendsService.addFriend(CreateFriendshipRequest(id), user!!.token)
@@ -275,7 +301,13 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
 
     private fun gameRequest(id: Int, email: String) {
         componentScope.launch {
-            // TODO send game request
+            val res = gameService.createInvitation(CreateGameRequest(id), user!!.token)
+            if (res.isSuccessful) {
+                window.alert("Game invitation send to $email.")
+                refresh()
+            } else {
+                window.alert("Game invitation request failed. Try it later.")
+            }
         }
     }
 }

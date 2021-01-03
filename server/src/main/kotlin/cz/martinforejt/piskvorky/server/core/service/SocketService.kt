@@ -2,6 +2,7 @@ package cz.martinforejt.piskvorky.server.core.service
 
 import cz.martinforejt.piskvorky.api.model.SocketApiMessage
 import cz.martinforejt.piskvorky.api.model.SocketApiMessageData
+import cz.martinforejt.piskvorky.domain.model.Game
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import io.ktor.http.cio.websocket.*
@@ -55,6 +56,10 @@ interface SocketServicesManager {
     fun isOnline(userId: Int, sessionId: String? = null): Boolean
 
     fun isInGame(userId: Int): Boolean
+
+    fun getGame(userId: Int): Game
+
+    fun getGames(): List<Game>
 
     suspend fun sendMessageTo(userId: Int, message: String)
 

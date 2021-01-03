@@ -1,12 +1,16 @@
 package cz.martinforejt.piskvorky.server.core.di
 
 import cz.martinforejt.piskvorky.domain.repository.FriendsRepository
+import cz.martinforejt.piskvorky.domain.repository.GameRepository
 import cz.martinforejt.piskvorky.domain.repository.LostPasswordRepository
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
 import cz.martinforejt.piskvorky.domain.service.EmailService
 import cz.martinforejt.piskvorky.server.core.service.EmailServiceImpl
 import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
 import cz.martinforejt.piskvorky.server.core.service.SocketServicesManagerImpl
+import cz.martinforejt.piskvorky.server.features.game.repository.GameRepositoryImpl
+import cz.martinforejt.piskvorky.server.features.game.usecase.CancelGameInvitationUseCase
+import cz.martinforejt.piskvorky.server.features.game.usecase.JoinGameUseCase
 import cz.martinforejt.piskvorky.server.features.users.manager.HashService
 import cz.martinforejt.piskvorky.server.features.users.manager.Sha256HashService
 import cz.martinforejt.piskvorky.server.features.users.repository.FriendsRepositoryImpl
@@ -61,6 +65,10 @@ fun serverModule(app: Application) = module {
 
     single<LostPasswordRepository> {
         LostPasswordRepositoryImpl()
+    }
+
+    single<GameRepository> {
+        GameRepositoryImpl()
     }
 
     single<SocketServicesManager> {
@@ -123,6 +131,19 @@ fun serverModule(app: Application) = module {
         CancelFriendUseCase(
             friendsRepository = get(),
             socketServicesManager = get()
+        )
+    }
+
+    factory {
+        JoinGameUseCase(
+            gameRepository = get(),
+            socketServicesManager = get()
+        )
+    }
+
+    factory {
+        CancelGameInvitationUseCase(
+            gameRepository = get()
         )
     }
 }

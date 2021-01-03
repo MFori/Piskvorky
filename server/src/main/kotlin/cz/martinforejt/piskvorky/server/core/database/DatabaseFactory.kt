@@ -3,6 +3,7 @@ package cz.martinforejt.piskvorky.server.core.database
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import cz.martinforejt.piskvorky.server.core.database.schema.Friendships
+import cz.martinforejt.piskvorky.server.core.database.schema.GameInvitations
 import cz.martinforejt.piskvorky.server.core.database.schema.LostPasswords
 import cz.martinforejt.piskvorky.server.core.database.schema.Users
 import org.jetbrains.exposed.sql.Database
@@ -24,6 +25,7 @@ object DatabaseFactory {
             SchemaUtils.create(
                 Users,
                 Friendships,
+                GameInvitations,
                 LostPasswords
             )
 

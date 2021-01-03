@@ -2,6 +2,7 @@ package cz.martinforejt.piskvorky.server.core.service
 
 import cz.martinforejt.piskvorky.api.model.SocketApi
 import cz.martinforejt.piskvorky.api.model.SocketApiMessageData
+import cz.martinforejt.piskvorky.domain.model.Game
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.server.features.game.GameServiceImpl
 import cz.martinforejt.piskvorky.server.features.game.GameSessionImpl
@@ -67,6 +68,14 @@ class SocketServicesManagerImpl : SocketServicesManager {
             }
         }
         return false
+    }
+
+    override fun getGame(userId: Int): Game {
+        TODO("Not yet implemented")
+    }
+
+    override fun getGames(): List<Game> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun sendMessageTo(userId: Int, message: String) {

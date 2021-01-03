@@ -31,6 +31,13 @@ object Api {
         const val ADD_FRIEND = "/friends/add"
         const val CANCEL_FRIEND = "/friends/cancel"
         const val FRIEND_REQUESTS = "/friend/requests"
+
+        const val INVITATIONS = "/game/invite/list"
+        const val CREATE_INVITATION = "/game/invite/join"
+        const val CANCEL_INVITATION = "/game/invite/cancel"
+        const val GAME = "/game"
+        const val PLAY = "/game/play"
+        const val GIVE_UP = "/game/giveup"
     }
 
 }
