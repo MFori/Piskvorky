@@ -1,5 +1,7 @@
 package core
 
+import cz.martinforejt.piskvorky.api.Api.apiUrl
+import cz.martinforejt.piskvorky.api.Api.wsUrl
 import cz.martinforejt.piskvorky.api.model.Error
 import io.ktor.client.*
 import io.ktor.client.features.websocket.*
@@ -21,14 +23,7 @@ import kotlin.js.json
  * @author Martin Forejt
  */
 
-object Api {
-
-    //const val BASE_URL = "http://http://192.168.0.104/:9090"
-    private const val REST_SCHEMA = "http"
-    private const val WS_SCHEMA = "ws"
-    private const val BASE_URL = "localhost"
-    private const val PORT = "9090"
-    private const val API_VERSION = "v1"
+object ApiClient {
 
     @KtorExperimentalAPI
     val client = HttpClient {
@@ -46,28 +41,11 @@ object Api {
         return postAndParseResult(url.apiUrl(), body, token)
     }
 
-    fun String.apiUrl() = "$REST_SCHEMA://$BASE_URL:$PORT/$API_VERSION$this"
-
-    fun String.wsUrl() = "$WS_SCHEMA://$BASE_URL:$PORT/$API_VERSION$this"
-
     @KtorExperimentalAPI
     suspend fun webSocket(url: String, block: suspend DefaultClientWebSocketSession.() -> Unit) {
         client.webSocket(url.wsUrl(), {}, block)
     }
 
-    object EP {
-        const val LOGIN = "/login"
-        const val REGISTER = "/register"
-        const val LOST_PASSWORD = "/lost-passwd"
-        const val RESET_PASSWORD = "/reset-passwd"
-        const val CHANGE_PASSWORD = "/profile/change-passwd"
-        const val LOBBY = "/lobby"
-
-        const val FRIENDS_LIST = "/friends"
-        const val ADD_FRIEND = "/friends/add"
-        const val CANCEL_FRIEND = "/friends/cancel"
-        const val FRIEND_REQUESTS = "/friend/requests"
-    }
 }
 
 data class ApiResult<T>(

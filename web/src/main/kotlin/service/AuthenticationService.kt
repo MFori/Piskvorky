@@ -1,7 +1,8 @@
 package service
 
-import core.Api
+import core.ApiClient
 import core.ApiResult
+import cz.martinforejt.piskvorky.api.Api
 import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.model.UserWithToken
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
@@ -27,7 +28,7 @@ class AuthenticationServiceImpl : AuthenticationService {
 
     @ExperimentalSerializationApi
     override suspend fun login(request: LoginRequest): Result<UserWithToken> {
-        val res = Api.post<LoginResponse>(Api.EP.LOGIN, format.encodeToString(LoginRequest.serializer(), request))
+        val res = ApiClient.post<LoginResponse>(Api.EP.LOGIN, format.encodeToString(LoginRequest.serializer(), request))
         return if (res.isSuccess) {
             val data = res.data!!
             val user = UserWithToken(request.email, data.token)
@@ -41,7 +42,7 @@ class AuthenticationServiceImpl : AuthenticationService {
 
     @ExperimentalSerializationApi
     override suspend fun register(request: RegisterRequest): Result<UserWithToken> {
-        val res = Api.post<LoginResponse>(Api.EP.REGISTER, format.encodeToString(RegisterRequest.serializer(), request))
+        val res = ApiClient.post<LoginResponse>(Api.EP.REGISTER, format.encodeToString(RegisterRequest.serializer(), request))
         return if (res.isSuccess) {
             val data = res.data!!
             val user = UserWithToken(request.email, data.token)
@@ -54,7 +55,7 @@ class AuthenticationServiceImpl : AuthenticationService {
 
     @ExperimentalSerializationApi
     override suspend fun changePassword(request: ChangePasswordRequest, token: String): Result<Unit> {
-        val res = Api.post<Unit>(
+        val res = ApiClient.post<Unit>(
             Api.EP.CHANGE_PASSWORD,
             format.encodeToString(ChangePasswordRequest.serializer(), request),
             token
@@ -68,7 +69,7 @@ class AuthenticationServiceImpl : AuthenticationService {
 
     @ExperimentalSerializationApi
     override suspend fun lostPassword(request: LostPasswordRequest): Result<Unit> {
-        val res = Api.post<Unit>(Api.EP.LOST_PASSWORD, format.encodeToString(LostPasswordRequest.serializer(), request))
+        val res = ApiClient.post<Unit>(Api.EP.LOST_PASSWORD, format.encodeToString(LostPasswordRequest.serializer(), request))
         return if (res.isSuccess) {
             Result(Unit)
         } else {
@@ -78,7 +79,7 @@ class AuthenticationServiceImpl : AuthenticationService {
 
     @ExperimentalSerializationApi
     override suspend fun resetPassword(request: ResetPasswordRequest): Result<Unit> {
-        val res = Api.post<Unit>(Api.EP.RESET_PASSWORD, format.encodeToString(ResetPasswordRequest.serializer(), request))
+        val res = ApiClient.post<Unit>(Api.EP.RESET_PASSWORD, format.encodeToString(ResetPasswordRequest.serializer(), request))
         return if (res.isSuccess) {
             Result(Unit)
         } else {

@@ -1,7 +1,8 @@
 package service
 
-import core.Api
+import core.ApiClient
 import core.ApiResult
+import cz.martinforejt.piskvorky.api.Api
 import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.service.FriendsService
 import cz.martinforejt.piskvorky.domain.usecase.Error
@@ -23,7 +24,7 @@ class FriendsServiceImpl : FriendsService {
 
     @ExperimentalSerializationApi
     override suspend fun addFriend(request: CreateFriendshipRequest, token: String): Result<Unit> {
-        val res = Api.post<Unit>(Api.EP.ADD_FRIEND, format.encodeToString(CreateFriendshipRequest.serializer(), request), token)
+        val res = ApiClient.post<Unit>(Api.EP.ADD_FRIEND, format.encodeToString(CreateFriendshipRequest.serializer(), request), token)
         return if (res.isSuccess) {
             Result(Unit)
         } else {
@@ -33,7 +34,7 @@ class FriendsServiceImpl : FriendsService {
 
     @ExperimentalSerializationApi
     override suspend fun removeFriend(request: CancelFriendshipRequest, token: String): Result<Unit> {
-        val res = Api.post<Unit>(Api.EP.CANCEL_FRIEND, format.encodeToString(CancelFriendshipRequest.serializer(), request), token)
+        val res = ApiClient.post<Unit>(Api.EP.CANCEL_FRIEND, format.encodeToString(CancelFriendshipRequest.serializer(), request), token)
         return if (res.isSuccess) {
             Result(Unit)
         } else {
@@ -43,7 +44,7 @@ class FriendsServiceImpl : FriendsService {
 
     @ExperimentalSerializationApi
     override suspend fun getFriends(token: String): Result<List<ApiUser>> {
-        val res = Api.get<UsersListResponse>(Api.EP.FRIENDS_LIST, token)
+        val res = ApiClient.get<UsersListResponse>(Api.EP.FRIENDS_LIST, token)
         return if (res.isSuccess) {
             val data = res.data!!
             Result(data.users)
@@ -54,7 +55,7 @@ class FriendsServiceImpl : FriendsService {
 
     @ExperimentalSerializationApi
     override suspend fun getFriendRequests(token: String): Result<List<FriendRequest>> {
-        val res = Api.get<FriendsRequestsResponse>(Api.EP.FRIEND_REQUESTS, token)
+        val res = ApiClient.get<FriendsRequestsResponse>(Api.EP.FRIEND_REQUESTS, token)
         return if (res.isSuccess) {
             val data = res.data!!
             Result(data.requests)

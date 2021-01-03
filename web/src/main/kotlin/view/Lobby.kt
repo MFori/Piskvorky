@@ -1,10 +1,11 @@
 package view
 
-import core.Api
+import core.ApiClient
 import core.component.CoreComponent
 import core.component.CoreRProps
 import core.utils.clearAndFill
 import core.utils.connectionErrorDialog
+import cz.martinforejt.piskvorky.api.Api
 import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.domain.service.FriendsService
@@ -101,7 +102,7 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
     @KtorExperimentalAPI
     suspend fun initWebSocket() {
         try {
-            Api.webSocket(Api.EP.LOBBY) {
+            ApiClient.webSocket(Api.EP.LOBBY) {
                 connection = this
                 println("onOpen")
                 try {
