@@ -1,28 +1,27 @@
 package view
 
 import core.component.ConnectionAwareCoreComponent
-import core.component.CoreComponent
 import core.component.CoreRProps
 import core.utils.connectionErrorDialog
-import cz.martinforejt.piskvorky.api.model.AuthorizeSocketApiMessage
 import cz.martinforejt.piskvorky.api.model.GameSnap
 import cz.martinforejt.piskvorky.api.model.GameUpdateSocketApiMessage
+import cz.martinforejt.piskvorky.api.model.Move
 import cz.martinforejt.piskvorky.api.model.SocketApiMessage
-import cz.martinforejt.piskvorky.domain.model.Game
 import cz.martinforejt.piskvorky.domain.service.GameService
 import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlinx.coroutines.launch
 import kotlinx.html.id
 import model.GameVO
 import model.asGameVO
 import org.koin.core.inject
-import react.RBuilder
-import react.RState
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.events.Event
+import react.*
+import react.dom.canvas
 import react.dom.div
 import react.router.dom.redirect
-import react.router.dom.routeLink
-import react.setState
-import service.WebSocketService
 
 /**
  * Created by Martin Forejt on 03.01.2021.
@@ -37,6 +36,7 @@ class GameState : RState {
     var game: GameVO? = null
     var inGame = true
     var showErrorDialog = false
+    var unread = 0
 }
 
 class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
@@ -46,12 +46,25 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
     override fun GameState.init() {
         game = null
         inGame = true
+        unread = 0
         showErrorDialog = false
     }
 
     override fun componentDidMount() {
         super.componentDidMount()
         document.title = "Piskvorky | Game"
+        window.onbeforeunload = { "" }
+        window.onpopstate = { window.history.go(1) }
+        window.onresize = {
+            setState { }
+        }
+    }
+
+    override fun componentWillUnmount() {
+        super.componentWillUnmount()
+        window.onbeforeunload = null
+        window.onpopstate = null
+        window.onresize = null
     }
 
     override fun RBuilder.render() {
@@ -59,34 +72,56 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
             redirect("/game", "/lobby")
             return
         }
-        div("container-md") {
-            coreChild(Header::class)
-            div("stretch-content") {
-                if (state.game == null) {
-                    loading()
-                } else {
-                    div {
-                        +state.game!!.cross.email
+        div("game-container") {
+            div("container-md") {
+                gameHeader(this@Game, state.game)
+                div("game-content") {
+                    if (state.game == null) {
+                        loading()
                     }
-                    div {
-                        +state.game!!.nought.email
+                }
+                gameFooter(this@Game, state.unread, onGiveUpClicked, onShowChat)
+                coreChild(GameFooter::class)
+                if (state.showErrorDialog) {
+                    connectionErrorDialog {
+                        setState {
+                            showErrorDialog = false
+                        }
+                        reconnect()
                     }
                 }
             }
-            coreChild(Footer::class)
-            if (state.showErrorDialog) {
-                connectionErrorDialog {
-                    setState {
-                        showErrorDialog = false
-                    }
-                    reconnect()
-                }
-            }
+            gameBoard(this@Game, state.game, onMove)
         }
     }
 
     override fun refresh() {
         super.refresh()
+    }
+
+    private val onGiveUpClicked: (Event) -> Unit = {
+        if (window.confirm("Really give up game?")) {
+            componentScope.launch {
+                val res = gameService.giveUp(user!!.token)
+                if (res.isSuccessful) {
+                    setState { inGame = false }
+                }
+            }
+        }
+    }
+
+    private val onShowChat: (Event) -> Unit = {
+
+    }
+
+    private val onMove: (Int, Int) -> Unit = { x, y ->
+        componentScope.launch {
+            val res = gameService.play(Move(x, y), user!!.token)
+            if (!res.isSuccessful) {
+                window.alert(res.error?.message ?: "Invalid move.")
+                refresh()
+            }
+        }
     }
 
     override fun onReceiveGameUpdate(message: SocketApiMessage<GameUpdateSocketApiMessage>) {
@@ -104,6 +139,8 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
     }
 
     override fun showConnectionErrorDialog() {
-        TODO("Not yet implemented")
+        setState {
+            showErrorDialog = true
+        }
     }
 }

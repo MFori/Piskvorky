@@ -18,7 +18,31 @@ data class GameVO(
     val nought: Player,
     val current: BoardValue,
     val winner: BoardValue
-)
+) {
+
+    private val cells: MutableMap<Pair<Int, Int>, BoardValue> = mutableMapOf()
+
+    init {
+
+        board.cells.forEach { cell ->
+            cells[Pair(cell.x, cell.y)] = cell.value
+        }
+    }
+
+    fun getValue(x: Int, y: Int) = cells[Pair(x, y)] ?: BoardValue.none
+
+    operator fun get(x: Int, y: Int) = getValue(x, y)
+
+    fun setValue(x: Int, y: Int, value: BoardValue) {
+        cells[Pair(x, y)] = value
+    }
+
+    operator fun set(x: Int, y: Int, value: BoardValue) = setValue(x, y, value)
+
+    fun isEmpty(x: Int, y: Int) = getValue(x, y) == BoardValue.none
+
+    fun rival(email: String) = if (cross.email == email) nought else cross
+}
 
 fun GameSnap.asGameVO() = GameVO(
     status = this.status,

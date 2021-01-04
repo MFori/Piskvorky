@@ -76,6 +76,20 @@ body, html {
   height: auto;
 }
 
+.game-content {
+  position: relative;
+  $offset: $header_height + $footer_height + 20;
+  height: -moz-calc(100vh - #{$offset});
+  height: -webkit-calc(100vh - #{$offset});
+  height: calc(100vh - #{$offset});
+  @media (min-width: 768px) {
+    height: -moz-calc(100vh - #{$offset + 20});
+    height: -webkit-calc(100vh - #{$offset + 20});
+    height: calc(100vh - #{$offset + 20});
+  }
+}
+
 @import "header", "footer";
 @import "lobby";
 @import "login";
+@import "game";

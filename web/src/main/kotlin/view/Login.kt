@@ -91,6 +91,7 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
                         onChangeFunction = {
                             setState {
                                 email = (it.target as HTMLInputElement).value
+                                error = null
                             }
                         }
                     }
@@ -111,6 +112,7 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
                         onChangeFunction = {
                             setState {
                                 password = (it.target as HTMLInputElement).value
+                                error = null
                             }
                         }
                     }

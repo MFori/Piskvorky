@@ -4,6 +4,7 @@
   height: $header_height;
   position: relative;
   margin-bottom: 10px;
+  z-index: 10;
 
   img {
     width: 50px;
@@ -18,5 +19,70 @@
     bottom: 0;
     right: 15px;
     margin: auto;
+  }
+
+  #game-title {
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    text-align: center;
+
+    .player-box {
+      display: inline-block;
+      width: 50%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      height: 100%;
+      color: #acacac;
+      background: #ededed;
+
+      img {
+        color: #838383;
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        top: 13px;
+        left: 0;
+        right: 0;
+        margin: auto;
+      }
+
+      span {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 12px;
+        margin: auto;
+      }
+    }
+
+    .player-right {
+      left: auto;
+      right: 0;
+    }
+
+    .player-left {
+      img {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .player-active {
+      color: black;
+      background: white;
+
+      img {
+        color: black;
+      }
+    }
   }
 }

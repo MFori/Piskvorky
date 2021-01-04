@@ -4,4 +4,29 @@
   height: $footer_height;
   margin-top: 10px;
   text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+.game-footer {
+  padding: 10px;
+
+  .chat {
+    position: absolute;
+    left: 15px;
+  }
+
+  .giveup {
+    position: absolute;
+    right: 10px;
+  }
+
+  .copy {
+    display: inline-block;
+    margin: 3px;
+
+    @media (min-width: 450px) {
+      display: none;
+    }
+  }
 }
