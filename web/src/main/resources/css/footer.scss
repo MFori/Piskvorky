@@ -22,11 +22,11 @@
   }
 
   .copy {
-    display: inline-block;
+    display: none;
     margin: 3px;
 
     @media (min-width: 450px) {
-      display: none;
+      display: inline-block;
     }
   }
 }
