@@ -1,10 +1,13 @@
-package cz.martinforejt.piskvorky.server.features.lobby
+package cz.martinforejt.piskvorky.server.features.socket
 
 import cz.martinforejt.piskvorky.api.model.*
+import cz.martinforejt.piskvorky.domain.model.toSnap
 import cz.martinforejt.piskvorky.domain.repository.FriendsRepository
+import cz.martinforejt.piskvorky.domain.repository.GameRepository
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
 import cz.martinforejt.piskvorky.server.core.service.SocketBroadcaster
-import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
+import cz.martinforejt.piskvorky.server.core.service.SocketService
+import cz.martinforejt.piskvorky.server.core.service.SocketServiceSession
 import cz.martinforejt.piskvorky.server.security.JwtManager
 import io.ktor.http.cio.websocket.*
 import org.koin.core.inject
@@ -15,17 +18,17 @@ import org.koin.core.inject
  *
  * @author Martin Forejt
  */
-class LobbySessionImpl(
+class SocketServiceSessionImpl(
     sessionId: String,
-    channel: String,
     broadcaster: SocketBroadcaster,
     private val connection: WebSocketSession
-) : LobbySession(sessionId, channel, broadcaster) {
+) : SocketServiceSession(sessionId, broadcaster) {
 
     private val usersRepository by inject<UsersRepository>()
     private val friendsRepository by inject<FriendsRepository>()
+    private val gameRepository by inject<GameRepository>()
     private val jwtManager by inject<JwtManager>()
-    private val socketServicesManager by inject<SocketServicesManager>()
+    private val socketService by inject<SocketService>()
 
     @Throws(SocketApiException::class)
     override suspend fun receivedMessage(data: String) {
@@ -53,7 +56,7 @@ class LobbySessionImpl(
     private suspend fun authorize(message: AuthorizeSocketApiMessage) {
         val principal = jwtManager.validateToken(message.token)
         if (principal != null) {
-            if (socketServicesManager.isOnline(principal.id, sessionId)) {
+            if (socketService.isOnline(principal.id, sessionId)) {
                 // already connected in other device
                 send(
                     SocketApi.encode(
@@ -67,6 +70,10 @@ class LobbySessionImpl(
             user = principal
             send(SocketApi.encode(SocketApiAction.AUTHORIZE, Error(SocketApiCode.OK.value, "Successfully authorized.")))
             setUserOnline(true)
+
+            gameRepository.getGame(principal.id)?.let {
+                socketService.sendMessageTo(principal.id, GameUpdateSocketApiMessage(it.toSnap()))
+            }
         } else {
             user = null
             send(SocketApi.encode(SocketApiAction.AUTHORIZE, Error(SocketApiCode.UNAUTHORIZED.value, "Invalid token.")))

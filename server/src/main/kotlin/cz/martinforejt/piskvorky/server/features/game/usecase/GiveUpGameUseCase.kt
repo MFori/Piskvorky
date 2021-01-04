@@ -3,7 +3,7 @@ package cz.martinforejt.piskvorky.server.features.game.usecase
 import cz.martinforejt.piskvorky.domain.repository.GameRepository
 import cz.martinforejt.piskvorky.domain.usecase.Result
 import cz.martinforejt.piskvorky.domain.usecase.UseCaseResult
-import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
+import cz.martinforejt.piskvorky.server.core.service.SocketService
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 
 /**
@@ -14,7 +14,7 @@ import cz.martinforejt.piskvorky.server.security.UserPrincipal
  */
 class GiveUpGameUseCase(
     private val gameRepository: GameRepository,
-    private val socketServicesManager: SocketServicesManager
+    private val socketService: SocketService
 ) : UseCaseResult<Unit, GiveUpGameUseCase.Params> {
 
     override fun execute(params: Params): Result<Unit> {

@@ -8,9 +8,9 @@ import cz.martinforejt.piskvorky.domain.core.di.initKoin
 import kotlinx.browser.document
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import react.child
 import react.dom.render
-import react.useContext
+import service.WebSocketService
+import service.WebSocketServiceImpl
 import view.AppComponent
 
 /**
@@ -22,6 +22,7 @@ import view.AppComponent
 
 object Dependencies : AppDependencies {
     override val logger: Kermit = Kermit(CommonLogger())
+    override val socketService: WebSocketService = WebSocketServiceImpl()
 }
 
 lateinit var appContext: AppContext

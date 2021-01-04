@@ -7,9 +7,7 @@ import cz.martinforejt.piskvorky.domain.service.FriendsService
 import cz.martinforejt.piskvorky.domain.service.GameService
 import org.koin.dsl.module
 import react.createContext
-import service.AuthenticationServiceImpl
-import service.FriendsServiceImpl
-import service.GameServiceImpl
+import service.*
 
 /**
  * Created by Martin Forejt on 27.12.2020.

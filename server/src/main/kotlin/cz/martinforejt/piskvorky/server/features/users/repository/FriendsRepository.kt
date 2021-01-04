@@ -4,6 +4,7 @@ import cz.martinforejt.piskvorky.api.model.FriendRequest
 import cz.martinforejt.piskvorky.domain.model.Friendship
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.domain.repository.FriendsRepository
+import cz.martinforejt.piskvorky.domain.repository.GameRepository
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
 import cz.martinforejt.piskvorky.server.core.database.schema.FriendshipEntity
 import cz.martinforejt.piskvorky.server.core.database.schema.FriendshipId
@@ -23,7 +24,8 @@ import java.time.LocalDateTime
  * @author Martin Forejt
  */
 class FriendsRepositoryImpl(
-    private val usersRepository: UsersRepository
+    private val usersRepository: UsersRepository,
+    private val gameRepository: GameRepository
 ) : FriendsRepository {
 
     override suspend fun deleteFriendship(userId1: Int, userId2: Int): Unit = newSuspendedTransaction {
@@ -63,7 +65,14 @@ class FriendsRepositoryImpl(
     override suspend fun getFriends(userId: Int): List<PublicUser> = newSuspendedTransaction {
         val friends = UserEntity.findById(userId)
             ?.friends ?: emptyList()
-        friends.map { entity -> entity.asPublicUser().let { it.copy(online = usersRepository.isOnline(it.id)) } }
+        friends.map { entity ->
+            entity.asPublicUser().let {
+                it.copy(
+                    online = usersRepository.isOnline(it.id),
+                    inGame = gameRepository.getGame(it.id) != null
+                )
+            }
+        }
     }
 
     override suspend fun getRequests(userId: Int): List<FriendRequest> = newSuspendedTransaction {

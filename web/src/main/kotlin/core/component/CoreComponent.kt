@@ -14,6 +14,7 @@ import react.*
 import react.dom.div
 import react.dom.span
 import react.router.dom.redirect
+import service.WebSocketService
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
@@ -26,6 +27,7 @@ import kotlin.reflect.KClass
 
 interface AppDependencies {
     val logger: Kermit
+    val socketService: WebSocketService
 }
 
 typealias AppContext = RContext<AppDependencies>

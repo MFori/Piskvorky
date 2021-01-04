@@ -1,8 +1,7 @@
 package cz.martinforejt.piskvorky.server.routing
 
 import cz.martinforejt.piskvorky.api.model.SocketApiException
-import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
-import cz.martinforejt.piskvorky.server.features.lobby.LobbyService
+import cz.martinforejt.piskvorky.server.core.service.SocketService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.cio.websocket.*
@@ -24,9 +23,9 @@ import java.time.Duration
  */
 
 @KtorExperimentalAPI
-fun Route.lobbyRoutes() {
+fun Route.socketRoute() {
 
-    val socketServicesManager by inject<SocketServicesManager>()
+    val socketService by inject<SocketService>()
 
     install(Sessions) {
         cookie<LobbyCookieSession>("LOBBY_SESSION")
@@ -47,8 +46,7 @@ fun Route.lobbyRoutes() {
         }
         println("onOpen ${cookieSession.id}")
 
-        val lobbyService = socketServicesManager.getService("lobby")
-        val session = lobbyService.newConnection(cookieSession.id, this)
+        val session = socketService.newConnection(cookieSession.id, this)
 
         try {
             incoming.consumeEach { frame ->
@@ -66,7 +64,7 @@ fun Route.lobbyRoutes() {
             println("onError ${closeReason.await()}")
         } finally {
             println("lobby end")
-            lobbyService.disconnect(session)
+            socketService.disconnect(session)
         }
     }
 

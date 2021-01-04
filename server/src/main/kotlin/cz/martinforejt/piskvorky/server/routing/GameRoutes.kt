@@ -6,6 +6,7 @@ import cz.martinforejt.piskvorky.domain.repository.GameRepository
 import cz.martinforejt.piskvorky.server.features.game.usecase.GiveUpGameUseCase
 import cz.martinforejt.piskvorky.server.features.game.usecase.PlayMoveUseCase
 import cz.martinforejt.piskvorky.server.routing.exception.ConflictApiException
+import cz.martinforejt.piskvorky.server.routing.exception.NotFoundApiException
 import cz.martinforejt.piskvorky.server.routing.utils.currentUser
 import cz.martinforejt.piskvorky.server.routing.utils.emptyResponse
 import io.ktor.application.*
@@ -33,7 +34,7 @@ fun Route.gameRoutes() {
             if(game != null) {
                 call.respond(game.toSnap())
             } else {
-                throw ConflictApiException("Not in game.")
+                throw NotFoundApiException("Not in game.")
             }
         }
 

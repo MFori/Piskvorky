@@ -42,8 +42,7 @@ fun Application.registerRoutes() {
         }
 
         route(API_VERSION) {
-            lobbyRoutes()
-            gamePublicRoutes()
+            socketRoute()
         }
     }
 

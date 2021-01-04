@@ -6,7 +6,7 @@ import cz.martinforejt.piskvorky.domain.repository.FriendsRepository
 import cz.martinforejt.piskvorky.domain.usecase.Error
 import cz.martinforejt.piskvorky.domain.usecase.Result
 import cz.martinforejt.piskvorky.domain.usecase.UseCaseResult
-import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
+import cz.martinforejt.piskvorky.server.core.service.SocketService
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import kotlinx.coroutines.runBlocking
 
@@ -18,7 +18,7 @@ import kotlinx.coroutines.runBlocking
  */
 class CancelFriendUseCase(
     private val friendsRepository: FriendsRepository,
-    private val socketServicesManager: SocketServicesManager
+    private val socketService: SocketService
 ) : UseCaseResult<Unit, CancelFriendUseCase.Params> {
 
     override fun execute(params: Params): Result<Unit> {
@@ -30,7 +30,7 @@ class CancelFriendUseCase(
         runBlocking {
             friendsRepository.deleteFriendship(params.currentUser.id, params.request.userId)
 
-            socketServicesManager.sendMessageTo(
+            socketService.sendMessageTo(
                 params.request.userId,
                 FriendshipCancelledSocketApiMessage(params.currentUser.id, params.currentUser.email)
             )

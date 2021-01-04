@@ -20,3 +20,5 @@ class ForbiddenApiException(message: String? = null) : ApiException(HttpStatusCo
 class AuthenticationApiException : ApiException(HttpStatusCode.Unauthorized, "Invalid login credentials")
 
 class ConflictApiException(message: String) : ApiException(HttpStatusCode.Conflict, message)
+
+class NotFoundApiException(message: String) : ApiException(HttpStatusCode.NotFound, message)

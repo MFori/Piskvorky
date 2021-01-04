@@ -5,7 +5,7 @@ import cz.martinforejt.piskvorky.api.model.FriendShipRequestSocketApiMessage
 import cz.martinforejt.piskvorky.domain.repository.FriendsRepository
 import cz.martinforejt.piskvorky.domain.usecase.Result
 import cz.martinforejt.piskvorky.domain.usecase.UseCaseResult
-import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
+import cz.martinforejt.piskvorky.server.core.service.SocketService
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import kotlinx.coroutines.runBlocking
 
@@ -17,7 +17,7 @@ import kotlinx.coroutines.runBlocking
  */
 class AddFriendUseCase(
     private val friendsRepository: FriendsRepository,
-    private val socketServicesManager: SocketServicesManager
+    private val socketService: SocketService
 ) : UseCaseResult<Unit, AddFriendUseCase.Params> {
 
     override fun execute(params: Params): Result<Unit> {
@@ -26,7 +26,7 @@ class AddFriendUseCase(
         if (friendship == null) {
             runBlocking {
                 friendsRepository.createFriendship(params.currentUser.id, params.request.userId)
-                socketServicesManager.sendMessageTo(
+                socketService.sendMessageTo(
                     params.request.userId,
                     FriendShipRequestSocketApiMessage(params.currentUser.id, params.currentUser.email, true, false)
                 )
@@ -35,11 +35,11 @@ class AddFriendUseCase(
             runBlocking {
                 friendsRepository.confirmFriendship(params.currentUser.id, params.request.userId)
 
-                socketServicesManager.sendMessageTo(
+                socketService.sendMessageTo(
                     params.request.userId,
                     FriendShipRequestSocketApiMessage(params.currentUser.id, params.currentUser.email, false, true)
                 )
-                socketServicesManager.sendMessageTo(
+                socketService.sendMessageTo(
                     params.currentUser.id,
                     FriendShipRequestSocketApiMessage(params.request.userId, "", false, true)
                 )

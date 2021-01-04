@@ -6,11 +6,11 @@ import cz.martinforejt.piskvorky.domain.repository.LostPasswordRepository
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
 import cz.martinforejt.piskvorky.domain.service.EmailService
 import cz.martinforejt.piskvorky.server.core.service.EmailServiceImpl
-import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
-import cz.martinforejt.piskvorky.server.core.service.SocketServicesManagerImpl
+import cz.martinforejt.piskvorky.server.core.service.SocketService
 import cz.martinforejt.piskvorky.server.features.game.repository.GameRepositoryImpl
 import cz.martinforejt.piskvorky.server.features.game.usecase.CancelGameInvitationUseCase
 import cz.martinforejt.piskvorky.server.features.game.usecase.JoinGameUseCase
+import cz.martinforejt.piskvorky.server.features.socket.SocketServiceImpl
 import cz.martinforejt.piskvorky.server.features.users.manager.HashService
 import cz.martinforejt.piskvorky.server.features.users.manager.Sha256HashService
 import cz.martinforejt.piskvorky.server.features.users.repository.FriendsRepositoryImpl
@@ -53,13 +53,14 @@ fun serverModule(app: Application) = module {
 
     single<UsersRepository> {
         UsersRepositoryImpl(
-            socketServicesManager = get()
+            socketService = get()
         )
     }
 
     single<FriendsRepository> {
         FriendsRepositoryImpl(
-            usersRepository = get()
+            usersRepository = get(),
+            gameRepository = get()
         )
     }
 
@@ -71,8 +72,10 @@ fun serverModule(app: Application) = module {
         GameRepositoryImpl()
     }
 
-    single<SocketServicesManager> {
-        SocketServicesManagerImpl()
+    single<SocketService> {
+        SocketServiceImpl(
+            gameRepository = get()
+        )
     }
 
     single<HashService> {
@@ -123,21 +126,22 @@ fun serverModule(app: Application) = module {
     factory {
         AddFriendUseCase(
             friendsRepository = get(),
-            socketServicesManager = get()
+            socketService = get()
         )
     }
 
     factory {
         CancelFriendUseCase(
             friendsRepository = get(),
-            socketServicesManager = get()
+            socketService = get()
         )
     }
 
     factory {
         JoinGameUseCase(
+            usersRepository = get(),
             gameRepository = get(),
-            socketServicesManager = get()
+            socketService = get()
         )
     }
 

@@ -4,7 +4,7 @@ import cz.martinforejt.piskvorky.api.model.Move
 import cz.martinforejt.piskvorky.domain.repository.GameRepository
 import cz.martinforejt.piskvorky.domain.usecase.Result
 import cz.martinforejt.piskvorky.domain.usecase.UseCaseResult
-import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
+import cz.martinforejt.piskvorky.server.core.service.SocketService
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 
 /**
@@ -15,7 +15,7 @@ import cz.martinforejt.piskvorky.server.security.UserPrincipal
  */
 class PlayMoveUseCase(
     private val gameRepository: GameRepository,
-    private val socketServicesManager: SocketServicesManager
+    private val socketService: SocketService
 ) : UseCaseResult<Unit, PlayMoveUseCase.Params> {
 
     override fun execute(params: Params): Result<Unit> {

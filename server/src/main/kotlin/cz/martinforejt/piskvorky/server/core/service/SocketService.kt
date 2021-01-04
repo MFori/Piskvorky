@@ -2,7 +2,6 @@ package cz.martinforejt.piskvorky.server.core.service
 
 import cz.martinforejt.piskvorky.api.model.SocketApiMessage
 import cz.martinforejt.piskvorky.api.model.SocketApiMessageData
-import cz.martinforejt.piskvorky.domain.model.Game
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import io.ktor.http.cio.websocket.*
@@ -28,38 +27,16 @@ interface ISocketService : SocketBroadcaster {
 
     suspend fun send(message: String, vararg sessionIds: String)
 
+    suspend fun getOnlineUsers(): List<PublicUser>
+
+    fun isOnline(userId: Int, sessionId: String? = null): Boolean
 }
 
 interface SocketBroadcaster {
 
     suspend fun sendBroadcast(message: String)
 
-    suspend fun sendBroadcast(message: String, channel: String)
-
-    suspend fun sendBroadcastAllChannels(message: String)
-
     suspend fun sendOthers(message: String, exceptSessionId: String)
-
-    suspend fun sendOthers(message: String, channel: String, exceptSessionId: String)
-
-    suspend fun sendOthersAllChannels(message: String, exceptSessionId: String)
-}
-
-interface SocketServicesManager {
-
-    fun getService(channel: String): ISocketService
-
-    fun channels(): List<String>
-
-    fun getOnlineUsers(): List<PublicUser>
-
-    fun isOnline(userId: Int, sessionId: String? = null): Boolean
-
-    fun isInGame(userId: Int): Boolean
-
-    fun getGame(userId: Int): Game
-
-    fun getGames(): List<Game>
 
     suspend fun sendMessageTo(userId: Int, message: String)
 
@@ -67,10 +44,7 @@ interface SocketServicesManager {
 
 }
 
-abstract class SocketService(
-    val channel: String,
-    private val socketServicesManager: SocketServicesManager
-) : ISocketService {
+abstract class SocketService : ISocketService {
 
     abstract val sessions: MutableMap<String, MutableList<SocketServiceSession>>
 
@@ -95,36 +69,16 @@ abstract class SocketService(
     }
 
     override suspend fun sendBroadcast(message: String) {
-        sendBroadcast(message, channel)
-    }
-
-    override suspend fun sendBroadcast(message: String, channel: String) {
         sessions.keys.forEach { sessionId ->
             send(message, sessionId)
         }
     }
 
-    override suspend fun sendBroadcastAllChannels(message: String) {
-        socketServicesManager.channels().forEach { channel ->
-            sendBroadcast(message, channel)
-        }
-    }
-
     override suspend fun sendOthers(message: String, exceptSessionId: String) {
-        sendOthers(message, channel, exceptSessionId)
-    }
-
-    override suspend fun sendOthers(message: String, channel: String, exceptSessionId: String) {
         sessions.keys.forEach { sessionId ->
             if (sessionId != exceptSessionId) {
                 send(message, sessionId)
             }
-        }
-    }
-
-    override suspend fun sendOthersAllChannels(message: String, exceptSessionId: String) {
-        socketServicesManager.channels().forEach { channel ->
-            sendOthers(message, channel, exceptSessionId)
         }
     }
 
@@ -141,7 +95,6 @@ abstract class SocketService(
 
 abstract class SocketServiceSession(
     val sessionId: String,
-    val channel: String,
     val broadcaster: SocketBroadcaster
 ) : KoinComponent {
 

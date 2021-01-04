@@ -3,6 +3,7 @@ package cz.martinforejt.piskvorky.domain.repository
 import cz.martinforejt.piskvorky.api.model.GameInvitation
 import cz.martinforejt.piskvorky.domain.model.Game
 import cz.martinforejt.piskvorky.domain.model.Invitation
+import cz.martinforejt.piskvorky.domain.model.User
 
 /**
  * Created by Martin Forejt on 26.12.2020.
@@ -24,5 +25,5 @@ interface GameRepository {
 
     suspend fun getGame(userId: Int) : Game?
 
-    suspend fun newGame(userId1: Int, userId2: Int) : Game?
+    suspend fun newGame(user1: User, user2: User) : Game?
 }

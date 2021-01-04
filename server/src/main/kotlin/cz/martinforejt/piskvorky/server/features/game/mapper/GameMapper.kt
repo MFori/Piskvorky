@@ -1,8 +1,10 @@
 package cz.martinforejt.piskvorky.server.features.game.mapper
 
 import cz.martinforejt.piskvorky.api.model.GameInvitation
+import cz.martinforejt.piskvorky.api.model.Player
 import cz.martinforejt.piskvorky.api.utils.ApiUtils.formatApi
 import cz.martinforejt.piskvorky.domain.model.Invitation
+import cz.martinforejt.piskvorky.domain.model.User
 import cz.martinforejt.piskvorky.server.core.database.schema.GameInvitationEntity
 import cz.martinforejt.piskvorky.server.core.database.schema.GameInvitations
 import org.jetbrains.exposed.sql.ResultRow
@@ -29,3 +31,9 @@ fun GameInvitationEntity.toGameInvitation(userId: Int): GameInvitation {
         created = created.formatApi()
     )
 }
+
+fun User.toPlayer(cross: Boolean) = Player(
+    id = this.id,
+    email = this.email,
+    cross = cross
+)

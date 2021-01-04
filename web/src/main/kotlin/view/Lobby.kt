@@ -1,22 +1,16 @@
 package view
 
-import core.ApiClient
-import core.component.CoreComponent
+import core.component.ConnectionAwareCoreComponent
 import core.component.CoreRProps
 import core.utils.clearAndFill
 import core.utils.connectionErrorDialog
-import cz.martinforejt.piskvorky.api.Api
 import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.domain.service.FriendsService
 import cz.martinforejt.piskvorky.domain.service.GameService
-import io.ktor.client.features.websocket.*
-import io.ktor.http.cio.websocket.*
 import io.ktor.util.*
 import kotlinx.browser.document
 import kotlinx.browser.window
-import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import kotlinx.html.id
 import org.koin.core.inject
@@ -43,9 +37,8 @@ class LobbyState : RState {
     var inGame = false
 }
 
-class Lobby : CoreComponent<LobbyProps, LobbyState>() {
+class Lobby : ConnectionAwareCoreComponent<LobbyProps, LobbyState>() {
 
-    private var connection: WebSocketSession? = null
     private val friendsService by inject<FriendsService>()
     private val gameService by inject<GameService>()
 
@@ -59,20 +52,15 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
 
     @KtorExperimentalAPI
     override fun componentDidMount() {
+        super.componentDidMount()
         document.title = "Piskvorky | Lobby"
-        reconnect()
-    }
-
-    override fun componentWillUnmount() {
-        componentScope.launch {
-            connection?.close(CloseReason(CloseReason.Codes.NORMAL, ""))
-        }
     }
 
     @KtorExperimentalAPI
     override fun RBuilder.render() {
-        if(state.inGame) {
+        if (state.inGame) {
             redirect("/lobby", "/game")
+            return
         }
         div("container-md") {
             attrs.id = "lobby_root"
@@ -107,63 +95,12 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
         }
     }
 
-    @KtorExperimentalAPI
-    suspend fun initWebSocket() {
-        try {
-            ApiClient.webSocket(Api.EP.LOBBY) {
-                connection = this
-                println("onOpen")
-                try {
-                    send(SocketApi.encode(AuthorizeSocketApiMessage(user!!.token)))
-                    incoming.consumeEach { frame ->
-                        if (frame is Frame.Text) {
-                            try {
-                                receivedMessage(frame.readText())
-                            } catch (socketException: SocketApiException) {
-                                disconnectOnError()
-                            }
-                        }
-                    }
-                } catch (e: ClosedReceiveChannelException) {
-                    connectionClosed(closeReason.await())
-                    println("onClose ${closeReason.await()}")
-                } catch (e: Throwable) {
-                    connectionClosed(closeReason.await())
-                    println("onError ${closeReason.await()}")
-                } finally {
-                    connection = null
-                }
-            }
-        } catch (e: WebSocketException) {
-            showConnectionErrorDialog()
-        }
-    }
-
-    @KtorExperimentalAPI
-    private fun reconnect() {
-        componentScope.launch {
-            initWebSocket()
-        }
-    }
-
-    private fun connectionClosed(closeReason: CloseReason?) {
-        if (closeReason?.code != CloseReason.Codes.NORMAL.code) {
-            showConnectionErrorDialog()
-        }
-    }
-
-    private fun showConnectionErrorDialog() {
+    override fun showConnectionErrorDialog() {
         setState {
             loading = false
             showErrorDialog = true
             if (onlineUsers == null) onlineUsers = mutableListOf()
             if (friends == null) friends = mutableListOf()
-        }
-    }
-
-    private fun disconnectOnError() {
-        componentScope.launch {
-            connection?.close(CloseReason(CloseReason.Codes.INTERNAL_ERROR, ""))
         }
     }
 
@@ -175,7 +112,8 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
         }
     }
 
-    private fun refresh() {
+    override fun refresh() {
+        super.refresh()
         state.onlineUsers = mutableListOf()
         state.friends = mutableListOf()
         refreshOnline()
@@ -183,95 +121,13 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
 
     private fun refreshFriends() {
         componentScope.launch {
-            connection?.send(SocketApi.encode(SocketApiAction.FRIENDS))
+            props.context?.socketService?.send(SocketApi.encode(SocketApiAction.FRIENDS))
         }
     }
 
     private fun refreshOnline() {
         componentScope.launch {
-            connection?.send(SocketApi.encode(SocketApiAction.ONLINE_USERS))
-        }
-    }
-
-    private fun receivedMessage(data: String) {
-        println("message $data")
-        val message = SocketApi.decode(data)
-        when (message.action) {
-            SocketApiAction.AUTHORIZE -> authorize(message)
-            SocketApiAction.ONLINE_USERS -> onlineUsers(message.data as OnlineUsersSocketApiMessage)
-            SocketApiAction.FRIENDS -> friends(message.data as FriendsSocketApiMessage)
-            SocketApiAction.FRIENDSHIP_REQUEST -> friendRequest(message.data as FriendShipRequestSocketApiMessage)
-            SocketApiAction.FRIENDSHIP_CANCELLED -> refresh()
-            SocketApiAction.GAME_UPDATE -> gameUpdate(message.data as GameUpdateSocketApiMessage)
-            SocketApiAction.GAME_REQUEST -> receivedGameRequest(message.data as GameRequestSocketApiMessage)
-            else -> {
-                if(message.error?.code == SocketApiCode.ALREADY_CONNECTED.value) {
-                    window.alert("Already connected on other device.")
-                    logout()
-                }
-                disconnectOnError()
-            }
-        }
-    }
-
-    private fun onSockedAuthorized() {
-        refresh()
-    }
-
-    private fun authorize(message: SocketApiMessage<*>) {
-        if (message.error?.code == SocketApiCode.OK.value) {
-            onSockedAuthorized()
-        } else {
-            logout()
-        }
-    }
-
-    private fun onlineUsers(message: OnlineUsersSocketApiMessage) {
-        refreshFriends()
-        setState {
-            loading = false
-            onlineUsers?.clearAndFill(message.users.filter { it.email != user!!.email })
-            friends?.let { onlineUsers?.removeAll(it) }
-        }
-    }
-
-    private fun friends(message: FriendsSocketApiMessage) {
-        setState {
-            loading = false
-            friends?.clearAndFill(message.users)
-            friends?.let { onlineUsers?.removeAll(it) }
-        }
-    }
-
-    private fun friendRequest(message: FriendShipRequestSocketApiMessage) {
-        if (message.request) {
-            if (window.confirm("Friendship request from ${message.email}. Add friend?")) {
-                componentScope.launch {
-                    friendsService.addFriend(CreateFriendshipRequest(message.userId), user!!.token)
-                }
-            } else {
-                componentScope.launch {
-                    friendsService.removeFriend(CancelFriendshipRequest(message.userId), user!!.token)
-                }
-            }
-        } else if (message.confirm) {
-            refresh()
-        }
-    }
-
-    private fun receivedGameRequest(message: GameRequestSocketApiMessage) {
-        if(window.confirm("Game request from ${message.email}. Are you ready to play?")) {
-            componentScope.launch {
-                gameService.createInvitation(CreateGameRequest(message.userId), user!!.token)
-            }
-        }
-    }
-
-    private fun gameUpdate(message: GameUpdateSocketApiMessage) {
-        if(message.game.status == GameSnap.Status.running) {
-            setState {
-                inGame = true
-            }
+            props.context?.socketService?.send(SocketApi.encode(SocketApiAction.ONLINE_USERS))
         }
     }
 
@@ -307,6 +163,51 @@ class Lobby : CoreComponent<LobbyProps, LobbyState>() {
                 refresh()
             } else {
                 window.alert("Game invitation request failed. Try it later.")
+            }
+        }
+    }
+
+    override fun onReceiveOnlineUsers(message: SocketApiMessage<OnlineUsersSocketApiMessage>) {
+        refreshFriends()
+        setState {
+            loading = false
+            onlineUsers?.clearAndFill(message.data?.users?.filter { it.email != user!!.email } ?: emptyList())
+            friends?.let { onlineUsers?.removeAll(it) }
+        }
+    }
+
+    override fun onReceiveFriends(message: SocketApiMessage<FriendsSocketApiMessage>) {
+        setState {
+            loading = false
+            friends?.clearAndFill(message.data?.users ?: emptyList())
+            friends?.let { onlineUsers?.removeAll(it) }
+        }
+    }
+
+    override fun onReceiveFriendRequest(message: SocketApiMessage<FriendShipRequestSocketApiMessage>) {
+        if (message.data?.request == true) {
+            if (window.confirm("Friendship request from ${message.data!!.email}. Add friend?")) {
+                componentScope.launch {
+                    friendsService.addFriend(CreateFriendshipRequest(message.data!!.userId), user!!.token)
+                }
+            } else {
+                componentScope.launch {
+                    friendsService.removeFriend(CancelFriendshipRequest(message.data!!.userId), user!!.token)
+                }
+            }
+        } else if (message.data?.confirm == true) {
+            refresh()
+        }
+    }
+
+    override fun onReceiveFriendCancel(message: SocketApiMessage<FriendshipCancelledSocketApiMessage>) {
+        refresh()
+    }
+
+    override fun onReceiveGameUpdate(message: SocketApiMessage<GameUpdateSocketApiMessage>) {
+        if (message.data?.game?.status == GameSnap.Status.running) {
+            setState {
+                inGame = true
             }
         }
     }

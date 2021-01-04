@@ -3,10 +3,11 @@ package cz.martinforejt.piskvorky.server.features.game.usecase
 import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.model.toSnap
 import cz.martinforejt.piskvorky.domain.repository.GameRepository
+import cz.martinforejt.piskvorky.domain.repository.UsersRepository
 import cz.martinforejt.piskvorky.domain.usecase.Error
 import cz.martinforejt.piskvorky.domain.usecase.Result
 import cz.martinforejt.piskvorky.domain.usecase.UseCaseResult
-import cz.martinforejt.piskvorky.server.core.service.SocketServicesManager
+import cz.martinforejt.piskvorky.server.core.service.SocketService
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
@@ -18,20 +19,23 @@ import java.time.LocalDateTime
  * @author Martin Forejt
  */
 class JoinGameUseCase(
+    private val usersRepository: UsersRepository,
     private val gameRepository: GameRepository,
-    private val socketServicesManager: SocketServicesManager
+    private val socketService: SocketService
 ) : UseCaseResult<Unit, JoinGameUseCase.Params> {
 
     override fun execute(params: Params): Result<Unit> {
-        runBlocking { gameRepository.getGame(params.currentUser.id) }
-            ?: return Result(error = Error(0, "Already in game"))
+        val currentGame = runBlocking { gameRepository.getGame(params.currentUser.id) }
+        if (currentGame != null) {
+            return Result(error = Error(0, "Already in game"))
+        }
 
         val invitation = runBlocking { gameRepository.getInvitation(params.currentUser.id, params.request.userId) }
         if (invitation == null) {
             runBlocking {
                 gameRepository.createInvitation(params.currentUser.id, params.request.userId)
 
-                socketServicesManager.sendMessageTo(
+                socketService.sendMessageTo(
                     params.request.userId,
                     GameRequestSocketApiMessage(params.currentUser.id, params.currentUser.email)
                 )
@@ -41,7 +45,7 @@ class JoinGameUseCase(
             runBlocking {
                 gameRepository.updateInvitation(invitation.copy(author = params.currentUser.id))
 
-                socketServicesManager.sendMessageTo(
+                socketService.sendMessageTo(
                     params.request.userId,
                     GameRequestSocketApiMessage(params.currentUser.id, params.currentUser.email)
                 )
@@ -50,12 +54,17 @@ class JoinGameUseCase(
             return runBlocking {
                 gameRepository.deleteInvitation(params.currentUser.id, params.request.userId)
 
-                val game = gameRepository.newGame(params.currentUser.id, params.request.userId)
+                val user1 = usersRepository.getUserById(params.currentUser.id)
+                    ?: return@runBlocking Result(error = Error(0, "Cant create game"))
+                val user2 = usersRepository.getUserById(params.request.userId)
+                    ?: return@runBlocking Result(error = Error(0, "Cant create game"))
+
+                val game = gameRepository.newGame(user1, user2)
                     ?: return@runBlocking Result(error = Error(0, "Cant create game"))
 
                 val message = GameUpdateSocketApiMessage(game.toSnap())
-                socketServicesManager.sendMessageTo(params.request.userId, message)
-                socketServicesManager.sendMessageTo(params.currentUser.id, message)
+                socketService.sendMessageTo(params.request.userId, message)
+                socketService.sendMessageTo(params.currentUser.id, message)
                 Result(Unit)
             }
         }
