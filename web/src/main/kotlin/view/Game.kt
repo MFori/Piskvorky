@@ -131,6 +131,11 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
                 inGame = true
                 game = message.data!!.game.asGameVO()
             }
+        } else if(message.data?.game?.status == GameSnap.Status.end) {
+            setState {
+                game = message.data!!.game.asGameVO()
+                // TODO show finish dialog
+            }
         } else {
             setState {
                 inGame = false

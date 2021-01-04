@@ -4,6 +4,7 @@ import core.component.CoreComponent
 import core.component.CoreRProps
 import core.component.coreChild
 import cz.martinforejt.piskvorky.api.model.BoardValue
+import cz.martinforejt.piskvorky.api.model.GameSnap
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.html.id
@@ -66,6 +67,7 @@ class GameBoard : CoreComponent<GameBoardProps, RState>() {
         ctx = c.getContext("2d") as CanvasRenderingContext2D
         width = ctx!!.canvas.width.toDouble()
         height = ctx!!.canvas.height.toDouble()
+        moved = false
 
         c.onmousedown = onMouseDown
         c.onmouseup = onMouseUp
@@ -100,7 +102,7 @@ class GameBoard : CoreComponent<GameBoardProps, RState>() {
     }
 
     private val onMouseUp: (MouseEvent) -> Unit = {
-        if(!moved && me() == props.game?.current) {
+        if(!moved && me() == props.game?.current && props.game?.status == GameSnap.Status.running) {
             if (isDragging && abs(clickX - it.clientX) < 20 && abs(clickY - it.clientY) < 20) {
                 getMouse(it.clientX, it.clientY)
                 if (props.game?.isEmpty(mouseX!!, mouseY!!) == true) {

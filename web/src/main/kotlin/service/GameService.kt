@@ -65,7 +65,7 @@ class GameServiceImpl : GameService {
 
     @ExperimentalSerializationApi
     override suspend fun giveUp(token: String): Result<Unit> {
-        val res = ApiClient.post<Unit>(Api.EP.GIVE_UP, null, token)
+        val res = ApiClient.post<Unit>(Api.EP.GIVE_UP, "", token)
         return if (res.isSuccess) {
             Result(Unit)
         } else {

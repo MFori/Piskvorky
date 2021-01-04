@@ -72,6 +72,15 @@ class GameRepositoryImpl : GameRepository {
         return games[userId]
     }
 
+    override suspend fun removeGame(userId1: Int, userId2: Int) {
+        games.remove(userId1)
+        games.remove(userId2)
+    }
+
+    override suspend fun removeGame(userId1: Int) {
+        games.remove(userId1)
+    }
+
     override suspend fun newGame(user1: User, user2: User): Game? {
         val r = Random.nextBoolean()
         val cross = if (r) user1.toPlayer(true) else user2.toPlayer(false)

@@ -9,7 +9,9 @@ import cz.martinforejt.piskvorky.server.core.service.EmailServiceImpl
 import cz.martinforejt.piskvorky.server.core.service.SocketService
 import cz.martinforejt.piskvorky.server.features.game.repository.GameRepositoryImpl
 import cz.martinforejt.piskvorky.server.features.game.usecase.CancelGameInvitationUseCase
+import cz.martinforejt.piskvorky.server.features.game.usecase.GiveUpGameUseCase
 import cz.martinforejt.piskvorky.server.features.game.usecase.JoinGameUseCase
+import cz.martinforejt.piskvorky.server.features.game.usecase.PlayMoveUseCase
 import cz.martinforejt.piskvorky.server.features.socket.SocketServiceImpl
 import cz.martinforejt.piskvorky.server.features.users.manager.HashService
 import cz.martinforejt.piskvorky.server.features.users.manager.Sha256HashService
@@ -148,6 +150,21 @@ fun serverModule(app: Application) = module {
     factory {
         CancelGameInvitationUseCase(
             gameRepository = get()
+        )
+    }
+
+    factory {
+        PlayMoveUseCase(
+            gameRepository = get(),
+            socketService = get()
+        )
+    }
+
+    factory {
+        GiveUpGameUseCase(
+            gameRepository = get(),
+            socketService = get(),
+            usersRepository = get()
         )
     }
 }

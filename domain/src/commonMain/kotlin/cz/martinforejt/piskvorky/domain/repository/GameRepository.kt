@@ -26,4 +26,9 @@ interface GameRepository {
     suspend fun getGame(userId: Int) : Game?
 
     suspend fun newGame(user1: User, user2: User) : Game?
+
+    suspend fun removeGame(userId1: Int, userId2: Int)
+
+    suspend fun removeGame(userId1: Int)
+
 }

@@ -8,6 +8,7 @@ import cz.martinforejt.piskvorky.domain.repository.UsersRepository
 import cz.martinforejt.piskvorky.server.core.service.SocketBroadcaster
 import cz.martinforejt.piskvorky.server.core.service.SocketService
 import cz.martinforejt.piskvorky.server.core.service.SocketServiceSession
+import cz.martinforejt.piskvorky.server.features.game.usecase.GiveUpGameUseCase
 import cz.martinforejt.piskvorky.server.security.JwtManager
 import io.ktor.http.cio.websocket.*
 import org.koin.core.inject
@@ -29,6 +30,7 @@ class SocketServiceSessionImpl(
     private val gameRepository by inject<GameRepository>()
     private val jwtManager by inject<JwtManager>()
     private val socketService by inject<SocketService>()
+    private val giveUpGameUseCase by inject<GiveUpGameUseCase>()
 
     @Throws(SocketApiException::class)
     override suspend fun receivedMessage(data: String) {
@@ -51,6 +53,10 @@ class SocketServiceSessionImpl(
 
     override suspend fun userLeft() {
         setUserOnline(false)
+        user?.let {
+            giveUpGameUseCase.execute(GiveUpGameUseCase.Params(it))
+        }
+
     }
 
     private suspend fun authorize(message: AuthorizeSocketApiMessage) {
