@@ -25,7 +25,7 @@ object Friendships : IdTable<FriendshipId>(name = "friendships") {
     val author = integer("author")
     val pending = bool("pending")
 
-    override val id = registerColumn<FriendshipId>("id", FriendshipIdColumnType()).entityId().default(EntityID(FriendshipId(1,2), this))
+    override val id = registerColumn<FriendshipId>("id", FriendshipIdColumnType()).entityId()
     override val primaryKey = PrimaryKey(user1, user2)
 }
 

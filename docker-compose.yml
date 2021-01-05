@@ -19,6 +19,9 @@ services:
       SERVER_DB_USER: root
       SERVER_DB_PASSWORD: password
       SERVER_DB_PORT: 3306
+      WAIT_HOSTS: mysql:3306
+    depends_on:
+      - mysql
 
   web:
     container_name: web
