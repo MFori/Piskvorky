@@ -26,7 +26,7 @@ class Game(
     }
 
     fun giveUp(id: Int) {
-        winner = value(id)
+        winner = rival(id)
         state = GameSnap.Status.end
     }
 
@@ -54,6 +54,14 @@ class Game(
 
     fun value(id: Int): BoardValue {
         return if (cross.id == id) {
+            BoardValue.cross
+        } else {
+            BoardValue.nought
+        }
+    }
+
+    fun rival(id: Int): BoardValue {
+        return if (cross.id != id) {
             BoardValue.cross
         } else {
             BoardValue.nought
