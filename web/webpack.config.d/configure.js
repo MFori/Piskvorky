@@ -1,3 +1,4 @@
+// TODO remove with nginx on release
 config.devServer.historyApiFallback = true;
 
 //config.devServer.host = '0.0.0.0';//your ip address
