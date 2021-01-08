@@ -149,7 +149,8 @@ fun serverModule(app: Application) = module {
 
     factory {
         CancelGameInvitationUseCase(
-            gameRepository = get()
+            gameRepository = get(),
+            socketService = get()
         )
     }
 

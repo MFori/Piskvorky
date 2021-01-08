@@ -5,7 +5,6 @@ import core.component.CoreRProps
 import core.component.CoreRState
 import core.component.DialogBuilder
 import core.utils.clearAndFill
-import core.utils.connectionErrorDialog
 import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import cz.martinforejt.piskvorky.domain.service.FriendsService
@@ -34,7 +33,6 @@ class LobbyState : CoreRState() {
     var onlineUsers: MutableList<PublicUser>? = null
     var friends: MutableList<PublicUser>? = null
     var loading = false
-    var showErrorDialog = false
     var inGame = false
 }
 
@@ -46,7 +44,6 @@ class Lobby : ConnectionAwareCoreComponent<LobbyProps, LobbyState>() {
     override fun LobbyState.init() {
         onlineUsers = mutableListOf()
         friends = mutableListOf()
-        showErrorDialog = false
         loading = true
         inGame = false
     }
@@ -84,22 +81,18 @@ class Lobby : ConnectionAwareCoreComponent<LobbyProps, LobbyState>() {
                 }
             }
             coreChild(Footer::class)
-            if (state.showErrorDialog) {
-                connectionErrorDialog {
-                    setState {
-                        showErrorDialog = false
-                        loading = true
-                    }
-                    reconnect()
-                }
-            }
         }
     }
 
-    override fun showConnectionErrorDialog() {
+    override fun onBeforeReconnect() {
+        setState {
+            loading = true
+        }
+    }
+
+    override fun onBeforeShowConnectionErrorDialog() {
         setState {
             loading = false
-            showErrorDialog = true
             if (onlineUsers == null) onlineUsers = mutableListOf()
             if (friends == null) friends = mutableListOf()
         }

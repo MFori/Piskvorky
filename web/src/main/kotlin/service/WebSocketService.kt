@@ -158,6 +158,7 @@ interface MessageListener {
             SocketApiAction.FRIENDSHIP_REQUEST -> onReceiveFriendRequest(message as SocketApiMessage<FriendShipRequestSocketApiMessage>)
             SocketApiAction.FRIENDSHIP_CANCELLED -> onReceiveFriendCancel(message as SocketApiMessage<FriendshipCancelledSocketApiMessage>)
             SocketApiAction.GAME_UPDATE -> onReceiveGameUpdate(message as SocketApiMessage<GameUpdateSocketApiMessage>)
+            SocketApiAction.GAME_REQUEST_CANCELLED -> onGameRequestCancel(message as SocketApiMessage<GameRequestCancelSocketApiMessage>)
             SocketApiAction.GAME_REQUEST -> onReceiveGameRequest(message as SocketApiMessage<GameRequestSocketApiMessage>)
             else -> {
                 onReceiveError(message)
@@ -179,6 +180,8 @@ interface MessageListener {
     fun onReceiveGameUpdate(message: SocketApiMessage<GameUpdateSocketApiMessage>)
 
     fun onReceiveGameRequest(message: SocketApiMessage<GameRequestSocketApiMessage>)
+
+    fun onGameRequestCancel(message: SocketApiMessage<GameRequestCancelSocketApiMessage>)
 
     fun onReceiveError(message: SocketApiMessage<*>)
 

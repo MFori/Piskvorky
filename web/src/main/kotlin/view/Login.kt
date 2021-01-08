@@ -87,7 +87,6 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
                         value = state.email
                         placeholder = "Email address"
                         required = true
-                        autoFocus = true
                         onChangeFunction = {
                             setState {
                                 email = (it.target as HTMLInputElement).value
@@ -146,6 +145,9 @@ class Login : CoreComponent<LoginFormProps, LoginFormState>() {
 
     private val handleSubmit: (Event) -> Unit = { event ->
         event.preventDefault()
+        setState {
+            error = null
+        }
         componentScope.launch {
             val res = authService.login(LoginRequest(state.email, state.password))
             if (!res.isSuccessful) {

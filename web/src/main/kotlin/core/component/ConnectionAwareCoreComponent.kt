@@ -40,7 +40,10 @@ abstract class ConnectionAwareCoreComponent<P : CoreRProps, S : CoreRState> : Co
 
     }
 
-    fun reconnect() {
+    open fun onBeforeReconnect() {}
+
+    private fun reconnect() {
+        onBeforeReconnect()
         props.context?.socketService?.setConnectionListener(this)
         props.context?.socketService?.setMessageListener(this)
         componentScope.launch {
@@ -48,7 +51,20 @@ abstract class ConnectionAwareCoreComponent<P : CoreRProps, S : CoreRState> : Co
         }
     }
 
-    abstract fun showConnectionErrorDialog()
+    open fun onBeforeShowConnectionErrorDialog() {}
+
+    private fun showConnectionErrorDialog() {
+        onBeforeShowConnectionErrorDialog()
+        showDialog(
+            DialogBuilder()
+                .title("Connection error")
+                .message("Connection error")
+                .positiveBtn("Retry") {
+                    reconnect()
+                }
+                .negativeBtn(null, null)
+        )
+    }
 
     open fun refresh() {
         componentScope.launch {
@@ -112,7 +128,20 @@ abstract class ConnectionAwareCoreComponent<P : CoreRProps, S : CoreRState> : Co
                     gameService.createInvitation(CreateGameRequest(message.data!!.userId), user!!.token)
                 }
             }
-            .negativeBtn("Dismiss", null))
+            .negativeBtn("Dismiss") {
+                componentScope.launch {
+                    gameService.cancelInvitation(CancelGameRequest(message.data!!.userId), user!!.token)
+                }
+            })
+    }
+
+    override fun onGameRequestCancel(message: SocketApiMessage<GameRequestCancelSocketApiMessage>) {
+        showDialog(
+            DialogBuilder()
+                .title("Game request refused.")
+                .message("User ${message.data!!.email} refused your game invitation.")
+                .positiveBtn("Ok", null)
+        )
     }
 
     override fun onReceiveError(message: SocketApiMessage<*>) {

@@ -3,7 +3,6 @@ package view
 import core.component.ConnectionAwareCoreComponent
 import core.component.CoreRProps
 import core.component.CoreRState
-import core.utils.connectionErrorDialog
 import cz.martinforejt.piskvorky.api.model.GameSnap
 import cz.martinforejt.piskvorky.api.model.GameUpdateSocketApiMessage
 import cz.martinforejt.piskvorky.api.model.Move
@@ -12,15 +11,11 @@ import cz.martinforejt.piskvorky.domain.service.GameService
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.launch
-import kotlinx.html.id
 import model.GameVO
 import model.asGameVO
 import org.koin.core.inject
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.Event
 import react.*
-import react.dom.canvas
 import react.dom.div
 import react.router.dom.redirect
 
@@ -36,7 +31,6 @@ class GameProps : CoreRProps()
 class GameState : CoreRState() {
     var game: GameVO? = null
     var inGame = true
-    var showErrorDialog = false
     var unread = 0
 }
 
@@ -48,7 +42,6 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
         game = null
         inGame = true
         unread = 0
-        showErrorDialog = false
     }
 
     override fun componentDidMount() {
@@ -83,14 +76,6 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
                 }
                 gameFooter(this@Game, state.unread, onGiveUpClicked, onShowChat)
                 coreChild(GameFooter::class)
-                if (state.showErrorDialog) {
-                    connectionErrorDialog {
-                        setState {
-                            showErrorDialog = false
-                        }
-                        reconnect()
-                    }
-                }
             }
             gameBoard(this@Game, state.game, onMove)
         }
@@ -141,12 +126,6 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
             setState {
                 inGame = false
             }
-        }
-    }
-
-    override fun showConnectionErrorDialog() {
-        setState {
-            showErrorDialog = true
         }
     }
 }

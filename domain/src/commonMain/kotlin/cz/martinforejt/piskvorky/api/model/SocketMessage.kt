@@ -32,6 +32,7 @@ enum class SocketApiAction {
     FRIENDSHIP_REQUEST,
     FRIENDSHIP_CANCELLED,
     GAME_REQUEST,
+    GAME_REQUEST_CANCELLED,
     GAME_UPDATE
 }
 
@@ -83,6 +84,12 @@ data class GameRequestSocketApiMessage(
 ) : SocketApiMessageData
 
 @Serializable
+data class GameRequestCancelSocketApiMessage(
+    val userId: Int,
+    val email: String
+) : SocketApiMessageData
+
+@Serializable
 data class GameUpdateSocketApiMessage(
     val game: GameSnap
 ) : SocketApiMessageData
@@ -99,6 +106,7 @@ fun SocketApiMessageData.getAction(): SocketApiAction {
         is FriendShipRequestSocketApiMessage -> SocketApiAction.FRIENDSHIP_REQUEST
         is FriendshipCancelledSocketApiMessage -> SocketApiAction.FRIENDSHIP_CANCELLED
         is GameRequestSocketApiMessage -> SocketApiAction.GAME_REQUEST
+        is GameRequestCancelSocketApiMessage -> SocketApiAction.GAME_REQUEST_CANCELLED
         is GameUpdateSocketApiMessage -> SocketApiAction.GAME_UPDATE
         else -> throw InvalidSocketMessageException()
     }
@@ -115,6 +123,7 @@ fun <T : SocketApiMessageData> SocketApiAction.serializer(): KSerializer<T> {
         SocketApiAction.FRIENDSHIP_REQUEST -> FriendShipRequestSocketApiMessage.serializer()
         SocketApiAction.FRIENDSHIP_CANCELLED -> FriendshipCancelledSocketApiMessage.serializer()
         SocketApiAction.GAME_REQUEST -> GameRequestSocketApiMessage.serializer()
+        SocketApiAction.GAME_REQUEST_CANCELLED -> GameRequestCancelSocketApiMessage.serializer()
         SocketApiAction.GAME_UPDATE -> GameUpdateSocketApiMessage.serializer()
     } as? KSerializer<T> ?: throw InvalidSocketMessageException()
 }

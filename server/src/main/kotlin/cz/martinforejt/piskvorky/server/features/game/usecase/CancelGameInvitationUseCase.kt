@@ -1,10 +1,12 @@
 package cz.martinforejt.piskvorky.server.features.game.usecase
 
 import cz.martinforejt.piskvorky.api.model.CancelGameRequest
+import cz.martinforejt.piskvorky.api.model.GameRequestCancelSocketApiMessage
 import cz.martinforejt.piskvorky.domain.repository.GameRepository
 import cz.martinforejt.piskvorky.domain.usecase.Error
 import cz.martinforejt.piskvorky.domain.usecase.Result
 import cz.martinforejt.piskvorky.domain.usecase.UseCaseResult
+import cz.martinforejt.piskvorky.server.core.service.SocketService
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import kotlinx.coroutines.runBlocking
 
@@ -15,7 +17,8 @@ import kotlinx.coroutines.runBlocking
  * @author Martin Forejt
  */
 class CancelGameInvitationUseCase(
-    private val gameRepository: GameRepository
+    private val gameRepository: GameRepository,
+    private val socketService: SocketService
 ) : UseCaseResult<Unit, CancelGameInvitationUseCase.Params> {
 
     override fun execute(params: Params): Result<Unit> {
@@ -26,6 +29,11 @@ class CancelGameInvitationUseCase(
 
         runBlocking {
             gameRepository.deleteInvitation(params.currentUser.id, params.request.userId)
+
+            socketService.sendMessageTo(
+                params.request.userId,
+                GameRequestCancelSocketApiMessage(params.currentUser.id, params.currentUser.email)
+            )
         }
 
         return Result(Unit)
