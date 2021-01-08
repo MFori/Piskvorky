@@ -2,6 +2,8 @@ package view
 
 import core.component.ConnectionAwareCoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
+import core.component.DialogBuilder
 import core.utils.clearAndFill
 import core.utils.connectionErrorDialog
 import cz.martinforejt.piskvorky.api.model.*
@@ -15,7 +17,6 @@ import kotlinx.coroutines.launch
 import kotlinx.html.id
 import org.koin.core.inject
 import react.RBuilder
-import react.RState
 import react.dom.div
 import react.router.dom.redirect
 import react.setState
@@ -29,7 +30,7 @@ import react.setState
 
 class LobbyProps : CoreRProps()
 
-class LobbyState : RState {
+class LobbyState : CoreRState() {
     var onlineUsers: MutableList<PublicUser>? = null
     var friends: MutableList<PublicUser>? = null
     var loading = false
@@ -135,7 +136,11 @@ class Lobby : ConnectionAwareCoreComponent<LobbyProps, LobbyState>() {
         componentScope.launch {
             val res = friendsService.addFriend(CreateFriendshipRequest(id), user!!.token)
             if (res.isSuccessful) {
-                window.alert("Friendship request send to $email")
+                showDialog(DialogBuilder()
+                    .title("Info")
+                    .message("Friendship request send to $email.")
+                    .positiveBtn("Ok", null)
+                )
                 refresh()
             } else {
                 window.alert("Friendship request failed. Try it later.")
@@ -144,22 +149,30 @@ class Lobby : ConnectionAwareCoreComponent<LobbyProps, LobbyState>() {
     }
 
     private fun removeFriend(id: Int, email: String) {
-        componentScope.launch {
-            val res = friendsService.removeFriend(CancelFriendshipRequest(id), user!!.token)
-            if (res.isSuccessful) {
-                window.alert("Friendship with $email cancelled.")
-                refresh()
-            } else {
-                window.alert("Friendship cancel request failed. Try it later.")
+        showDialog(DialogBuilder()
+            .title("Remove friend?")
+            .message("Really want to remove $email from friends?")
+            .positiveBtn("Yes") {
+                componentScope.launch {
+                    val res = friendsService.removeFriend(CancelFriendshipRequest(id), user!!.token)
+                    if (res.isSuccessful) {
+                        refresh()
+                    } else {
+                        window.alert("Friendship cancel request failed. Try it later.")
+                    }
+                }
             }
-        }
+            .negativeBtn("No", null))
     }
 
     private fun gameRequest(id: Int, email: String) {
         componentScope.launch {
             val res = gameService.createInvitation(CreateGameRequest(id), user!!.token)
             if (res.isSuccessful) {
-                window.alert("Game invitation send to $email.")
+                showDialog(DialogBuilder()
+                    .title("Info")
+                    .message("Game invitation send to $email.")
+                    .positiveBtn("Ok", null))
                 refresh()
             } else {
                 window.alert("Game invitation request failed. Try it later.")
@@ -186,15 +199,19 @@ class Lobby : ConnectionAwareCoreComponent<LobbyProps, LobbyState>() {
 
     override fun onReceiveFriendRequest(message: SocketApiMessage<FriendShipRequestSocketApiMessage>) {
         if (message.data?.request == true) {
-            if (window.confirm("Friendship request from ${message.data!!.email}. Add friend?")) {
-                componentScope.launch {
-                    friendsService.addFriend(CreateFriendshipRequest(message.data!!.userId), user!!.token)
+            showDialog(DialogBuilder()
+                .title("Add friend?")
+                .message("Friendship request from ${message.data!!.email}.")
+                .positiveBtn("Yes") {
+                    componentScope.launch {
+                        friendsService.addFriend(CreateFriendshipRequest(message.data!!.userId), user!!.token)
+                    }
                 }
-            } else {
-                componentScope.launch {
-                    friendsService.removeFriend(CancelFriendshipRequest(message.data!!.userId), user!!.token)
-                }
-            }
+                .negativeBtn("No") {
+                    componentScope.launch {
+                        friendsService.removeFriend(CancelFriendshipRequest(message.data!!.userId), user!!.token)
+                    }
+                })
         } else if (message.data?.confirm == true) {
             refresh()
         }

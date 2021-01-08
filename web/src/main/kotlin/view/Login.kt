@@ -2,6 +2,7 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
 import cz.martinforejt.piskvorky.api.model.LoginRequest
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import kotlinx.browser.document
@@ -18,7 +19,6 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.get
 import react.RBuilder
-import react.RState
 import react.dom.*
 import react.router.dom.redirect
 import react.router.dom.routeLink
@@ -33,7 +33,7 @@ import react.setState
 
 class LoginFormProps : CoreRProps()
 
-class LoginFormState : RState {
+class LoginFormState : CoreRState() {
     var email = ""
     var password = ""
     var error: String? = null

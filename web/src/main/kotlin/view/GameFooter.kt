@@ -2,12 +2,12 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
 import core.component.coreChild
 import kotlinx.html.id
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.events.Event
 import react.RBuilder
-import react.RState
 import react.dom.a
 import react.dom.button
 import react.dom.div
@@ -26,7 +26,7 @@ class GameFooterProps : CoreRProps() {
     var onChatClicked: ((Event) -> Unit)? = null
 }
 
-class GameFooter : CoreComponent<GameFooterProps, RState>() {
+class GameFooter : CoreComponent<GameFooterProps, CoreRState>() {
 
     override fun RBuilder.render() {
         div("panel-box game-footer") {

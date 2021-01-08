@@ -4,13 +4,9 @@ import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.service.GameService
 import io.ktor.http.cio.websocket.*
 import kotlinx.browser.window
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import model.asGameVO
 import org.koin.core.inject
 import react.RBuilder
-import react.RState
-import react.setState
 import service.ConnectionListener
 import service.MessageListener
 import service.WebSocketService
@@ -21,7 +17,7 @@ import service.WebSocketService
  *
  * @author Martin Forejt
  */
-abstract class ConnectionAwareCoreComponent<P : CoreRProps, S : RState> : CoreComponent<P, S>(), MessageListener,
+abstract class ConnectionAwareCoreComponent<P : CoreRProps, S : CoreRState> : CoreComponent<P, S>(), MessageListener,
     ConnectionListener {
 
     private val gameService by inject<GameService>()
@@ -108,11 +104,15 @@ abstract class ConnectionAwareCoreComponent<P : CoreRProps, S : RState> : CoreCo
     }
 
     override fun onReceiveGameRequest(message: SocketApiMessage<GameRequestSocketApiMessage>) {
-        if (window.confirm("Game request from ${message.data!!.email}. Are you ready to play?")) {
-            componentScope.launch {
-                gameService.createInvitation(CreateGameRequest(message.data!!.userId), user!!.token)
+        showDialog(DialogBuilder()
+            .title("Are you ready to play?")
+            .message("Game request from ${message.data!!.email}.")
+            .positiveBtn("Play") {
+                componentScope.launch {
+                    gameService.createInvitation(CreateGameRequest(message.data!!.userId), user!!.token)
+                }
             }
-        }
+            .negativeBtn("Dismiss", null))
     }
 
     override fun onReceiveError(message: SocketApiMessage<*>) {

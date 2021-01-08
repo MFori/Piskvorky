@@ -2,12 +2,12 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
 import core.component.coreChild
 import cz.martinforejt.piskvorky.api.model.BoardValue
 import kotlinx.html.id
 import model.GameVO
 import react.RBuilder
-import react.RState
 import react.dom.div
 import react.dom.img
 import react.dom.span
@@ -23,7 +23,7 @@ class GameHeaderProps : CoreRProps() {
     var game: GameVO? = null
 }
 
-class GameHeader : CoreComponent<GameHeaderProps, RState>() {
+class GameHeader : CoreComponent<GameHeaderProps, CoreRState>() {
 
     override fun RBuilder.render() {
         div("panel-box") {

@@ -2,13 +2,10 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
-import cz.martinforejt.piskvorky.api.model.LoginRequest
-import cz.martinforejt.piskvorky.api.model.LostPasswordRequest
+import core.component.CoreRState
 import cz.martinforejt.piskvorky.api.model.ResetPasswordRequest
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import kotlinx.browser.document
-import kotlinx.browser.localStorage
-import kotlinx.browser.window
 import kotlinx.coroutines.launch
 import kotlinx.html.ButtonType
 import kotlinx.html.InputType
@@ -18,11 +15,8 @@ import kotlinx.html.js.onClickFunction
 import org.koin.core.inject
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
-import org.w3c.dom.get
 import react.RBuilder
-import react.RState
 import react.dom.*
-import react.router.dom.redirect
 import react.router.dom.routeLink
 import react.setState
 
@@ -38,7 +32,7 @@ class ResetPasswordProps : CoreRProps() {
     var hash: String = ""
 }
 
-class ResetPasswdFormState : RState {
+class ResetPasswdFormState : CoreRState() {
     var password: String = ""
     var passwordConfirm: String = ""
     var error: String? = null

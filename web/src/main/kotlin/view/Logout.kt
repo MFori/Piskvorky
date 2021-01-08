@@ -2,12 +2,12 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import kotlinx.browser.localStorage
 import org.koin.core.inject
 import org.w3c.dom.set
 import react.RBuilder
-import react.RState
 import react.router.dom.redirect
 
 /**
@@ -17,7 +17,7 @@ import react.router.dom.redirect
  * @author Martin Forejt
  */
 
-class Logout : CoreComponent<CoreRProps, RState>() {
+class Logout : CoreComponent<CoreRProps, CoreRState>() {
 
     private val authService by inject<AuthenticationService>()
 

@@ -21,6 +21,7 @@ class DialogProps : RProps {
     var negativeBtn: String? = null
     var positiveCallback: (() -> Unit)? = null
     var negativeCallback: (() -> Unit)? = null
+    var dismissCallback: (() -> Unit)? = null
 }
 
 class Dialog : RComponent<DialogProps, RState>() {
@@ -60,6 +61,7 @@ class Dialog : RComponent<DialogProps, RState>() {
                                 attrs["data-dismiss"] = "modal"
                                 attrs.onClickFunction = {
                                     props.negativeCallback?.invoke()
+                                    props.dismissCallback?.invoke()
                                 }
                                 +props.negativeBtn!!
                             }
@@ -68,6 +70,7 @@ class Dialog : RComponent<DialogProps, RState>() {
                             button(type = ButtonType.button, classes = "btn btn-primary") {
                                 attrs.onClickFunction = {
                                     props.positiveCallback?.invoke()
+                                    props.dismissCallback?.invoke()
                                 }
                                 +props.positiveBtn!!
                             }
@@ -80,17 +83,18 @@ class Dialog : RComponent<DialogProps, RState>() {
     }
 }
 
-class DialogBuilder(private val builder: RBuilder) {
+class DialogBuilder(private val builder: RBuilder? = null) {
     var title = ""
         private set
     var message = ""
         private set
-    var positiveBtn: String? = "Ok"
+    var positiveBtn: String? = null
         private set
-    var negativeBtn: String? = "Cancel"
+    var negativeBtn: String? = null
         private set
     private var positiveCallback: (() -> Unit)? = null
     private var negativeCallback: (() -> Unit)? = null
+    private var dismissCallback: (() -> Unit)? = null
 
     fun title(title: String) = apply { this.title = title }
     fun message(message: String) = apply { this.message = message }
@@ -100,8 +104,12 @@ class DialogBuilder(private val builder: RBuilder) {
     fun negativeBtn(title: String?, callback: (() -> Unit)?) =
         apply { negativeBtn = title; negativeCallback = callback }
 
-    fun build(): ReactElement {
-        return builder.child(Dialog::class) {
+    fun dismissCallback(dismissCallback: (() -> Unit)?) =
+        apply { this.dismissCallback = dismissCallback }
+
+    fun build(builder: RBuilder? = null): ReactElement {
+        val b = builder ?: this.builder ?: throw IllegalStateException()
+        return b.child(Dialog::class) {
             attrs {
                 this.title = this@DialogBuilder.title
                 this.message = this@DialogBuilder.message
@@ -109,6 +117,7 @@ class DialogBuilder(private val builder: RBuilder) {
                 this.negativeBtn = this@DialogBuilder.negativeBtn
                 this.positiveCallback = this@DialogBuilder.positiveCallback
                 this.negativeCallback = this@DialogBuilder.negativeCallback
+                this.dismissCallback = this@DialogBuilder.dismissCallback
             }
         }
     }

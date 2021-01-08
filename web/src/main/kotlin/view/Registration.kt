@@ -2,6 +2,7 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
 import cz.martinforejt.piskvorky.api.model.RegisterRequest
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import kotlinx.browser.document
@@ -16,7 +17,6 @@ import org.koin.core.inject
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import react.RBuilder
-import react.RState
 import react.dom.*
 import react.router.dom.redirect
 import react.router.dom.routeLink
@@ -31,7 +31,7 @@ import react.setState
 
 class RegisterFormProps : CoreRProps()
 
-class RegisterFormState : RState {
+class RegisterFormState : CoreRState() {
     var email: String = ""
     var password: String = ""
     var passwordConfirm: String = ""

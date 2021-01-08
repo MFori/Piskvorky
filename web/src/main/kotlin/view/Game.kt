@@ -2,6 +2,7 @@ package view
 
 import core.component.ConnectionAwareCoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
 import core.utils.connectionErrorDialog
 import cz.martinforejt.piskvorky.api.model.GameSnap
 import cz.martinforejt.piskvorky.api.model.GameUpdateSocketApiMessage
@@ -32,7 +33,7 @@ import react.router.dom.redirect
 
 class GameProps : CoreRProps()
 
-class GameState : RState {
+class GameState : CoreRState() {
     var game: GameVO? = null
     var inGame = true
     var showErrorDialog = false

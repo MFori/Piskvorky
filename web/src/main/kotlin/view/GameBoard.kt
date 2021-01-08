@@ -2,6 +2,7 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
 import core.component.coreChild
 import cz.martinforejt.piskvorky.api.model.BoardValue
 import cz.martinforejt.piskvorky.api.model.GameSnap
@@ -16,7 +17,6 @@ import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.get
 import react.RBuilder
-import react.RState
 import react.dom.canvas
 import kotlin.math.PI
 import kotlin.math.abs
@@ -34,7 +34,7 @@ class GameBoardProps : CoreRProps() {
     var onMove: ((Int, Int) -> Unit)? = null
 }
 
-class GameBoard : CoreComponent<GameBoardProps, RState>() {
+class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
 
     private var ctx: CanvasRenderingContext2D? = null
     private var width = 0.0
@@ -62,7 +62,7 @@ class GameBoard : CoreComponent<GameBoardProps, RState>() {
         }
     }
 
-    override fun componentDidUpdate(prevProps: GameBoardProps, prevState: RState, snapshot: Any) {
+    override fun componentDidUpdate(prevProps: GameBoardProps, prevState: CoreRState, snapshot: Any) {
         val c = document.getElementById("canvas") as HTMLCanvasElement
         ctx = c.getContext("2d") as CanvasRenderingContext2D
         width = ctx!!.canvas.width.toDouble()

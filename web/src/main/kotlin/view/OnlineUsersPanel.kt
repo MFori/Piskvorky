@@ -2,9 +2,9 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import react.RBuilder
-import react.RState
 import react.dom.div
 
 /**
@@ -19,7 +19,7 @@ class OnlineUsersPanelProps : CoreRProps() {
     var onAction: ((PlayerListItem.Action, PlayerVO) -> Unit)? = null
 }
 
-class OnlineUsersPanel : CoreComponent<OnlineUsersPanelProps, RState>() {
+class OnlineUsersPanel : CoreComponent<OnlineUsersPanelProps, CoreRState>() {
 
     override fun RBuilder.render() {
         div("panel-box") {

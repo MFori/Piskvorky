@@ -2,13 +2,14 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
 import kotlinx.browser.window
 import react.*
 import react.router.dom.*
 
 abstract class AppProps : CoreRProps()
 
-class AppComponent : CoreComponent<AppProps, RState>() {
+class AppComponent : CoreComponent<AppProps, CoreRState>() {
 
     override fun componentDidMount() {
         window.addEventListener("storage", {

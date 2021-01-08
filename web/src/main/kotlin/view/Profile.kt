@@ -2,9 +2,9 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
 import kotlinx.browser.document
 import react.RBuilder
-import react.RState
 import react.dom.div
 
 /**
@@ -13,14 +13,8 @@ import react.dom.div
  *
  * @author Martin Forejt
  */
-class ProfileState : RState {
-    var passwordCurrent: String = ""
-    var password: String = ""
-    var passwordConfirm: String = ""
-    var error: String? = null
-}
 
-class Profile : CoreComponent<CoreRProps, RState>() {
+class Profile : CoreComponent<CoreRProps, CoreRState>() {
 
     override fun componentDidMount() {
         super.componentDidMount()

@@ -2,11 +2,11 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
 import core.component.coreChild
 import kotlinx.html.js.onClickFunction
 import kotlinx.html.title
 import react.RBuilder
-import react.RState
 import react.dom.button
 import react.dom.div
 import react.dom.img
@@ -32,7 +32,7 @@ class PlayerListItemProps : CoreRProps() {
     var onAction: ((PlayerListItem.Action, PlayerVO) -> Unit)? = null
 }
 
-class PlayerListItem : CoreComponent<PlayerListItemProps, RState>() {
+class PlayerListItem : CoreComponent<PlayerListItemProps, CoreRState>() {
 
     override fun RBuilder.render() {
         val player = props.user ?: return

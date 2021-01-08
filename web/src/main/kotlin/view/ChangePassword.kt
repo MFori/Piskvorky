@@ -2,6 +2,7 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
 import cz.martinforejt.piskvorky.api.model.ChangePasswordRequest
 import cz.martinforejt.piskvorky.domain.service.AuthenticationService
 import kotlinx.coroutines.launch
@@ -14,7 +15,6 @@ import org.koin.core.inject
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.events.Event
 import react.RBuilder
-import react.RState
 import react.dom.*
 import react.setState
 
@@ -24,7 +24,7 @@ import react.setState
  *
  * @author Martin Forejt
  */
-class ChangePasswordState : RState {
+class ChangePasswordState : CoreRState() {
     var passwordCurrent: String = ""
     var password: String = ""
     var passwordConfirm: String = ""

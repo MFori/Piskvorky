@@ -2,9 +2,9 @@ package view
 
 import core.component.CoreComponent
 import core.component.CoreRProps
+import core.component.CoreRState
 import kotlinx.html.id
 import react.RBuilder
-import react.RState
 import react.dom.div
 import react.dom.img
 import react.dom.span
@@ -17,7 +17,7 @@ import react.router.dom.routeLink
  * @author Martin Forejt
  */
 
-class Header : CoreComponent<CoreRProps, RState>() {
+class Header : CoreComponent<CoreRProps, CoreRState>() {
 
     override fun RBuilder.render() {
         div("panel-box") {

@@ -1,4 +1,4 @@
-//config.devServer.historyApiFallback = true;
+config.devServer.historyApiFallback = true;
 
 //config.devServer.host = '0.0.0.0';//your ip address
 //    config.devServer.port = 8080;

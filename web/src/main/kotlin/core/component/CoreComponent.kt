@@ -41,7 +41,11 @@ abstract class CoreRProps : RProps, KoinComponent {
     //var location: String = ""
 }
 
-abstract class CoreComponent<P : CoreRProps, S : RState> : RComponent<P, S>(), KoinComponent, CoroutineScope {
+abstract class CoreRState : RState {
+    var dialogs: MutableList<DialogBuilder>? = null
+}
+
+abstract class CoreComponent<P : CoreRProps, S : CoreRState> : RComponent<P, S>(), KoinComponent, CoroutineScope {
     final override val coroutineContext: CoroutineContext = Job()
     val componentScope = CoroutineScope(coroutineContext)
     private val authService by inject<AuthenticationService>()
@@ -52,6 +56,7 @@ abstract class CoreComponent<P : CoreRProps, S : RState> : RComponent<P, S>(), K
         get() = authService.getCurrentUser()
 
     open val customLogout = false
+
     override fun render() = buildElements {
         if (mayLogout && !customLogout) {
             redirect(to = "/logout")
@@ -59,6 +64,11 @@ abstract class CoreComponent<P : CoreRProps, S : RState> : RComponent<P, S>(), K
             return@buildElements
         }
         render()
+        state.dialogs?.forEachIndexed { index, dialogBuilder ->
+            dialogBuilder.dismissCallback {
+                setState { dialogs?.removeAt(index) }
+            }.build(this)
+        }
     }
 
     fun logout() {
@@ -100,6 +110,15 @@ abstract class CoreComponent<P : CoreRProps, S : RState> : RComponent<P, S>(), K
     override fun componentWillUnmount() {
         window.removeEventListener("focus", visibilityChangeCallback, false)
     }
+
+    fun showDialog(dialogBuilder: DialogBuilder) {
+        setState {
+            if (dialogs == null) {
+                dialogs = mutableListOf()
+            }
+            dialogs!!.add(dialogBuilder)
+        }
+    }
 }
 
 fun <P : CoreRProps> RBuilder.coreChild(
@@ -130,10 +149,10 @@ fun <P : CoreRProps> coreFunctionalComponent(
     return fc
 }
 
-fun <P : CoreRProps, S : RState> CoreComponent<P, S>.logger() = this.props.logger()
+fun <P : CoreRProps, S : CoreRState> CoreComponent<P, S>.logger() = this.props.logger()
 
 fun CoreRProps.logger() = this.context?.logger
 
-fun <P : CoreRProps, S : RState> CoreComponent<P, S>.rlogger() = this.props.rlogger()
+fun <P : CoreRProps, S : CoreRState> CoreComponent<P, S>.rlogger() = this.props.rlogger()
 
 fun CoreRProps.rlogger() = requireNotNull(this.context).logger
