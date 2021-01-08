@@ -34,6 +34,7 @@ class Game(
         if (state != GameSnap.Status.running) return false
         if (current != value(id)) return false
         if (!board.isEmpty(move.x, move.y)) return false
+        if (!board.isEmpty() && !board.isNear(move.x, move.y)) return false
 
         board[move.x, move.y] = current
         if (checkWinner(move, current)) {

@@ -25,6 +25,18 @@ class Board {
 
     fun isEmpty(x: Int, y: Int) = getValue(x, y) == BoardValue.none
 
+    fun isEmpty() = cells.isEmpty()
+
+    fun isNear(x: Int, y: Int): Boolean {
+        return if (!isEmpty(x - 1, y - 1)) true
+        else if (!isEmpty(x, y - 1)) true
+        else if (!isEmpty(x + 1, y - 1)) true
+        else if (!isEmpty(x + 1, y)) true
+        else if (!isEmpty(x + 1, y + 1)) true
+        else if (!isEmpty(x, y + 1)) true
+        else if (!isEmpty(x - 1, y + 1)) true
+        else !isEmpty(x - 1, y)
+    }
 
     fun toApiBoard() = cz.martinforejt.piskvorky.api.model.Board(
         cells = this.cells.map { BoardCell(it.key.first, it.key.second, it.value) }
