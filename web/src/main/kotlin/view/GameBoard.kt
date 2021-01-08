@@ -68,6 +68,7 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
         width = ctx!!.canvas.width.toDouble()
         height = ctx!!.canvas.height.toDouble()
         moved = false
+        getCenter()
 
         c.onmousedown = onMouseDown
         c.onmouseup = onMouseUp
@@ -102,7 +103,7 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
     }
 
     private val onMouseUp: (MouseEvent) -> Unit = {
-        if(!moved && me() == props.game?.current && props.game?.status == GameSnap.Status.running) {
+        if (!moved && me() == props.game?.current && props.game?.status == GameSnap.Status.running) {
             if (isDragging && abs(clickX - it.clientX) < 20 && abs(clickY - it.clientY) < 20) {
                 getMouse(it.clientX, it.clientY)
                 if (props.game?.isEmpty(mouseX!!, mouseY!!) == true) {
@@ -194,17 +195,19 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
 
                 if (props.game?.isEmpty(xx, yy) == false) {
                     val value = props.game!![xx, yy]
-                    if(value == BoardValue.cross) {
+                    if (value == BoardValue.cross) {
                         beginPath()
                         moveTo(offsetX + x * CELL_SIZE + 15, offsetY + y * CELL_SIZE + 15)
-                        lineTo(offsetX + x * CELL_SIZE + CELL_SIZE - 15, offsetY  + y * CELL_SIZE + CELL_SIZE - 15)
+                        lineTo(offsetX + x * CELL_SIZE + CELL_SIZE - 15, offsetY + y * CELL_SIZE + CELL_SIZE - 15)
                         moveTo(offsetX + x * CELL_SIZE + CELL_SIZE - 15, offsetY + y * CELL_SIZE + 15)
-                        lineTo(offsetX + x * CELL_SIZE + 15, offsetY  + y * CELL_SIZE + CELL_SIZE - 15)
+                        lineTo(offsetX + x * CELL_SIZE + 15, offsetY + y * CELL_SIZE + CELL_SIZE - 15)
                         stroke()
                     } else {
                         beginPath()
-                        arc(offsetX + x * CELL_SIZE + CELL_SIZE/2, offsetY + y* CELL_SIZE + CELL_SIZE/2,
-                            (CELL_SIZE / 2 - 15).toDouble(),0.0,2* PI)
+                        arc(
+                            offsetX + x * CELL_SIZE + CELL_SIZE / 2, offsetY + y * CELL_SIZE + CELL_SIZE / 2,
+                            (CELL_SIZE / 2 - 15).toDouble(), 0.0, 2 * PI
+                        )
                         stroke()
                     }
                 }
@@ -252,6 +255,14 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
 
     private fun CanvasRenderingContext2D.clear(width: Double, height: Double) {
         clearRect(0.0, 0.0, width, height)
+    }
+
+    private fun getCenter() {
+        if (props.game?.board?.cells?.size == 1) {
+            val cell = props.game!!.board.cells[0]
+            offsetX = -(cell.x * CELL_SIZE) + (width / 2).toInt()
+            offsetY = -(cell.y * CELL_SIZE) + (height / 2).toInt()
+        }
     }
 
     companion object {
