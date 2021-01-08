@@ -18,7 +18,7 @@ import org.jetbrains.exposed.sql.ResultRow
 
 fun ResultRow.asInvitationDO() = Invitation(
     userId1 = this[GameInvitations.user1].value,
-    userId2 = this[GameInvitations.user1].value,
+    userId2 = this[GameInvitations.user2].value,
     author = this[GameInvitations.author],
     created = this[GameInvitations.created]
 )
