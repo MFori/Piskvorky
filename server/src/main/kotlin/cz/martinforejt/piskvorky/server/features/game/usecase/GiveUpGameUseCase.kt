@@ -1,9 +1,6 @@
 package cz.martinforejt.piskvorky.server.features.game.usecase
 
-import cz.martinforejt.piskvorky.api.model.GameSnap
-import cz.martinforejt.piskvorky.api.model.GameUpdateSocketApiMessage
-import cz.martinforejt.piskvorky.api.model.OnlineUsersSocketApiMessage
-import cz.martinforejt.piskvorky.api.model.SocketApi
+import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.model.toSnap
 import cz.martinforejt.piskvorky.domain.repository.GameRepository
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
@@ -11,6 +8,7 @@ import cz.martinforejt.piskvorky.domain.usecase.Error
 import cz.martinforejt.piskvorky.domain.usecase.Result
 import cz.martinforejt.piskvorky.domain.usecase.UseCaseResult
 import cz.martinforejt.piskvorky.server.core.service.SocketService
+import cz.martinforejt.piskvorky.server.features.results.usecase.AddGameResultUseCase
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import kotlinx.coroutines.runBlocking
 
@@ -23,7 +21,8 @@ import kotlinx.coroutines.runBlocking
 class GiveUpGameUseCase(
     private val gameRepository: GameRepository,
     private val usersRepository: UsersRepository,
-    private val socketService: SocketService
+    private val socketService: SocketService,
+    private val addGameResultUseCase: AddGameResultUseCase
 ) : UseCaseResult<Unit, GiveUpGameUseCase.Params> {
 
     override fun execute(params: Params): Result<Unit> {
@@ -32,6 +31,7 @@ class GiveUpGameUseCase(
 
         if (game.state == GameSnap.Status.running) {
             game.giveUp(params.currentUser.id)
+            addGameResultUseCase.execute(game)
 
             val message = GameUpdateSocketApiMessage(game.toSnap())
             runBlocking {

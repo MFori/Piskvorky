@@ -1,5 +1,6 @@
 package cz.martinforejt.piskvorky.server.features.game.usecase
 
+import cz.martinforejt.piskvorky.api.model.BoardValue
 import cz.martinforejt.piskvorky.api.model.GameSnap
 import cz.martinforejt.piskvorky.api.model.GameUpdateSocketApiMessage
 import cz.martinforejt.piskvorky.api.model.Move
@@ -9,6 +10,7 @@ import cz.martinforejt.piskvorky.domain.usecase.Error
 import cz.martinforejt.piskvorky.domain.usecase.Result
 import cz.martinforejt.piskvorky.domain.usecase.UseCaseResult
 import cz.martinforejt.piskvorky.server.core.service.SocketService
+import cz.martinforejt.piskvorky.server.features.results.usecase.AddGameResultUseCase
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import kotlinx.coroutines.runBlocking
 
@@ -20,7 +22,8 @@ import kotlinx.coroutines.runBlocking
  */
 class PlayMoveUseCase(
     private val gameRepository: GameRepository,
-    private val socketService: SocketService
+    private val socketService: SocketService,
+    private val addGameResultUseCase: AddGameResultUseCase
 ) : UseCaseResult<Unit, PlayMoveUseCase.Params> {
 
     override fun execute(params: Params): Result<Unit> {
@@ -37,6 +40,10 @@ class PlayMoveUseCase(
 
         if (!game.play(params.currentUser.id, params.request)) {
             return Result(error = Error(0, "Not valid move."))
+        }
+
+        if (game.state == GameSnap.Status.end && game.winner != BoardValue.none) {
+            addGameResultUseCase.execute(game)
         }
 
         val message = GameUpdateSocketApiMessage(game.toSnap())

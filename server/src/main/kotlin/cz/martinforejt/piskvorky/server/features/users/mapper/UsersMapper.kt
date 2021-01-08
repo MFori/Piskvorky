@@ -43,6 +43,14 @@ fun RegisterRequest.toUserWithPassDO() = UserWithPassword(
     password = this.password
 )
 
+fun UserEntity.asUserDO() = User(
+    id = this.id.value,
+    email = this.email,
+    created = this.created,
+    admin = this.admin,
+    active = this.active
+)
+
 fun UserEntity.asPublicUser(isOnline: Boolean = false) = PublicUser(
     id = this.id.value,
     email = this.email,

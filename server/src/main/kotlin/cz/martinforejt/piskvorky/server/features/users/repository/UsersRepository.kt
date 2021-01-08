@@ -72,29 +72,4 @@ class UsersRepositoryImpl(
     override suspend fun isOnline(userId: Int): Boolean {
         return socketService.isOnline(userId)
     }
-
-
-    /*
-    override suspend fun setOnline(user: PublicUser, online: Boolean) {
-        if (online) {
-            redis.client.sadd(RedisDatabase.OnlineUsersKey, user.toOnlineJson())
-        } else {
-            redis.client.srem(RedisDatabase.OnlineUsersKey, user.toOnlineJson())
-        }
-    }
-
-    override suspend fun getOnlineUsers(): List<PublicUser> {
-        return redis.client.smembers(RedisDatabase.OnlineUsersKey).map {
-            it.toOnlineUser()
-        }.toList()
-    }
-
-    override suspend fun isOnline(user: PublicUser): Boolean {
-        return redis.client.sismember(RedisDatabase.OnlineUsersKey, user.toOnlineJson())
-    }
-
-    private fun PublicUser.toOnlineJson() = Json.encodeToString(PublicUser.serializer(), this.copy(online = true))
-
-    private fun String.toOnlineUser() = Json.decodeFromString(PublicUser.serializer(), this).copy(online = true)
-*/
 }

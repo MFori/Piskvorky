@@ -3,10 +3,7 @@ package cz.martinforejt.piskvorky.server.core.database
 import com.mysql.cj.jdbc.Driver
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import cz.martinforejt.piskvorky.server.core.database.schema.Friendships
-import cz.martinforejt.piskvorky.server.core.database.schema.GameInvitations
-import cz.martinforejt.piskvorky.server.core.database.schema.LostPasswords
-import cz.martinforejt.piskvorky.server.core.database.schema.Users
+import cz.martinforejt.piskvorky.server.core.database.schema.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -27,6 +24,7 @@ object DatabaseFactory {
                 Users,
                 Friendships,
                 GameInvitations,
+                GameResults,
                 LostPasswords
             )
 

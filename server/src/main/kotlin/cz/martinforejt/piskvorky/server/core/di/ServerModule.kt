@@ -1,9 +1,6 @@
 package cz.martinforejt.piskvorky.server.core.di
 
-import cz.martinforejt.piskvorky.domain.repository.FriendsRepository
-import cz.martinforejt.piskvorky.domain.repository.GameRepository
-import cz.martinforejt.piskvorky.domain.repository.LostPasswordRepository
-import cz.martinforejt.piskvorky.domain.repository.UsersRepository
+import cz.martinforejt.piskvorky.domain.repository.*
 import cz.martinforejt.piskvorky.domain.service.EmailService
 import cz.martinforejt.piskvorky.server.core.service.EmailServiceImpl
 import cz.martinforejt.piskvorky.server.core.service.SocketService
@@ -12,6 +9,8 @@ import cz.martinforejt.piskvorky.server.features.game.usecase.CancelGameInvitati
 import cz.martinforejt.piskvorky.server.features.game.usecase.GiveUpGameUseCase
 import cz.martinforejt.piskvorky.server.features.game.usecase.JoinGameUseCase
 import cz.martinforejt.piskvorky.server.features.game.usecase.PlayMoveUseCase
+import cz.martinforejt.piskvorky.server.features.results.repository.ResultsRepositoryImpl
+import cz.martinforejt.piskvorky.server.features.results.usecase.AddGameResultUseCase
 import cz.martinforejt.piskvorky.server.features.socket.SocketServiceImpl
 import cz.martinforejt.piskvorky.server.features.users.manager.HashService
 import cz.martinforejt.piskvorky.server.features.users.manager.Sha256HashService
@@ -72,6 +71,10 @@ fun serverModule(app: Application) = module {
 
     single<GameRepository> {
         GameRepositoryImpl()
+    }
+
+    single<ResultsRepository> {
+        ResultsRepositoryImpl()
     }
 
     single<SocketService> {
@@ -157,7 +160,8 @@ fun serverModule(app: Application) = module {
     factory {
         PlayMoveUseCase(
             gameRepository = get(),
-            socketService = get()
+            socketService = get(),
+            addGameResultUseCase = get()
         )
     }
 
@@ -165,7 +169,15 @@ fun serverModule(app: Application) = module {
         GiveUpGameUseCase(
             gameRepository = get(),
             socketService = get(),
-            usersRepository = get()
+            usersRepository = get(),
+            addGameResultUseCase = get()
+        )
+    }
+
+    factory {
+        AddGameResultUseCase(
+            usersRepository = get(),
+            resultsRepository = get()
         )
     }
 }
