@@ -8,6 +8,23 @@
   user-select: none;
 }
 
+.game-content {
+  position: relative;
+
+  .zoom-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 100;
+
+    button {
+      width: 40px;
+      height: 40px;
+      margin-right: 5px;
+    }
+  }
+}
+
 #canvas {
   position: absolute;
   cursor: pointer;

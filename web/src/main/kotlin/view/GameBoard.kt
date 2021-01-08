@@ -31,6 +31,8 @@ import kotlin.math.floor
 
 class GameBoardProps : CoreRProps() {
     var game: GameVO? = null
+    var zoom = 0
+    var center = false
     var onMove: ((Int, Int) -> Unit)? = null
 }
 
@@ -39,6 +41,7 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
     private var ctx: CanvasRenderingContext2D? = null
     private var width = 0.0
     private var height = 0.0
+    private var cellSize = DEFAULT_CELL_SIZE
 
     private var moved = false
     private var isDragging = false
@@ -68,6 +71,7 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
         width = ctx!!.canvas.width.toDouble()
         height = ctx!!.canvas.height.toDouble()
         moved = false
+        cellSize = props.zoom * CELL_INCREMENT + DEFAULT_CELL_SIZE
         getCenter()
 
         c.onmousedown = onMouseDown
@@ -163,8 +167,8 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
 
     private fun getMouse(x: Int, y: Int) {
 
-        val mouseX = (-offsetX + x).toDouble() / CELL_SIZE
-        val mouseY = (-offsetY + y).toDouble() / CELL_SIZE
+        val mouseX = (-offsetX + x).toDouble() / cellSize
+        val mouseY = (-offsetY + y).toDouble() / cellSize
 
         this.mouseX = floor(mouseX).toInt()
         this.mouseY = floor(mouseY).toInt()
@@ -173,10 +177,10 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
     private fun redraw(ctx: CanvasRenderingContext2D, width: Double, height: Double) {
         ctx.clear(width, height)
 
-        val cellsX = width.toInt() / CELL_SIZE
-        val offsetX = (offsetX % CELL_SIZE).toDouble()
-        val cellsY = height.toInt() / CELL_SIZE
-        val offsetY = (offsetY % CELL_SIZE).toDouble()
+        val cellsX = width.toInt() / cellSize
+        val offsetX = (offsetX % cellSize).toDouble()
+        val cellsY = height.toInt() / cellSize
+        val offsetY = (offsetY % cellSize).toDouble()
 
         ctx.drawBackground(width, height, cellsX, offsetX, cellsY, offsetY)
         ctx.drawMouse(offsetX, offsetY)
@@ -186,27 +190,27 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
     private fun CanvasRenderingContext2D.drawMoves(cellsX: Int, offsetX: Double, cellsY: Int, offsetY: Double) {
         for (x in -1..cellsX + 1) {
             for (y in -1..cellsY + 1) {
-                val xx = x - (this@GameBoard.offsetX / CELL_SIZE)
-                val yy = y - (this@GameBoard.offsetY / CELL_SIZE)
+                val xx = x - (this@GameBoard.offsetX / cellSize)
+                val yy = y - (this@GameBoard.offsetY / cellSize)
 
                 strokeStyle = "#fff"
-                lineWidth = 3.0
+                lineWidth = 3.0 + props.zoom * 0.2
                 //strokeText("$xx:$yy", offsetX + x * CELL_SIZE, offsetY + y * CELL_SIZE + CELL_SIZE / 2)
 
                 if (props.game?.isEmpty(xx, yy) == false) {
                     val value = props.game!![xx, yy]
                     if (value == BoardValue.cross) {
                         beginPath()
-                        moveTo(offsetX + x * CELL_SIZE + 15, offsetY + y * CELL_SIZE + 15)
-                        lineTo(offsetX + x * CELL_SIZE + CELL_SIZE - 15, offsetY + y * CELL_SIZE + CELL_SIZE - 15)
-                        moveTo(offsetX + x * CELL_SIZE + CELL_SIZE - 15, offsetY + y * CELL_SIZE + 15)
-                        lineTo(offsetX + x * CELL_SIZE + 15, offsetY + y * CELL_SIZE + CELL_SIZE - 15)
+                        moveTo(offsetX + x * cellSize + cellSize/5, offsetY + y * cellSize + cellSize/5)
+                        lineTo(offsetX + x * cellSize + cellSize - cellSize/5, offsetY + y * cellSize + cellSize - cellSize/5)
+                        moveTo(offsetX + x * cellSize + cellSize - cellSize/5, offsetY + y * cellSize + cellSize/5)
+                        lineTo(offsetX + x * cellSize + cellSize/5, offsetY + y * cellSize + cellSize - cellSize/5)
                         stroke()
                     } else {
                         beginPath()
                         arc(
-                            offsetX + x * CELL_SIZE + CELL_SIZE / 2, offsetY + y * CELL_SIZE + CELL_SIZE / 2,
-                            (CELL_SIZE / 2 - 15).toDouble(), 0.0, 2 * PI
+                            offsetX + x * cellSize + cellSize / 2, offsetY + y * cellSize + cellSize / 2,
+                            (cellSize / 2 - cellSize/5).toDouble(), 0.0, 2 * PI
                         )
                         stroke()
                     }
@@ -220,10 +224,10 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
             strokeStyle = "#5d7191"
             fillStyle = "#5d7191"
             fillRect(
-                offsetX + (mouseX!! + (this@GameBoard.offsetX / CELL_SIZE)) * CELL_SIZE,
-                offsetY + (mouseY!! + (this@GameBoard.offsetY / CELL_SIZE)) * CELL_SIZE,
-                CELL_SIZE.toDouble(),
-                CELL_SIZE.toDouble()
+                offsetX + (mouseX!! + (this@GameBoard.offsetX / cellSize)) * cellSize,
+                offsetY + (mouseY!! + (this@GameBoard.offsetY / cellSize)) * cellSize,
+                cellSize.toDouble(),
+                cellSize.toDouble()
             )
         }
     }
@@ -241,14 +245,14 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
 
         beginPath()
         for (i in -1..cellsX + 1) {
-            moveTo(offsetX + i * CELL_SIZE, 0.0)
-            lineTo(offsetX + i * CELL_SIZE, height)
+            moveTo(offsetX + i * cellSize, 0.0)
+            lineTo(offsetX + i * cellSize, height)
         }
         stroke()
         beginPath()
         for (i in -1..cellsY + 1) {
-            moveTo(0.0, offsetY + i * CELL_SIZE)
-            lineTo(width, offsetY + i * CELL_SIZE)
+            moveTo(0.0, offsetY + i * cellSize)
+            lineTo(width, offsetY + i * cellSize)
         }
         stroke()
     }
@@ -258,20 +262,23 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
     }
 
     private fun getCenter() {
-        if (props.game?.board?.cells?.size == 1) {
+        if (props.game?.board?.cells?.isEmpty() == false && (props.center || props.game?.board?.cells?.size == 1)) {
             val cell = props.game!!.board.cells[0]
-            offsetX = -(cell.x * CELL_SIZE) + (width / 2).toInt()
-            offsetY = -(cell.y * CELL_SIZE) + (height / 2).toInt()
+            offsetX = -(cell.x * cellSize) + (width / 2).toInt()
+            offsetY = -(cell.y * cellSize) + (height / 2).toInt()
         }
     }
 
     companion object {
-        const val CELL_SIZE = 80
+        const val DEFAULT_CELL_SIZE = 80
+        const val CELL_INCREMENT = 10
     }
 }
 
-fun RBuilder.gameBoard(parent: CoreComponent<*, *>, game: GameVO?, onMove: (Int, Int) -> Unit) =
+fun RBuilder.gameBoard(parent: CoreComponent<*, *>, game: GameVO?, zoom: Int, center: Boolean, onMove: (Int, Int) -> Unit) =
     coreChild(parent, GameBoard::class) {
         attrs.game = game
+        attrs.zoom = zoom
+        attrs.center = center
         attrs.onMove = onMove
     }

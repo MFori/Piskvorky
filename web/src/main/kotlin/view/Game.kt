@@ -12,11 +12,15 @@ import cz.martinforejt.piskvorky.domain.service.GameService
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.launch
+import kotlinx.html.ButtonType
+import kotlinx.html.js.onClickFunction
+import kotlinx.html.title
 import model.GameVO
 import model.asGameVO
 import org.koin.core.inject
 import org.w3c.dom.events.Event
 import react.*
+import react.dom.button
 import react.dom.div
 import react.router.dom.redirect
 
@@ -33,16 +37,21 @@ class GameState : CoreRState() {
     var game: GameVO? = null
     var inGame = true
     var unread = 0
+    var zoom = 0
+    var center = false
 }
 
 class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
 
     private val gameService by inject<GameService>()
+    private var board: GameBoard? = null
 
     override fun GameState.init() {
         game = null
         inGame = true
         unread = 0
+        zoom = 0
+        center = false
     }
 
     override fun componentDidMount() {
@@ -73,13 +82,41 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
                 div("game-content") {
                     if (state.game == null) {
                         loading()
+                    } else {
+                        div("zoom-container") {
+                            button(type = ButtonType.button, classes = "zoom-center") {
+                                attrs.title = "Center"
+                                attrs.onClickFunction = {
+                                    setState { center = true }
+                                }
+                                +"."
+                            }
+                            button(type = ButtonType.button, classes = "zoom-in") {
+                                attrs.title = "Zoom in"
+                                attrs.onClickFunction = {
+                                    if (state.zoom < 6) setState { zoom++ }
+                                }
+                                +"+"
+                            }
+                            button(type = ButtonType.button, classes = "zoom-out") {
+                                attrs.title = "Zoom out"
+                                attrs.onClickFunction = {
+                                    if (state.zoom > -6) setState { zoom-- }
+                                }
+                                +"-"
+                            }
+                        }
                     }
                 }
                 gameFooter(this@Game, state.unread, onGiveUpClicked, onShowChat)
                 coreChild(GameFooter::class)
             }
-            gameBoard(this@Game, state.game, onMove)
+            gameBoard(this@Game, state.game, state.zoom, state.center, onMove)
         }
+    }
+
+    override fun componentDidUpdate(prevProps: GameProps, prevState: GameState, snapshot: Any) {
+        state.center = false
     }
 
     override fun refresh() {
@@ -109,7 +146,12 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
         componentScope.launch {
             val res = gameService.play(Move(x, y), user!!.token)
             if (!res.isSuccessful) {
-                window.alert(res.error?.message ?: "Invalid move.")
+                showDialog(
+                    DialogBuilder()
+                        .title("Invalid move")
+                        .message("Invalid move, try it better again.")
+                        .positiveBtn("Ok", null)
+                )
                 refresh()
             }
         }
