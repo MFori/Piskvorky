@@ -191,21 +191,8 @@ class Lobby : ConnectionAwareCoreComponent<LobbyProps, LobbyState>() {
     }
 
     override fun onReceiveFriendRequest(message: SocketApiMessage<FriendShipRequestSocketApiMessage>) {
-        if (message.data?.request == true) {
-            showDialog(DialogBuilder()
-                .title("Add friend?")
-                .message("Friendship request from ${message.data!!.email}.")
-                .positiveBtn("Yes") {
-                    componentScope.launch {
-                        friendsService.addFriend(CreateFriendshipRequest(message.data!!.userId), user!!.token)
-                    }
-                }
-                .negativeBtn("No") {
-                    componentScope.launch {
-                        friendsService.removeFriend(CancelFriendshipRequest(message.data!!.userId), user!!.token)
-                    }
-                })
-        } else if (message.data?.confirm == true) {
+        super.onReceiveFriendRequest(message)
+        if (message.data?.confirm == true) {
             refresh()
         }
     }

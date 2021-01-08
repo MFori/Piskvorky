@@ -1,6 +1,7 @@
 package core.component
 
 import cz.martinforejt.piskvorky.api.model.*
+import cz.martinforejt.piskvorky.domain.service.FriendsService
 import cz.martinforejt.piskvorky.domain.service.GameService
 import io.ktor.http.cio.websocket.*
 import kotlinx.browser.window
@@ -20,6 +21,7 @@ import service.WebSocketService
 abstract class ConnectionAwareCoreComponent<P : CoreRProps, S : CoreRState> : CoreComponent<P, S>(), MessageListener,
     ConnectionListener {
 
+    private val friendsService by inject<FriendsService>()
     private val gameService by inject<GameService>()
 
     override fun componentDidMount() {
@@ -111,6 +113,21 @@ abstract class ConnectionAwareCoreComponent<P : CoreRProps, S : CoreRState> : Co
     }
 
     override fun onReceiveFriendRequest(message: SocketApiMessage<FriendShipRequestSocketApiMessage>) {
+        if (message.data?.request == true) {
+            showDialog(DialogBuilder()
+                .title("Add friend?")
+                .message("Friendship request from ${message.data!!.email}.")
+                .positiveBtn("Yes") {
+                    componentScope.launch {
+                        friendsService.addFriend(CreateFriendshipRequest(message.data!!.userId), user!!.token)
+                    }
+                }
+                .negativeBtn("No") {
+                    componentScope.launch {
+                        friendsService.removeFriend(CancelFriendshipRequest(message.data!!.userId), user!!.token)
+                    }
+                })
+        }
     }
 
     override fun onReceiveFriendCancel(message: SocketApiMessage<FriendshipCancelledSocketApiMessage>) {
