@@ -41,7 +41,7 @@ data class GameVO(
 
     fun isEmpty(x: Int, y: Int) = getValue(x, y) == BoardValue.none
 
-    fun rival(email: String) = if (cross.email == email) nought else cross
+    fun player(email: String) = if (cross.email == email) BoardValue.cross else BoardValue.nought
 }
 
 fun GameSnap.asGameVO() = GameVO(

@@ -194,7 +194,7 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
 
                 if (props.game?.isEmpty(xx, yy) == false) {
                     val value = props.game!![xx, yy]
-                    if(value != BoardValue.cross) {
+                    if(value == BoardValue.cross) {
                         beginPath()
                         moveTo(offsetX + x * CELL_SIZE + 15, offsetY + y * CELL_SIZE + 15)
                         lineTo(offsetX + x * CELL_SIZE + CELL_SIZE - 15, offsetY  + y * CELL_SIZE + CELL_SIZE - 15)

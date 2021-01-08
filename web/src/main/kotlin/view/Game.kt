@@ -3,6 +3,7 @@ package view
 import core.component.ConnectionAwareCoreComponent
 import core.component.CoreRProps
 import core.component.CoreRState
+import core.component.DialogBuilder
 import cz.martinforejt.piskvorky.api.model.GameSnap
 import cz.martinforejt.piskvorky.api.model.GameUpdateSocketApiMessage
 import cz.martinforejt.piskvorky.api.model.Move
@@ -86,14 +87,18 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
     }
 
     private val onGiveUpClicked: (Event) -> Unit = {
-        if (window.confirm("Really give up game?")) {
-            componentScope.launch {
-                val res = gameService.giveUp(user!!.token)
-                if (res.isSuccessful) {
-                    setState { inGame = false }
+        showDialog(DialogBuilder()
+            .title("Really give up game?")
+            .message("Really give up game?")
+            .positiveBtn("Yes") {
+                componentScope.launch {
+                    val res = gameService.giveUp(user!!.token)
+                    if (res.isSuccessful) {
+                        setState { inGame = false }
+                    }
                 }
             }
-        }
+            .negativeBtn("No", null))
     }
 
     private val onShowChat: (Event) -> Unit = {
@@ -112,20 +117,37 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
 
     override fun onReceiveGameUpdate(message: SocketApiMessage<GameUpdateSocketApiMessage>) {
         super.onReceiveGameUpdate(message)
-        if (message.data?.game?.status == GameSnap.Status.running) {
-            setState {
-                inGame = true
-                game = message.data!!.game.asGameVO()
+        when (message.data?.game?.status) {
+            GameSnap.Status.running -> {
+                setState {
+                    inGame = true
+                    game = message.data!!.game.asGameVO()
+                }
             }
-        } else if(message.data?.game?.status == GameSnap.Status.end) {
-            setState {
-                game = message.data!!.game.asGameVO()
-                // TODO show finish dialog
+            GameSnap.Status.end -> {
+                val finishedGame = message.data!!.game.asGameVO()
+                setState {
+                    game = finishedGame
+                }
+                showGameFinishDialog(finishedGame)
             }
-        } else {
-            setState {
-                inGame = false
+            else -> {
+                setState {
+                    inGame = false
+                }
             }
         }
+    }
+
+    private fun showGameFinishDialog(game: GameVO) {
+        showDialog(DialogBuilder()
+            .title("Game end.")
+            .message(if (game.winner == game.player(user!!.email)) "You are winner!" else "You are looser!")
+            .positiveBtn("Ok") {
+                componentScope.launch { gameService.giveUp(user!!.token) }
+                setState {
+                    inGame = false
+                }
+            })
     }
 }

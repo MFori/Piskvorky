@@ -5,6 +5,7 @@ import core.component.CoreRProps
 import core.component.CoreRState
 import core.component.coreChild
 import cz.martinforejt.piskvorky.api.model.BoardValue
+import cz.martinforejt.piskvorky.api.model.GameSnap
 import kotlinx.html.id
 import model.GameVO
 import react.RBuilder
@@ -34,15 +35,15 @@ class GameHeader : CoreComponent<GameHeaderProps, CoreRState>() {
 
             div {
                 attrs.id = "game-title"
-                div("player-box player-left ${if (props.game?.current == BoardValue.cross) "player-active" else ""}") {
+                div("player-box player-left ${if (props.game?.current == BoardValue.cross && props.game?.status == GameSnap.Status.running) "player-active" else ""}") {
                     img(src = "/icons/close.svg") {}
-                    span(if(props.game?.cross?.email == user!!.email) "font-weight-bold" else "") {
+                    span(if (props.game?.cross?.email == user!!.email) "font-weight-bold" else "") {
                         +(props.game?.cross?.email ?: "")
                     }
                 }
-                div("player-box player-right ${if (props.game?.current == BoardValue.nought) "player-active" else ""}") {
+                div("player-box player-right ${if (props.game?.current == BoardValue.nought && props.game?.status == GameSnap.Status.running) "player-active" else ""}") {
                     img(src = "/icons/rec.svg") {}
-                    span(if(props.game?.nought?.email == user!!.email) "font-weight-bold" else "") {
+                    span(if (props.game?.nought?.email == user!!.email) "font-weight-bold" else "") {
                         +(props.game?.nought?.email ?: "")
                     }
                 }
