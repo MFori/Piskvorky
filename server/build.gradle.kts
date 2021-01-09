@@ -17,6 +17,7 @@ dependencies {
     implementation(Ktor.websockets)
     implementation(Ktor.authCore)
     implementation(Ktor.authJwt)
+    implementation("io.ktor:ktor-html-builder:${Versions.ktor}")
 
     implementation(Koin.ktor)
     implementation(Logback.classic)

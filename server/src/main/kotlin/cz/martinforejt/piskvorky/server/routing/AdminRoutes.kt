@@ -1,7 +1,10 @@
 package cz.martinforejt.piskvorky.server.routing
 
+import cz.martinforejt.piskvorky.server.features.admin.LayoutTemplate
 import io.ktor.application.*
+import io.ktor.html.*
 import io.ktor.response.*
+import io.ktor.response.respond
 import io.ktor.routing.*
 
 /**
@@ -24,6 +27,10 @@ fun Route.adminApiRoutes() {
 
         }
 
+        get("/results") {
+
+        }
+
     }
 
 }
@@ -33,7 +40,19 @@ fun Route.adminWebRoutes() {
     route("/admin") {
 
         get("/") {
-            call.respond("Hello from admin")
+            call.respondHtmlTemplate(LayoutTemplate()) {
+                header {
+                    +"Admin"
+                }
+                content {
+                    articleTitle {
+                        +"Hello from Admin!"
+                    }
+                    articleText {
+                        +"Admin desc"
+                    }
+                }
+            }
         }
 
 
