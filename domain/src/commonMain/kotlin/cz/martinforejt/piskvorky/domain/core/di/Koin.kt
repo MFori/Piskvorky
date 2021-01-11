@@ -15,7 +15,7 @@ fun initKoin(
         modules(
             modules.toMutableList().apply {
                 add(
-                    domainModule(enableNetworkLogs)
+                    domainModule()
                 )
             }
         )

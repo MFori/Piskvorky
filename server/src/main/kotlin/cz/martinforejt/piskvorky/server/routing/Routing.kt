@@ -2,12 +2,13 @@ package cz.martinforejt.piskvorky.server.routing
 
 import cz.martinforejt.piskvorky.server.routing.exception.ApiException
 import cz.martinforejt.piskvorky.server.routing.utils.errorResponse
-import cz.martinforejt.piskvorky.server.security.*
+import cz.martinforejt.piskvorky.server.security.JWT_AUTH_ADMIN
+import cz.martinforejt.piskvorky.server.security.JWT_AUTH_USER
+import cz.martinforejt.piskvorky.server.security.SESSION_AUTH_ADMIN
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.http.*
-import io.ktor.http.content.*
 import io.ktor.routing.*
 import io.ktor.util.*
 

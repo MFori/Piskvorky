@@ -2,14 +2,12 @@ package cz.martinforejt.piskvorky.server.features.game.repository
 
 import cz.martinforejt.piskvorky.api.model.BoardValue
 import cz.martinforejt.piskvorky.api.model.GameInvitation
-import cz.martinforejt.piskvorky.api.model.Player
 import cz.martinforejt.piskvorky.domain.model.Game
 import cz.martinforejt.piskvorky.domain.model.Invitation
 import cz.martinforejt.piskvorky.domain.model.User
 import cz.martinforejt.piskvorky.domain.repository.GameRepository
 import cz.martinforejt.piskvorky.server.core.database.schema.GameInvitationEntity
 import cz.martinforejt.piskvorky.server.core.database.schema.GameInvitations
-import cz.martinforejt.piskvorky.server.core.service.SocketService
 import cz.martinforejt.piskvorky.server.features.game.mapper.asInvitationDO
 import cz.martinforejt.piskvorky.server.features.game.mapper.toGameInvitation
 import cz.martinforejt.piskvorky.server.features.game.mapper.toPlayer

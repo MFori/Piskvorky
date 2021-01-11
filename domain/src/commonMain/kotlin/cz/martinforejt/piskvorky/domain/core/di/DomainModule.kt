@@ -9,7 +9,7 @@ import org.koin.dsl.module
  * @author Martin Forejt
  */
 
-fun domainModule(enableNetworkLogs: Boolean) = module {
+fun domainModule() = module {
 
 
 }

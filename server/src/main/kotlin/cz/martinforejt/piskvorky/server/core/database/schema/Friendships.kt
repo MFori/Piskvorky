@@ -4,13 +4,10 @@ import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
-import org.jetbrains.exposed.sql.ColumnType
-import org.jetbrains.exposed.sql.StringColumnType
 import org.jetbrains.exposed.sql.VarCharColumnType
 import org.jetbrains.exposed.sql.`java-time`.datetime
 import org.jetbrains.exposed.sql.vendors.currentDialect
 import java.io.Serializable
-import java.time.format.DateTimeFormatter
 
 /**
  * Created by Martin Forejt on 01.01.2021.
@@ -41,12 +38,16 @@ class FriendshipId(
     val id2: Int
 ) : Comparable<FriendshipId>, Serializable {
     override fun compareTo(other: FriendshipId): Int {
-        return if (id1 != other.id1) {
-            id1.compareTo(other.id1)
-        } else if (id2 != other.id2) {
-            id2.compareTo(other.id2)
-        } else {
-            id1.compareTo(other.id2)
+        return when {
+            id1 != other.id1 -> {
+                id1.compareTo(other.id1)
+            }
+            id2 != other.id2 -> {
+                id2.compareTo(other.id2)
+            }
+            else -> {
+                id1.compareTo(other.id2)
+            }
         }
     }
 }

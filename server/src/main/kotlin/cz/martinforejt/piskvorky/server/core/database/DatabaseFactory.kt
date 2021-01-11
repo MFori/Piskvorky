@@ -1,6 +1,5 @@
 package cz.martinforejt.piskvorky.server.core.database
 
-import com.mysql.cj.jdbc.Driver
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import cz.martinforejt.piskvorky.server.core.database.schema.*

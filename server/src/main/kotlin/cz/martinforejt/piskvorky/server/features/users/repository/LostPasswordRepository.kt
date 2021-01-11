@@ -1,10 +1,9 @@
 package cz.martinforejt.piskvorky.server.features.users.repository
 
-import cz.martinforejt.piskvorky.domain.model.*
+import cz.martinforejt.piskvorky.domain.model.LostPasswordLink
 import cz.martinforejt.piskvorky.domain.repository.LostPasswordRepository
 import cz.martinforejt.piskvorky.server.core.database.schema.LostPasswords
 import cz.martinforejt.piskvorky.server.features.users.mapper.asLostPasswordLink
-import io.ktor.server.engine.*
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
