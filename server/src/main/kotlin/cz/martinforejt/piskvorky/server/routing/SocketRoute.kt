@@ -27,10 +27,6 @@ fun Route.socketRoute() {
 
     val socketService by inject<SocketService>()
 
-    install(Sessions) {
-        cookie<LobbyCookieSession>("LOBBY_SESSION")
-    }
-
     intercept(ApplicationCallPipeline.Features) {
         if (call.sessions.get<LobbyCookieSession>() == null) {
             call.sessions.set(LobbyCookieSession(generateNonce()))

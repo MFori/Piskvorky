@@ -2,9 +2,7 @@ package cz.martinforejt.piskvorky.server.routing
 
 import cz.martinforejt.piskvorky.server.routing.exception.ApiException
 import cz.martinforejt.piskvorky.server.routing.utils.errorResponse
-import cz.martinforejt.piskvorky.server.security.BASIC_AUTH_ADMIN
-import cz.martinforejt.piskvorky.server.security.JWT_AUTH_ADMIN
-import cz.martinforejt.piskvorky.server.security.JWT_AUTH_USER
+import cz.martinforejt.piskvorky.server.security.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
@@ -35,12 +33,13 @@ fun Application.registerRoutes() {
             }
         }
 
-        authenticate(BASIC_AUTH_ADMIN, JWT_AUTH_ADMIN) {
+        authenticate(SESSION_AUTH_ADMIN, JWT_AUTH_ADMIN) {
             route(API_VERSION) {
                 adminApiRoutes()
             }
             adminWebRoutes()
         }
+        adminPublicWebRoutes()
 
         route(API_VERSION) {
             socketRoute()

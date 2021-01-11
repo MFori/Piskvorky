@@ -9,6 +9,7 @@ import cz.martinforejt.piskvorky.server.routing.securityRoutes
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
+import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.*
 import org.koin.ktor.ext.inject
@@ -22,7 +23,9 @@ import org.koin.ktor.ext.inject
 
 const val JWT_AUTH_USER = "jwt-auth-user"
 const val JWT_AUTH_ADMIN = "jwt-auth-admin"
-const val BASIC_AUTH_ADMIN = "basic-auth-admin"
+//const val BASIC_AUTH_ADMIN = "basic-auth-admin"
+const val FORM_AUTH_ADMIN = "form-auth-admin"
+const val SESSION_AUTH_ADMIN = "session-auth-admin"
 
 @KtorExperimentalAPI
 fun Application.setUpSecurity() {
@@ -51,7 +54,7 @@ fun Application.setUpSecurity() {
             }
             challenge { _, _ -> throw UnauthorizedApiException() }
         }
-        basic(BASIC_AUTH_ADMIN) {
+        /*basic(BASIC_AUTH_ADMIN) {
             realm = jwtConfig.realm
             validate { credential ->
                 val principal = validateCredentialsUseCase.execute(credential.toUserCredential())
@@ -61,6 +64,34 @@ fun Application.setUpSecurity() {
                 }
                 principal
             }
+        }*/
+        form(FORM_AUTH_ADMIN) {
+            challenge {
+                val errors: Map<Any, AuthenticationFailedCause> = call.authentication.errors
+                when (errors.values.singleOrNull()) {
+                    AuthenticationFailedCause.InvalidCredentials ->
+                        call.respondRedirect("/login?invalid")
+
+                    AuthenticationFailedCause.NoCredentials ->
+                        call.respondRedirect("/login?no")
+
+                    else ->
+                        call.respondRedirect("/login")
+                }
+
+            }
+            validate { credential ->
+                val principal = validateCredentialsUseCase.execute(credential.toUserCredential())
+                    ?: return@validate null
+                if (principal.admin.not()) {
+                    return@validate null
+                }
+                principal
+            }
+        }
+        session<UserPrincipal>(SESSION_AUTH_ADMIN) {
+            challenge("/login")
+            validate { session: UserPrincipal -> session }
         }
     }
 

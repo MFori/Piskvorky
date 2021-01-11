@@ -1,8 +1,5 @@
 package cz.martinforejt.piskvorky.server.features.admin.view
 
-import cz.martinforejt.piskvorky.domain.model.User
-import cz.martinforejt.piskvorky.server.security.UserPrincipal
-import io.ktor.html.*
 import kotlinx.html.*
 
 /**
@@ -11,20 +8,17 @@ import kotlinx.html.*
  *
  * @author Martin Forejt
  */
-class HomePageTempl(
-    val users: List<User>
-) : AdminContentTempl {
-    val hovnoText = Placeholder<FlowContent>()
-    val users2 = PlaceholderList<FlowContent, User>()
+class HomePageTempl : AdminContentTempl {
     override fun FlowContent.apply() {
         article {
             h2 {
-                insert(hovnoText)
+                +"Hello from admin zone."
             }
-            users.forEach {
-                p {
-                    +"${it.email}"
-                }
+            div {
+                a("/admin/users") {+"Users"}
+            }
+            div {
+                a("/admin/results") {+"Results"}
             }
         }
     }

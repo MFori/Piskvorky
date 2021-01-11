@@ -10,40 +10,47 @@ import kotlinx.html.*
  *
  * @author Martin Forejt
  */
+interface AdminContentTempl : Template<FlowContent>
+
 class AdminLayoutTempl<CT : AdminContentTempl>(
     private val contentTempl: CT,
     val user: UserPrincipal
 ) : Template<HTML> {
-    val header = Placeholder<FlowContent>()
     val content = TemplatePlaceholder<CT>()
 
     override fun HTML.apply() {
         head {
             title("Piskvorky | Admin")
-            link("admin/bootstrap.min.css", rel = "stylesheet")
+            link("/admin/bootstrap.min.css", rel = "stylesheet")
+            link("/admin/admin.css", rel = "stylesheet")
         }
         body {
-            h1 {
-                insert(header)
+            createHeader()
+            article {
+                insert(contentTempl, content)
             }
-            insert(contentTempl, content)
         }
     }
-}
 
-interface AdminContentTempl : Template<FlowContent>
+    private fun BODY.createHeader() {
+        header {
+            a("/admin") {
+                +"Piskvorky - Admin zone"
+            }
+            div {
+                id = "user-box"
+                +user.email
+                +" | "
+                a("/logout") {
+                    +"logout"
+                }
+            }
+        }
+    }
 
-class ContentTemplate : Template<FlowContent> {
-    val articleTitle = Placeholder<FlowContent>()
-    val articleText = Placeholder<FlowContent>()
-    override fun FlowContent.apply() {
-        article {
-            h2 {
-                insert(articleTitle)
-            }
-            p {
-                insert(articleText)
-            }
+    private fun BODY.createFooter() {
+        footer {
+
         }
     }
 }
