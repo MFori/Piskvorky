@@ -1,5 +1,6 @@
-package cz.martinforejt.piskvorky.server.features.admin
+package cz.martinforejt.piskvorky.server.features.admin.view
 
+import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import io.ktor.html.*
 import kotlinx.html.*
 
@@ -9,24 +10,30 @@ import kotlinx.html.*
  *
  * @author Martin Forejt
  */
-class LayoutTemplate: Template<HTML> {
+class AdminLayoutTempl<CT : AdminContentTempl>(
+    private val contentTempl: CT,
+    val user: UserPrincipal
+) : Template<HTML> {
     val header = Placeholder<FlowContent>()
-    val content = TemplatePlaceholder<ContentTemplate>()
+    val content = TemplatePlaceholder<CT>()
 
     override fun HTML.apply() {
         head {
-            
+            title("Piskvorky | Admin")
+            link("admin/bootstrap.min.css", rel = "stylesheet")
         }
         body {
             h1 {
                 insert(header)
             }
-            insert(ContentTemplate(), content)
+            insert(contentTempl, content)
         }
     }
 }
 
-class ContentTemplate: Template<FlowContent> {
+interface AdminContentTempl : Template<FlowContent>
+
+class ContentTemplate : Template<FlowContent> {
     val articleTitle = Placeholder<FlowContent>()
     val articleText = Placeholder<FlowContent>()
     override fun FlowContent.apply() {

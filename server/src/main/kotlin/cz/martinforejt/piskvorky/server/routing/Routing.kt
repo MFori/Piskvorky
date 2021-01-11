@@ -9,6 +9,7 @@ import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.routing.*
 import io.ktor.util.*
 

@@ -1,11 +1,15 @@
 package cz.martinforejt.piskvorky.server.routing
 
-import cz.martinforejt.piskvorky.server.features.admin.LayoutTemplate
+import cz.martinforejt.piskvorky.domain.repository.ResultsRepository
+import cz.martinforejt.piskvorky.domain.repository.UsersRepository
+import cz.martinforejt.piskvorky.server.features.admin.view.HomePageTempl
+import cz.martinforejt.piskvorky.server.features.admin.view.adminTemplate
+import cz.martinforejt.piskvorky.server.routing.exception.NotFoundApiException
 import io.ktor.application.*
-import io.ktor.html.*
+import io.ktor.http.content.*
 import io.ktor.response.*
-import io.ktor.response.respond
 import io.ktor.routing.*
+import org.koin.ktor.ext.inject
 
 /**
  * Created by Martin Forejt on 26.12.2020.
@@ -16,19 +20,30 @@ import io.ktor.routing.*
 
 fun Route.adminApiRoutes() {
 
+    val usersRepository by inject<UsersRepository>()
+    val resultsRepository by inject<ResultsRepository>()
+
     route("/admin") {
 
         get("/") {
-            call.respond("Hello from admin")
+            call.respond("Hello from admin api.")
         }
 
-
         get("/users") {
+            val users = usersRepository.getUsers()
+            call.respond(mapOf("users" to users))
+        }
 
+        get("/users/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+            val user =
+                id?.let { usersRepository.getUserById(it) } ?: throw NotFoundApiException("User with id not found.")
+            call.respond(mapOf("user" to user))
         }
 
         get("/results") {
-
+            val results = resultsRepository.getResults()
+            call.respond(mapOf("results" to results))
         }
 
     }
@@ -37,19 +52,24 @@ fun Route.adminApiRoutes() {
 
 fun Route.adminWebRoutes() {
 
+    val usersRepository by inject<UsersRepository>()
+
     route("/admin") {
 
+        static {
+            files("src/main/resources/css")
+        }
+
         get("/") {
-            call.respondHtmlTemplate(LayoutTemplate()) {
+            val users = usersRepository.getUsers()
+
+            adminTemplate(HomePageTempl(users)) {
                 header {
-                    +"Admin"
+
                 }
                 content {
-                    articleTitle {
-                        +"Hello from Admin!"
-                    }
-                    articleText {
-                        +"Admin desc"
+                    hovnoText {
+                        +"Hovno"
                     }
                 }
             }
@@ -57,6 +77,10 @@ fun Route.adminWebRoutes() {
 
 
         get("/users") {
+
+        }
+
+        get("/results") {
 
         }
 

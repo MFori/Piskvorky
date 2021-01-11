@@ -1,5 +1,8 @@
 package cz.martinforejt.piskvorky.domain.model
 
+import cz.martinforejt.piskvorky.domain.utils.IsoLocalDateTimeSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 /**
@@ -8,10 +11,13 @@ import java.time.LocalDateTime
  *
  * @author Martin Forejt
  */
+@ExperimentalSerializationApi
+@Serializable
 actual data class GameResult(
     val id: Int? = null,
     val user1: User,
     val user2: User,
+    @Serializable(with = IsoLocalDateTimeSerializer::class)
     val created: LocalDateTime,
     val winnerId: Int
 )
