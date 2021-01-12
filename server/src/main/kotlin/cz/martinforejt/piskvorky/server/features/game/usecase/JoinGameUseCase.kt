@@ -25,9 +25,13 @@ class JoinGameUseCase(
 ) : UseCaseResult<Unit, JoinGameUseCase.Params> {
 
     override fun execute(params: Params): Result<Unit> {
-        val currentGame = runBlocking { gameRepository.getGame(params.currentUser.id) }
+        var currentGame = runBlocking { gameRepository.getGame(params.currentUser.id) }
         if (currentGame != null) {
             return Result(error = Error(0, "Already in game"))
+        }
+        currentGame = runBlocking { gameRepository.getGame(params.request.userId) }
+        if (currentGame != null) {
+            return Result(error = Error(0, "User already in game"))
         }
 
         val invitation = runBlocking { gameRepository.getInvitation(params.currentUser.id, params.request.userId) }

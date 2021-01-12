@@ -4,10 +4,7 @@ import core.component.ConnectionAwareCoreComponent
 import core.component.CoreRProps
 import core.component.CoreRState
 import core.component.DialogBuilder
-import cz.martinforejt.piskvorky.api.model.GameSnap
-import cz.martinforejt.piskvorky.api.model.GameUpdateSocketApiMessage
-import cz.martinforejt.piskvorky.api.model.Move
-import cz.martinforejt.piskvorky.api.model.SocketApiMessage
+import cz.martinforejt.piskvorky.api.model.*
 import cz.martinforejt.piskvorky.domain.service.GameService
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -178,6 +175,12 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
                     inGame = false
                 }
             }
+        }
+    }
+
+    override fun onReceiveGameRequest(message: SocketApiMessage<GameRequestSocketApiMessage>) {
+        if (!state.inGame) {
+            super.onReceiveGameRequest(message)
         }
     }
 
