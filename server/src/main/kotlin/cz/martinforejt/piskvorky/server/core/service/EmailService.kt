@@ -6,6 +6,7 @@ import org.apache.commons.mail.DefaultAuthenticator
 import org.apache.commons.mail.SimpleEmail
 
 import org.apache.commons.mail.Email
+import org.apache.commons.mail.EmailException
 
 
 /**
@@ -14,19 +15,32 @@ import org.apache.commons.mail.Email
  *
  * @author Martin Forejt
  */
-class EmailServiceImpl : EmailService {
+class EmailServiceImpl(private val config: EmailServiceConfig) : EmailService {
 
-    override fun sendEmail(subject: String, message: String, to: Array<String>) {
-        // TODO read production configuration form conf file
+    override fun sendEmail(subject: String, message: String, to: Array<String>): Boolean {
         val email: Email = SimpleEmail()
-        email.hostName = "smtp.googlemail.com"
-        email.setSmtpPort(465)
-        email.setAuthenticator(DefaultAuthenticator("username", "password"))
-        email.isSSLOnConnect = true
-        email.setFrom("user@gmail.com")
+        email.hostName = config.hostName
+        email.setSmtpPort(config.port)
+        email.setAuthenticator(DefaultAuthenticator(config.userName, config.password))
+        email.isSSLOnConnect = config.ssl
+        email.setFrom(config.from)
         email.subject = subject
         email.setMsg(message)
         email.addTo(*to)
-        email.send()
+        return try {
+            email.send()
+            true
+        } catch (e: EmailException) {
+            false
+        }
     }
 }
+
+data class EmailServiceConfig(
+    val hostName: String,
+    val port: Int,
+    val userName: String,
+    val password: String,
+    val ssl: Boolean,
+    val from: String
+)

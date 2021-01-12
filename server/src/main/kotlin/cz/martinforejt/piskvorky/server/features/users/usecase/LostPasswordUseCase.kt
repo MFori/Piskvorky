@@ -49,13 +49,19 @@ class LostPasswordUseCase(
             lostPasswordRepository.addLink(user.id, hash)
         }
 
-        emailService.sendEmail(
+        val res = emailService.sendEmail(
             "Piskvorky - Reset password",
             "Reset link: $url",
             arrayOf(user.email)
         )
 
-        return Result(Unit)
+        return if(res) {
+            Result(Unit)
+        } else {
+            Result(
+                error = Error(0, "Some error occurred, try it later.")
+            )
+        }
     }
 
     data class Params(

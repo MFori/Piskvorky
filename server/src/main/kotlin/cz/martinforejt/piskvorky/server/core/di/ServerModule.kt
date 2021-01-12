@@ -2,6 +2,7 @@ package cz.martinforejt.piskvorky.server.core.di
 
 import cz.martinforejt.piskvorky.domain.repository.*
 import cz.martinforejt.piskvorky.domain.service.EmailService
+import cz.martinforejt.piskvorky.server.core.service.EmailServiceConfig
 import cz.martinforejt.piskvorky.server.core.service.EmailServiceImpl
 import cz.martinforejt.piskvorky.server.core.service.SocketService
 import cz.martinforejt.piskvorky.server.features.admin.usecase.EditUserUseCase
@@ -89,7 +90,15 @@ fun serverModule(app: Application) = module {
     }
 
     single<EmailService> {
-        EmailServiceImpl()
+        val config = EmailServiceConfig(
+            hostName = app.property("email.host_name"),
+            port = app.property("email.port").toInt(),
+            userName = app.property("email.user_name"),
+            password = app.property("email.password"),
+            ssl = app.property("email.ssl").toBoolean(),
+            from = "info@piskvorkyapp.com"
+        )
+        EmailServiceImpl(config)
     }
 
     factory {

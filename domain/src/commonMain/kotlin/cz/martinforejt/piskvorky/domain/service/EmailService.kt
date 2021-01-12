@@ -8,6 +8,6 @@ package cz.martinforejt.piskvorky.domain.service
  */
 interface EmailService {
 
-    fun sendEmail(subject: String, message: String, to: Array<String>)
+    fun sendEmail(subject: String, message: String, to: Array<String>): Boolean
 
 }
