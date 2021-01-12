@@ -40,6 +40,7 @@ class GameState : CoreRState() {
     var zoom = 0
     var center = false
     var chatOpen = false
+    var helpOpen = false
     var messages: MutableList<ChatMessage>? = null
 }
 
@@ -89,6 +90,15 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
                     if (state.game == null) {
                         loading()
                     } else {
+                        div("help-container") {
+                            button(type = ButtonType.button, classes = "btn btn-light help") {
+                                attrs.title = "Help"
+                                attrs.onClickFunction = {
+                                    setState { helpOpen = true }
+                                }
+                                img(src = "/icons/question-circle.svg") {}
+                            }
+                        }
                         div("zoom-container") {
                             button(type = ButtonType.button, classes = "btn btn-light zoom-center") {
                                 attrs.title = "Center"
@@ -126,6 +136,11 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
                     onSend = onSendChatMessage
                     dismissCallback = onDismissChatDialog
                 }
+            }
+        }
+        if (state.helpOpen) {
+            child(HelpDialog::class) {
+                attrs.dismissCallback = onDismissHelpDialog
             }
         }
     }
@@ -168,9 +183,11 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
     }
 
     private val onDismissChatDialog: () -> Unit = {
-        setState {
-            chatOpen = false
-        }
+        setState { chatOpen = false }
+    }
+
+    private val onDismissHelpDialog: () -> Unit = {
+        setState { helpOpen = false }
     }
 
     private val onMove: (Int, Int) -> Unit = { x, y ->
@@ -232,7 +249,7 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
 
     override fun onReceiveChatMessage(message: SocketApiMessage<ChatMessageSocketApiMessage>) {
         setState {
-            if(!chatOpen) unread++
+            if (!chatOpen) unread++
             if (messages == null) messages = mutableListOf()
             message.data?.message?.let { messages!!.add(it) }
         }

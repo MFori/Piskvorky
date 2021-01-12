@@ -23,6 +23,19 @@
       margin-right: 5px;
     }
   }
+
+  .help-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+
+    button {
+      width: 40px;
+      height: 40px;
+      margin-left: 5px;
+    }
+  }
 }
 
 #canvas {
