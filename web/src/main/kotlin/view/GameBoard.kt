@@ -36,6 +36,9 @@ class GameBoardProps : CoreRProps() {
     var onMove: ((Int, Int) -> Unit)? = null
 }
 
+/**
+ * Game board component, contains only html canvas
+ */
 class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
 
     private var ctx: CanvasRenderingContext2D? = null
@@ -52,8 +55,8 @@ class GameBoard : CoreComponent<GameBoardProps, CoreRState>() {
     private var offsetX = 0
     private var offsetY = 0
 
-    var mouseX: Int? = null
-    var mouseY: Int? = null
+    private var mouseX: Int? = null
+    private var mouseY: Int? = null
 
     override fun RBuilder.render() {
         canvas {

@@ -28,14 +28,14 @@ fun Route.socketRoute() {
     val socketService by inject<SocketService>()
 
     intercept(ApplicationCallPipeline.Features) {
-        if (call.sessions.get<LobbyCookieSession>() == null) {
-            call.sessions.set(LobbyCookieSession(generateNonce()))
+        if (call.sessions.get<SocketCookieSession>() == null) {
+            call.sessions.set(SocketCookieSession(generateNonce()))
         }
     }
 
     webSocket("/lobby") {
         this.pingInterval = Duration.ofSeconds(5)
-        val cookieSession = call.sessions.get<LobbyCookieSession>()
+        val cookieSession = call.sessions.get<SocketCookieSession>()
         if (cookieSession == null) {
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session"))
             return@webSocket
@@ -66,4 +66,4 @@ fun Route.socketRoute() {
 
 }
 
-data class LobbyCookieSession(val id: String)
+data class SocketCookieSession(val id: String)

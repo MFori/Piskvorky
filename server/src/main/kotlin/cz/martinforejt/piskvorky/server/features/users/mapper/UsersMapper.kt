@@ -58,22 +58,6 @@ fun UserEntity.asPublicUser(isOnline: Boolean = false) = PublicUser(
     inGame = false
 )
 
-fun UserEntity.asApiUser(isOnline: Boolean = false, inGame: Boolean = false) = ApiUser(
-    id = this.id.value,
-    email = this.email,
-    online = isOnline,
-    inGame = inGame
-)
-
-fun ApiUser.asPublicUser() = PublicUser(
-    id = this.id,
-    email = this.email,
-    online = this.online,
-    inGame = this.inGame
-)
-
-fun List<ApiUser>.asPublicUsers() = this.map { it.asPublicUser() }.toList()
-
 fun PublicUser.asApiUser() = ApiUser(
     id = this.id,
     email = this.email,

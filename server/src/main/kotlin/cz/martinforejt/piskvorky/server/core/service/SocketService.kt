@@ -13,6 +13,10 @@ import org.koin.core.KoinComponent
  *
  * @author Martin Forejt
  */
+
+/**
+ * Socket service, manage all socket connections
+ */
 interface ISocketService : SocketBroadcaster {
 
     fun newConnection(sessionId: String, connection: WebSocketSession): SocketServiceSession
@@ -32,6 +36,9 @@ interface ISocketService : SocketBroadcaster {
     fun isOnline(userId: Int, sessionId: String? = null): Boolean
 }
 
+/**
+ * Broadcaster can send messages to specific users or groups
+ */
 interface SocketBroadcaster {
 
     suspend fun sendBroadcast(message: String)
@@ -44,8 +51,16 @@ interface SocketBroadcaster {
 
 }
 
+/**
+ * Abstract socket service
+ */
 abstract class SocketService : ISocketService {
 
+    /**
+     * Map of sessions
+     *      key = session id
+     *      value = list of socket sessions
+     */
     abstract val sessions: MutableMap<String, MutableList<SocketServiceSession>>
 
     override suspend fun receivedMessage(data: String, session: SocketServiceSession) {
@@ -93,6 +108,12 @@ abstract class SocketService : ISocketService {
     }
 }
 
+/**
+ * Session represents one socket connection
+ *
+ * @property sessionId
+ * @property broadcaster
+ */
 abstract class SocketServiceSession(
     val sessionId: String,
     val broadcaster: SocketBroadcaster

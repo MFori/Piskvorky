@@ -88,7 +88,7 @@ class SocketServiceSessionImpl(
     }
 
 
-    private suspend fun setUserOnline(online: Boolean) {
+    private suspend fun setUserOnline(@Suppress("UNUSED_PARAMETER") online: Boolean) {
         user?.let {
             val message = SocketApi.encode(onlineUsersMessage())
             broadcaster.sendBroadcast(message)

@@ -26,6 +26,9 @@ import org.koin.ktor.ext.inject
  * @author Martin Forejt
  */
 
+/**
+ * Protected admin router for json api
+ */
 fun Route.adminApiRoutes() {
 
     val usersRepository by inject<UsersRepository>()
@@ -59,6 +62,9 @@ fun Route.adminApiRoutes() {
 
 }
 
+/**
+ * Protected web admin routes
+ */
 fun Route.adminWebRoutes() {
 
     val usersRepository by inject<UsersRepository>()
@@ -110,6 +116,9 @@ fun Route.adminWebRoutes() {
 
 }
 
+/**
+ * Public web admin routes
+ */
 fun Route.adminPublicWebRoutes() {
     route("/admin") {
         static {

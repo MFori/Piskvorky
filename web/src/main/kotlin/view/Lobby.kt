@@ -36,6 +36,9 @@ class LobbyState : CoreRState() {
     var inGame = false
 }
 
+/**
+ * Lobby component
+ */
 class Lobby : ConnectionAwareCoreComponent<LobbyProps, LobbyState>() {
 
     private val friendsService by inject<FriendsService>()

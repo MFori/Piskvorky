@@ -39,6 +39,9 @@ class RegisterFormState : CoreRState() {
     var signed = false
 }
 
+/**
+ * Registration component
+ */
 class Registration : CoreComponent<RegisterFormProps, RegisterFormState>() {
 
     private val authService by inject<AuthenticationService>()

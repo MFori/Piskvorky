@@ -16,6 +16,9 @@ import service.*
  * @author Martin Forejt
  */
 
+/**
+ * Web koin module
+ */
 val webModule = module {
 
     single<AuthenticationService> {

@@ -19,6 +19,11 @@ import service.WebSocketService
  *
  * @author Martin Forejt
  */
+
+/**
+ * React component, that automatically connect and keeps connections with socket
+ * Inherited component can override any function from [MessageListener] to get realtime socket message
+ */
 abstract class ConnectionAwareCoreComponent<P : CoreRProps, S : CoreRState> : CoreComponent<P, S>(), MessageListener,
     ConnectionListener {
 

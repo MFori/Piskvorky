@@ -15,6 +15,9 @@ import react.dom.div
  * @author Martin Forejt
  */
 
+/**
+ * Footer component
+ */
 class Footer : CoreComponent<CoreRProps, CoreRState>() {
 
     override fun RBuilder.render() {

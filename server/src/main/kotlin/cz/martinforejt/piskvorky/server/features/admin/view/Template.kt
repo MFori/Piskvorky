@@ -47,10 +47,4 @@ class AdminLayoutTempl<CT : AdminContentTempl>(
             }
         }
     }
-
-    private fun BODY.createFooter() {
-        footer {
-
-        }
-    }
 }

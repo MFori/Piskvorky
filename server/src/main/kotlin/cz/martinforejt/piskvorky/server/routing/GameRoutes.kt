@@ -22,6 +22,9 @@ import org.koin.ktor.ext.inject
  * @author Martin Forejt
  */
 
+/**
+ * Game api routes (protected)
+ */
 fun Route.gameRoutes() {
     val gameRepository by inject<GameRepository>()
     val playMoveUseCase by inject<PlayMoveUseCase>()

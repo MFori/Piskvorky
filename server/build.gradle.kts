@@ -17,7 +17,7 @@ dependencies {
     implementation(Ktor.websockets)
     implementation(Ktor.authCore)
     implementation(Ktor.authJwt)
-    implementation("io.ktor:ktor-html-builder:${Versions.ktor}")
+    implementation(Ktor.htmlBuilder)
 
     implementation(Koin.ktor)
     implementation(Logback.classic)
@@ -28,7 +28,7 @@ dependencies {
     implementation(Exposed.time)
     implementation(Hikari.core)
     implementation(MysqlConnector.core)
-    implementation("org.apache.commons:commons-email:1.5")
+    implementation(Commons.email)
 
 
     implementation(project(":domain"))

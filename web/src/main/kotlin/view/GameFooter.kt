@@ -26,6 +26,9 @@ class GameFooterProps : CoreRProps() {
     var onChatClicked: ((Event) -> Unit)? = null
 }
 
+/**
+ * Game footer component
+ */
 class GameFooter : CoreComponent<GameFooterProps, CoreRState>() {
 
     override fun RBuilder.render() {

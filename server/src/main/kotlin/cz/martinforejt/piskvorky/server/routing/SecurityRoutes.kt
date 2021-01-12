@@ -25,6 +25,9 @@ import org.koin.ktor.ext.inject
  * @author Martin Forejt
  */
 
+/**
+ * Security/authentication api routes (public)
+ */
 @KtorExperimentalAPI
 fun Route.securityRoutes(jwtManager: JwtManager) {
 

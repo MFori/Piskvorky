@@ -17,6 +17,9 @@ import react.router.dom.routeLink
  * @author Martin Forejt
  */
 
+/**
+ * Header component
+ */
 class Header : CoreComponent<CoreRProps, CoreRState>() {
 
     override fun RBuilder.render() {

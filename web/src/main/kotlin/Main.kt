@@ -1,13 +1,6 @@
-import kotlinx.browser.window
-
+/**
+ * Web app entry point, just create and start [Application]
+ */
 fun main() {
     Application().start()
-
-    /*window.addEventListener("resize", {
-        println("change+")
-
-    })
-    window.addEventListener("storage", {
-        println("change")
-    }, false)*/
 }

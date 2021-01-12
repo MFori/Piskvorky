@@ -14,13 +14,25 @@ interface FriendsRepository {
 
     suspend fun deleteFriendship(userId1: Int, userId2: Int)
 
+    /**
+     * Create friendship pending request
+     */
     suspend fun createFriendship(userId1: Int, userId2: Int)
 
+    /**
+     * Confirm friendship pending request
+     */
     suspend fun confirmFriendship(userId1: Int, userId2: Int)
 
-    suspend fun getFriendship(userId1:Int, userId2:Int) : Friendship?
+    suspend fun getFriendship(userId1: Int, userId2: Int): Friendship?
 
-    suspend fun getFriends(userId: Int) : List<PublicUser>
+    /**
+     * Get all friends for user
+     */
+    suspend fun getFriends(userId: Int): List<PublicUser>
 
-    suspend fun getRequests(userId: Int) : List<FriendRequest>
+    /**
+     * Get all pending friendship requests
+     */
+    suspend fun getRequests(userId: Int): List<FriendRequest>
 }

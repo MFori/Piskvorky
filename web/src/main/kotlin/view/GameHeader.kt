@@ -24,6 +24,9 @@ class GameHeaderProps : CoreRProps() {
     var game: GameVO? = null
 }
 
+/**
+ * Game header component
+ */
 class GameHeader : CoreComponent<GameHeaderProps, CoreRState>() {
 
     override fun RBuilder.render() {

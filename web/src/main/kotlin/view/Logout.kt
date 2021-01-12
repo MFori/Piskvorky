@@ -17,6 +17,9 @@ import react.router.dom.redirect
  * @author Martin Forejt
  */
 
+/**
+ * Logout component, just clear storage and redirect to login
+ */
 class Logout : CoreComponent<CoreRProps, CoreRState>() {
 
     private val authService by inject<AuthenticationService>()

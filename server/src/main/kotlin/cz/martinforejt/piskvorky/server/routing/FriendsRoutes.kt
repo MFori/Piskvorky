@@ -21,6 +21,9 @@ import org.koin.ktor.ext.inject
  * @author Martin Forejt
  */
 
+/**
+ * Friends api routes (protected)
+ */
 fun Route.friendsRoutes() {
     val friendsRepository by inject<FriendsRepository>()
     val addFriendUseCase by inject<AddFriendUseCase>()

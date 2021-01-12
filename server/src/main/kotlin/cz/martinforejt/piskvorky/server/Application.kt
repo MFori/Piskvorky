@@ -3,7 +3,7 @@ package cz.martinforejt.piskvorky.server
 import cz.martinforejt.piskvorky.domain.core.di.initKoin
 import cz.martinforejt.piskvorky.server.core.di.serverModule
 import cz.martinforejt.piskvorky.server.core.database.DatabaseFactory
-import cz.martinforejt.piskvorky.server.routing.LobbyCookieSession
+import cz.martinforejt.piskvorky.server.routing.SocketCookieSession
 import cz.martinforejt.piskvorky.server.routing.registerRoutes
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import cz.martinforejt.piskvorky.server.security.setUpSecurity
@@ -23,14 +23,13 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 @KtorExperimentalAPI
 @Suppress("unused") // Referenced in application.conf
-@kotlin.jvm.JvmOverloads
 fun Application.module() {
     install(CallLogging) {
         level = Level.INFO
     }
 
     initKoin(
-        enableNetworkLogs = true, modules = listOf(
+        modules = listOf(
             serverModule(this)
         )
     ).koin
@@ -47,8 +46,6 @@ fun Application.module() {
 
         //host("localhost:8080")
         //host("localhost:80")
-
-        //  anyHost()
     }
 
     install(ContentNegotiation) {
@@ -56,7 +53,7 @@ fun Application.module() {
     }
 
     install(Sessions) {
-        cookie<LobbyCookieSession>("LOBBY_SESSION")
+        cookie<SocketCookieSession>("LOBBY_SESSION")
         cookie<UserPrincipal>(
             "admin-auth",
             storage = SessionStorageMemory()

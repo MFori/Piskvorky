@@ -39,6 +39,9 @@ class ResetPasswdFormState : CoreRState() {
     var ok: String? = null
 }
 
+/**
+ * Reset password component
+ */
 class ResetPassword : CoreComponent<ResetPasswordProps, ResetPasswdFormState>() {
 
     private val authService by inject<AuthenticationService>()

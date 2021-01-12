@@ -19,6 +19,9 @@ class FriendsPanelProps : CoreRProps() {
     var onAction: ((PlayerListItem.Action, PlayerVO) -> Unit)? = null
 }
 
+/**
+ * Friends panel component
+ */
 class FriendsPanel : CoreComponent<FriendsPanelProps, CoreRState>() {
 
     override fun RBuilder.render() {

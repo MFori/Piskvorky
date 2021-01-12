@@ -32,6 +32,9 @@ class PlayerListItemProps : CoreRProps() {
     var onAction: ((PlayerListItem.Action, PlayerVO) -> Unit)? = null
 }
 
+/**
+ * Player list item component
+ */
 class PlayerListItem : CoreComponent<PlayerListItemProps, CoreRState>() {
 
     override fun RBuilder.render() {

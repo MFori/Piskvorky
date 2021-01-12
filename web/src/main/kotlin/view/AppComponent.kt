@@ -9,9 +9,13 @@ import react.router.dom.*
 
 abstract class AppProps : CoreRProps()
 
+/**
+ * Root app component with router
+ */
 class AppComponent : CoreComponent<AppProps, CoreRState>() {
 
     override fun componentDidMount() {
+        // if storage is updated from another tab refresh component
         window.addEventListener("storage", {
             setState { }
         }, false)
@@ -59,6 +63,10 @@ class AppComponent : CoreComponent<AppProps, CoreRState>() {
         }
     }
 
+    /**
+     * Create private route only for logged users
+     * otherwise redirect to login page
+     */
     private fun RBuilder.privateRoute(
         path: String,
         exact: Boolean = false,

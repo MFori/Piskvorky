@@ -27,6 +27,9 @@ object Dependencies : AppDependencies {
 
 lateinit var appContext: AppContext
 
+/**
+ * App
+ */
 class Application : KoinComponent {
 
     fun start() {

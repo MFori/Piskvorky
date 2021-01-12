@@ -28,7 +28,6 @@ fun Application.registerRoutes() {
             route(API_VERSION) {
                 profileRoutes()
                 friendsRoutes()
-                exampleRoutes()
                 gameCreationRoutes()
                 gameRoutes()
             }

@@ -27,7 +27,7 @@ kotlin {
         sourceSets["commonMain"].kotlin.srcDirs("$rootDir/domain/api/src/commonMain")
         sourceSets["commonMain"].dependencies {
             // Coroutines
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinCoroutines}") {
+            implementation(Coroutines.core) {
                 isForce = true
             }
 

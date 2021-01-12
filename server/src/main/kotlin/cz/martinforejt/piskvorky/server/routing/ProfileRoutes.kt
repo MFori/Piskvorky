@@ -20,6 +20,9 @@ import org.koin.ktor.ext.inject
  * @author Martin Forejt
  */
 
+/**
+ * Profile api routes (protected)
+ */
 fun Route.profileRoutes() {
     val changePasswordUseCase by inject<ChangePasswordUseCase>()
 

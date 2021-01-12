@@ -26,11 +26,6 @@ object DatabaseFactory {
                 GameResults,
                 LostPasswords
             )
-
-            /*Users.insert {
-                it[email] = "admin@admin.com"
-                it[password] = "test123"
-            }*/
         }
     }
 

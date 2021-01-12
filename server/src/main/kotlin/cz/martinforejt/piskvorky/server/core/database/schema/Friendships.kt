@@ -62,7 +62,7 @@ class FriendshipIdColumnType : VarCharColumnType(15) {
         else -> error("Unexpected value of type Int: $value of ${value::class.qualifiedName}")
     }
 
-    override fun valueToDB(value: Any?): Any? {
+    override fun valueToDB(value: Any?): Any {
         if (value is FriendshipId) {
             return "${value.id1}:${value.id2}"
         }

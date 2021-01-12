@@ -11,9 +11,9 @@ import java.time.format.DateTimeFormatter
  * @author Martin Forejt
  */
 object ApiUtils {
-    val dateFormatter: DateTimeFormatter = DateTimeFormatter
+    private val dateFormatter: DateTimeFormatter = DateTimeFormatter
         .ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         .withZone(ZoneId.of("UTC"))
 
-    fun LocalDateTime.formatApi() = this.format(dateFormatter)
+    fun LocalDateTime.formatApi(): String = this.format(dateFormatter)
 }

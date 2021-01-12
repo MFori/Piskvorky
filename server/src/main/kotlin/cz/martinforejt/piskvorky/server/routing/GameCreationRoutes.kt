@@ -22,6 +22,9 @@ import org.koin.ktor.ext.inject
  * @author Martin Forejt
  */
 
+/**
+ * Game invitation api routes (protected)
+ */
 fun Route.gameCreationRoutes() {
     val gameRepository by inject<GameRepository>()
     val joinGameUseCase by inject<JoinGameUseCase>()

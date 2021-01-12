@@ -28,7 +28,10 @@ class AddFriendUseCase(
                 friendsRepository.createFriendship(params.currentUser.id, params.request.userId)
                 socketService.sendMessageTo(
                     params.request.userId,
-                    FriendShipRequestSocketApiMessage(params.currentUser.id, params.currentUser.email, true, false)
+                    FriendShipRequestSocketApiMessage(params.currentUser.id, params.currentUser.email,
+                        request = true,
+                        confirm = false
+                    )
                 )
             }
         } else if (friendship.author == params.request.userId) {
@@ -37,11 +40,14 @@ class AddFriendUseCase(
 
                 socketService.sendMessageTo(
                     params.request.userId,
-                    FriendShipRequestSocketApiMessage(params.currentUser.id, params.currentUser.email, false, true)
+                    FriendShipRequestSocketApiMessage(params.currentUser.id, params.currentUser.email,
+                        request = false,
+                        confirm = true
+                    )
                 )
                 socketService.sendMessageTo(
                     params.currentUser.id,
-                    FriendShipRequestSocketApiMessage(params.request.userId, "", false, true)
+                    FriendShipRequestSocketApiMessage(params.request.userId, "", request = false, confirm = true)
                 )
             }
         }

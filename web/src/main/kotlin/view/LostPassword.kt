@@ -33,6 +33,9 @@ class LostPasswdFormState : CoreRState() {
     var ok: String? = null
 }
 
+/**
+ * Lost password component
+ */
 class LostPassword : CoreComponent<CoreRProps, LostPasswdFormState>() {
 
     private val authService by inject<AuthenticationService>()

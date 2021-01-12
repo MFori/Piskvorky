@@ -23,6 +23,9 @@ class ProfileState : CoreRState() {
     var inGame = false
 }
 
+/**
+ * Profile component
+ */
 class Profile : ConnectionAwareCoreComponent<CoreRProps, ProfileState>() {
 
     override fun ProfileState.init() {

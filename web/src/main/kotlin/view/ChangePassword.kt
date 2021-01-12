@@ -32,6 +32,9 @@ class ChangePasswordState : CoreRState() {
     var ok: String? = null
 }
 
+/**
+ * Change password component
+ */
 class ChangePassword : CoreComponent<CoreRProps, ChangePasswordState>() {
 
     private val authService by inject<AuthenticationService>()

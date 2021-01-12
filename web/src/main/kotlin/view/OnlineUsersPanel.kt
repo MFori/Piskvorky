@@ -19,6 +19,9 @@ class OnlineUsersPanelProps : CoreRProps() {
     var onAction: ((PlayerListItem.Action, PlayerVO) -> Unit)? = null
 }
 
+/**
+ * Online users component
+ */
 class OnlineUsersPanel : CoreComponent<OnlineUsersPanelProps, CoreRState>() {
 
     override fun RBuilder.render() {

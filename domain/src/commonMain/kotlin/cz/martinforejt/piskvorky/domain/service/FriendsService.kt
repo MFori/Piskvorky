@@ -1,7 +1,9 @@
 package cz.martinforejt.piskvorky.domain.service
 
-import cz.martinforejt.piskvorky.api.model.*
-import cz.martinforejt.piskvorky.domain.model.UserWithToken
+import cz.martinforejt.piskvorky.api.model.ApiUser
+import cz.martinforejt.piskvorky.api.model.CancelFriendshipRequest
+import cz.martinforejt.piskvorky.api.model.CreateFriendshipRequest
+import cz.martinforejt.piskvorky.api.model.FriendRequest
 import cz.martinforejt.piskvorky.domain.usecase.Result
 
 /**

@@ -23,6 +23,7 @@ import org.koin.ktor.ext.inject
 
 const val JWT_AUTH_USER = "jwt-auth-user"
 const val JWT_AUTH_ADMIN = "jwt-auth-admin"
+
 //const val BASIC_AUTH_ADMIN = "basic-auth-admin"
 const val FORM_AUTH_ADMIN = "form-auth-admin"
 const val SESSION_AUTH_ADMIN = "session-auth-admin"
@@ -67,6 +68,7 @@ fun Application.setUpSecurity() {
         }*/
         form(FORM_AUTH_ADMIN) {
             challenge {
+                @Suppress("DEPRECATION")
                 val errors: Map<Any, AuthenticationFailedCause> = call.authentication.errors
                 when (errors.values.singleOrNull()) {
                     AuthenticationFailedCause.InvalidCredentials ->

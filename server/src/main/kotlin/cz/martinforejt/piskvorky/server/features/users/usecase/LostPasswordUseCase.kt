@@ -37,7 +37,11 @@ class LostPasswordUseCase(
                 error = Error(ERROR_EMAIL_INVALID, "Invalid email.")
             )
 
-        val hash = URLEncoder.encode(String(Base64.getEncoder().encode(sha1("${user.id}$KEY${System.currentTimeMillis()}".toByteArray()))), "utf-8")
+        val hash = URLEncoder.encode(
+            String(
+                Base64.getEncoder().encode(sha1("${user.id}$KEY${System.currentTimeMillis()}".toByteArray()))
+            ), "utf-8"
+        )
         val url = "${params.webUrl}/reset-password/${params.request.email}/$hash"
         applicationEngineEnvironment { log.debug(url) }
 
@@ -45,11 +49,11 @@ class LostPasswordUseCase(
             lostPasswordRepository.addLink(user.id, hash)
         }
 
-        //emailService.sendEmail(
-        //    "Piskvorky - Reset password",
-        //    "Reset link: $url",
-        //    arrayOf(user.email)
-        //)
+        emailService.sendEmail(
+            "Piskvorky - Reset password",
+            "Reset link: $url",
+            arrayOf(user.email)
+        )
 
         return Result(Unit)
     }

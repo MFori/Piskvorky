@@ -43,10 +43,12 @@ class GameState : CoreRState() {
     var messages: MutableList<ChatMessage>? = null
 }
 
+/**
+ * Game component
+ */
 class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
 
     private val gameService by inject<GameService>()
-    private var board: GameBoard? = null
 
     override fun GameState.init() {
         game = null
@@ -130,10 +132,6 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
 
     override fun componentDidUpdate(prevProps: GameProps, prevState: GameState, snapshot: Any) {
         state.center = false
-    }
-
-    override fun refresh() {
-        super.refresh()
     }
 
     private val onGiveUpClicked: (Event) -> Unit = {

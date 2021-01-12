@@ -6,7 +6,6 @@ import kotlinx.html.role
 import kotlinx.html.tabIndex
 import react.*
 import react.dom.*
-import kotlin.text.Typography.times
 
 /**
  * Created by Martin Forejt on 01.01.2021.
@@ -39,18 +38,6 @@ class Dialog : RComponent<DialogProps, RState>() {
                         h5("modal-title") {
                             +props.title
                         }
-                        /*button(type = ButtonType.button, classes = "close") {
-                            attrs {
-                                set("data-dismiss", "modal")
-                                set("aria-label", "Close")
-                            }
-                            span {
-                                attrs {
-                                    set("ara-hidden", "true")
-                                }
-                                +times.toString()
-                            }
-                        }*/
                     }
                     div("modal-body") {
                         +props.message

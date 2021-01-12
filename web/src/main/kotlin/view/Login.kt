@@ -40,6 +40,9 @@ class LoginFormState : CoreRState() {
     var signed = false
 }
 
+/**
+ * Login component
+ */
 class Login : CoreComponent<LoginFormProps, LoginFormState>() {
 
     private val authService by inject<AuthenticationService>()

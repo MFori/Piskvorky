@@ -31,20 +31,24 @@ interface AppDependencies {
 }
 
 typealias AppContext = RContext<AppDependencies>
-//external interface AppContext : RContext<AppDependencies>
 
 class AppContextHolder(val appContext: AppContext)
 
 
 abstract class CoreRProps : RProps, KoinComponent {
     var context: AppDependencies? = null
-    //var location: String = ""
 }
 
 abstract class CoreRState : RState {
     var dialogs: MutableList<DialogBuilder>? = null
 }
 
+/**
+ * Core react component, every app component may extend this class
+ *
+ * @param P props
+ * @param S state
+ */
 abstract class CoreComponent<P : CoreRProps, S : CoreRState> : RComponent<P, S>(), KoinComponent, CoroutineScope {
     final override val coroutineContext: CoroutineContext = Job()
     val componentScope = CoroutineScope(coroutineContext)

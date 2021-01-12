@@ -7,7 +7,6 @@ import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.*
-import kotlin.js.Date
 import kotlin.text.Typography.times
 
 /**
@@ -26,6 +25,9 @@ class ChatDialogState : RState {
     var message: String = ""
 }
 
+/**
+ * Chat dialog component
+ */
 class ChatDialog : RComponent<ChatDialogProps, ChatDialogState>() {
 
     override fun ChatDialogState.init() {
