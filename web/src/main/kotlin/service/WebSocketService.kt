@@ -160,6 +160,7 @@ interface MessageListener {
             SocketApiAction.GAME_UPDATE -> onReceiveGameUpdate(message as SocketApiMessage<GameUpdateSocketApiMessage>)
             SocketApiAction.GAME_REQUEST_CANCELLED -> onGameRequestCancel(message as SocketApiMessage<GameRequestCancelSocketApiMessage>)
             SocketApiAction.GAME_REQUEST -> onReceiveGameRequest(message as SocketApiMessage<GameRequestSocketApiMessage>)
+            SocketApiAction.CHAT_MESSAGE -> onReceiveChatMessage(message as SocketApiMessage<ChatMessageSocketApiMessage>)
             else -> {
                 onReceiveError(message)
                 throw InvalidSocketMessageException()
@@ -182,6 +183,8 @@ interface MessageListener {
     fun onReceiveGameRequest(message: SocketApiMessage<GameRequestSocketApiMessage>)
 
     fun onGameRequestCancel(message: SocketApiMessage<GameRequestCancelSocketApiMessage>)
+
+    fun onReceiveChatMessage(message: SocketApiMessage<ChatMessageSocketApiMessage>)
 
     fun onReceiveError(message: SocketApiMessage<*>)
 

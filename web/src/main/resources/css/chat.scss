@@ -1,0 +1,26 @@
+@import "dimens";
+
+#chat-dialog {
+  padding: 1.5rem;
+  margin: 0;
+
+  .modal-dialog {
+    max-width: 700px;
+    height: 100%;
+    margin: 0 auto;
+
+    .modal-content {
+      height: 100%;
+
+      .modal-body {
+        overflow: auto;
+      }
+    }
+
+    .modal-footer {
+      .container {
+        padding: 0;
+      }
+    }
+  }
+}

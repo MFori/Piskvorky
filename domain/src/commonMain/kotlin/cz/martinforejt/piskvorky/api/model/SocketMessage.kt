@@ -1,5 +1,6 @@
 package cz.martinforejt.piskvorky.api.model
 
+import cz.martinforejt.piskvorky.domain.model.ChatMessage
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -33,7 +34,8 @@ enum class SocketApiAction {
     FRIENDSHIP_CANCELLED,
     GAME_REQUEST,
     GAME_REQUEST_CANCELLED,
-    GAME_UPDATE
+    GAME_UPDATE,
+    CHAT_MESSAGE
 }
 
 enum class SocketApiCode(val value: Int) {
@@ -94,6 +96,11 @@ data class GameUpdateSocketApiMessage(
     val game: GameSnap
 ) : SocketApiMessageData
 
+@Serializable
+data class ChatMessageSocketApiMessage(
+    val message: ChatMessage
+) : SocketApiMessageData
+
 /////////////// Serializer mappers
 
 @Throws(InvalidSocketMessageException::class)
@@ -108,6 +115,7 @@ fun SocketApiMessageData.getAction(): SocketApiAction {
         is GameRequestSocketApiMessage -> SocketApiAction.GAME_REQUEST
         is GameRequestCancelSocketApiMessage -> SocketApiAction.GAME_REQUEST_CANCELLED
         is GameUpdateSocketApiMessage -> SocketApiAction.GAME_UPDATE
+        is ChatMessageSocketApiMessage -> SocketApiAction.CHAT_MESSAGE
         else -> throw InvalidSocketMessageException()
     }
 }
@@ -125,5 +133,6 @@ fun <T : SocketApiMessageData> SocketApiAction.serializer(): KSerializer<T> {
         SocketApiAction.GAME_REQUEST -> GameRequestSocketApiMessage.serializer()
         SocketApiAction.GAME_REQUEST_CANCELLED -> GameRequestCancelSocketApiMessage.serializer()
         SocketApiAction.GAME_UPDATE -> GameUpdateSocketApiMessage.serializer()
+        SocketApiAction.CHAT_MESSAGE -> ChatMessageSocketApiMessage.serializer()
     } as? KSerializer<T> ?: throw InvalidSocketMessageException()
 }

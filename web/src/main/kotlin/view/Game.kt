@@ -5,6 +5,7 @@ import core.component.CoreRProps
 import core.component.CoreRState
 import core.component.DialogBuilder
 import cz.martinforejt.piskvorky.api.model.*
+import cz.martinforejt.piskvorky.domain.model.ChatMessage
 import cz.martinforejt.piskvorky.domain.service.GameService
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -19,7 +20,9 @@ import org.w3c.dom.events.Event
 import react.*
 import react.dom.button
 import react.dom.div
+import react.dom.img
 import react.router.dom.redirect
+import kotlin.js.Date
 
 /**
  * Created by Martin Forejt on 03.01.2021.
@@ -36,6 +39,8 @@ class GameState : CoreRState() {
     var unread = 0
     var zoom = 0
     var center = false
+    var chatOpen = false
+    var messages: MutableList<ChatMessage>? = null
 }
 
 class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
@@ -49,6 +54,8 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
         unread = 0
         zoom = 0
         center = false
+        chatOpen = false
+        messages = mutableListOf()
     }
 
     override fun componentDidMount() {
@@ -81,26 +88,26 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
                         loading()
                     } else {
                         div("zoom-container") {
-                            button(type = ButtonType.button, classes = "zoom-center") {
+                            button(type = ButtonType.button, classes = "btn btn-light zoom-center") {
                                 attrs.title = "Center"
                                 attrs.onClickFunction = {
                                     setState { center = true }
                                 }
-                                +"."
+                                img(src = "/icons/x-circle-fill.svg") {}
                             }
-                            button(type = ButtonType.button, classes = "zoom-in") {
+                            button(type = ButtonType.button, classes = "btn btn-light zoom-in") {
                                 attrs.title = "Zoom in"
                                 attrs.onClickFunction = {
                                     if (state.zoom < 6) setState { zoom++ }
                                 }
-                                +"+"
+                                img(src = "/icons/zoom-in.svg") {}
                             }
-                            button(type = ButtonType.button, classes = "zoom-out") {
+                            button(type = ButtonType.button, classes = "btn btn-light zoom-out") {
                                 attrs.title = "Zoom out"
                                 attrs.onClickFunction = {
                                     if (state.zoom > -6) setState { zoom-- }
                                 }
-                                +"-"
+                                img(src = "/icons/zoom-out.svg") {}
                             }
                         }
                     }
@@ -109,6 +116,15 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
                 coreChild(GameFooter::class)
             }
             gameBoard(this@Game, state.game, state.zoom, state.center, onMove)
+        }
+        if (state.chatOpen) {
+            child(ChatDialog::class) {
+                attrs {
+                    messages = state.messages
+                    onSend = onSendChatMessage
+                    dismissCallback = onDismissChatDialog
+                }
+            }
         }
     }
 
@@ -136,7 +152,27 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
     }
 
     private val onShowChat: (Event) -> Unit = {
+        setState {
+            chatOpen = true
+            unread = 0
+        }
+    }
 
+    private val onSendChatMessage: (String) -> Unit = {
+        val message = ChatMessage(user!!.email, it, Date().getMilliseconds().toLong())
+        setState {
+            if (messages == null) messages = mutableListOf()
+            messages!!.add(message)
+        }
+        componentScope.launch {
+            sendChatMessage(message)
+        }
+    }
+
+    private val onDismissChatDialog: () -> Unit = {
+        setState {
+            chatOpen = false
+        }
     }
 
     private val onMove: (Int, Int) -> Unit = { x, y ->
@@ -194,5 +230,13 @@ class Game : ConnectionAwareCoreComponent<GameProps, GameState>() {
                     inGame = false
                 }
             })
+    }
+
+    override fun onReceiveChatMessage(message: SocketApiMessage<ChatMessageSocketApiMessage>) {
+        setState {
+            if(!chatOpen) unread++
+            if (messages == null) messages = mutableListOf()
+            message.data?.message?.let { messages!!.add(it) }
+        }
     }
 }

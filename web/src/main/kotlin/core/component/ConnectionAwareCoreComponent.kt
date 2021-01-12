@@ -1,6 +1,7 @@
 package core.component
 
 import cz.martinforejt.piskvorky.api.model.*
+import cz.martinforejt.piskvorky.domain.model.ChatMessage
 import cz.martinforejt.piskvorky.domain.service.FriendsService
 import cz.martinforejt.piskvorky.domain.service.GameService
 import io.ktor.http.cio.websocket.*
@@ -166,5 +167,11 @@ abstract class ConnectionAwareCoreComponent<P : CoreRProps, S : CoreRState> : Co
             window.alert("Already connected on other device.")
             logout()
         }
+    }
+
+    override fun onReceiveChatMessage(message: SocketApiMessage<ChatMessageSocketApiMessage>) {}
+
+    suspend fun sendChatMessage(message: ChatMessage) {
+        props.context?.socketService?.send(SocketApi.encode(ChatMessageSocketApiMessage(message)))
     }
 }

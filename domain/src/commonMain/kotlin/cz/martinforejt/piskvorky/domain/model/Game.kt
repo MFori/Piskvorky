@@ -53,6 +53,14 @@ class Game(
         }
     }
 
+    fun rivalPlayer(id: Int): Player {
+        return if (cross.id == id) {
+            nought
+        } else {
+            cross
+        }
+    }
+
     fun value(id: Int): BoardValue {
         return if (cross.id == id) {
             BoardValue.cross

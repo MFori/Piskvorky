@@ -33,7 +33,7 @@ class GameFooter : CoreComponent<GameFooterProps, CoreRState>() {
             attrs {
                 id = "footer"
             }
-            button(classes = "chat") {
+            button(classes = "btn btn-dark chat") {
                 props.onChatClicked?.let { attrs.onClickFunction = it }
                 +"Chat (${props.messages})"
             }
@@ -43,7 +43,7 @@ class GameFooter : CoreComponent<GameFooterProps, CoreRState>() {
                     +"Martin Forejt"
                 }
             }
-            button(classes = "giveup") {
+            button(classes = "btn btn-dark giveup") {
                 props.onGiveUpClicked?.let { attrs.onClickFunction = it }
                 +"GiveUp"
             }

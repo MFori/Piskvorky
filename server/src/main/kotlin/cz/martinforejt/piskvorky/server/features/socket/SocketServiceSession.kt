@@ -44,6 +44,7 @@ class SocketServiceSessionImpl(
             SocketApiAction.AUTHORIZE -> authorize(message.data as AuthorizeSocketApiMessage)
             SocketApiAction.ONLINE_USERS -> onlineUsers()
             SocketApiAction.FRIENDS -> friends()
+            SocketApiAction.CHAT_MESSAGE -> chatMessage(message.data as ChatMessageSocketApiMessage)
             SocketApiAction.ERROR -> errorMessage()
             else -> {
                 throw InvalidSocketMessageException()
@@ -101,6 +102,11 @@ class SocketServiceSessionImpl(
     private suspend fun friends() {
         val users = friendsRepository.getFriends(user!!.id)
         send(SocketApi.encode(FriendsSocketApiMessage(users)))
+    }
+
+    private suspend fun chatMessage(message: ChatMessageSocketApiMessage) {
+        val game = user?.let { gameRepository.getGame(it.id) } ?: return
+        broadcaster.sendMessageTo(game.rivalPlayer(user!!.id).id, message)
     }
 
     private fun errorMessage() {
