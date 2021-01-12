@@ -1,7 +1,7 @@
 POST http://localhost:9090/v1/login
 Content-Type: application/json
 
-{"email":  "admin@admin.com", "password": "pass123"}
+{"email":  "forejt.martin97@gmail.com", "password": "test123"}
 
 ###
 POST http://localhost:9090/v1/register
@@ -24,7 +24,7 @@ Content-Type: application/json
 ###
 GET http://localhost:9090/v1/profile
 Content-Type: application/json
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImFkbWluIjpmYWxzZSwiaWQiOjEsImV4cCI6MTYwOTAzNTAzOSwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20ifQ.vwYHMXsPvcs5LOOMZmMSRujPjE2J0LcpAP-VSsbz_4uKgHJO1iZr24HyfZLaXRbCd9QCQlKXFURcKWYXNS7oeQ
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6ImxvY2FsaG9zdCIsImFkbWluIjpmYWxzZSwiaWQiOjEwLCJleHAiOjE2MTA1MDMyMTQsImVtYWlsIjoiZm9yZWp0Lm1hcnRpbjk3QGdtYWlsLmNvbSJ9.UKDFoaAdl28LwVLBmfBVBb48dUppi-UeJd46sZ8Fkfb9rVCTtDnzHBJiXa9pUWJc4b-AeZOL17L66_7Jpz5unA
 
 ###
 GET http://localhost:9090/v1/profile

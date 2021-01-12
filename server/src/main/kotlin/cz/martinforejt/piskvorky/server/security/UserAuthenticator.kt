@@ -20,7 +20,7 @@ class UserAuthenticator(
         val user = runBlocking { usersRepository.getUserWithPasswordByEmail(credential.email) } ?: return null
         val hash = hashService.hashPassword(credential.password)
 
-        return if (hash == user.password) {
+        return if (hash == user.password && user.active) {
             UserPrincipal(user.id, user.email, user.admin)
         } else {
             null
@@ -28,6 +28,12 @@ class UserAuthenticator(
     }
 
     override fun authenticate(credential: UserIdCredential): UserPrincipal? {
-        return UserPrincipal(credential.id, credential.email, credential.admin)
+        val user = runBlocking { usersRepository.getUserById(credential.id) } ?: return null
+
+        return if (user.active) {
+            UserPrincipal(credential.id, credential.email, credential.admin)
+        } else {
+            null
+        }
     }
 }
