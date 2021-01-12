@@ -30,4 +30,6 @@ interface UsersRepository {
 
     suspend fun isOnline(userId: Int): Boolean
 
+    suspend fun deleteUser(userId: Int)
+
 }

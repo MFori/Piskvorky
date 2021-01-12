@@ -1,7 +1,6 @@
 package cz.martinforejt.piskvorky.domain.model
 
 import cz.martinforejt.piskvorky.domain.utils.IsoLocalDateTimeSerializer
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
@@ -11,7 +10,6 @@ import java.time.LocalDateTime
  *
  * @author Martin Forejt
  */
-@ExperimentalSerializationApi
 @Serializable
 actual data class User(
     val id: Int,

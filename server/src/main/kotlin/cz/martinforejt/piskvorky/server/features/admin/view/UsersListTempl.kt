@@ -26,7 +26,6 @@ class UsersListTempl(
                     th { +"Created" }
                     th { +"Admin" }
                     th { +"Active" }
-                    th { +"Edit" }
                 }
             }
             tbody {
@@ -40,11 +39,10 @@ class UsersListTempl(
     private fun TBODY.userRow(user: User) {
         tr {
             td { +"${user.id}" }
-            td { +user.email }
+            td { a("/admin/users/${user.id}") { +user.email } }
             td { +"${user.created}" }
             td { +(if(user.admin) "yes" else "no") }
             td { +(if(user.active) "yes" else "no") }
-            td { a("/admin/users/${user.id}") { +"Edit" } }
         }
     }
 

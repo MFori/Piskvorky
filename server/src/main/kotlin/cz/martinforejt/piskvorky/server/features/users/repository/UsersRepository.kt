@@ -8,11 +8,8 @@ import cz.martinforejt.piskvorky.server.core.database.schema.Users
 import cz.martinforejt.piskvorky.server.core.service.SocketService
 import cz.martinforejt.piskvorky.server.features.users.mapper.asUserDO
 import cz.martinforejt.piskvorky.server.features.users.mapper.asUserWithPassDO
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.update
 import java.time.LocalDateTime
 
 /**
@@ -57,6 +54,10 @@ class UsersRepositoryImpl(
             it[admin] = user.admin
             it[active] = user.active
         }
+    }
+
+    override suspend fun deleteUser(userId: Int): Unit = newSuspendedTransaction {
+        Users.deleteWhere { Users.id eq userId }
     }
 
     override suspend fun updateUserPassword(id: Int, passwordHash: String): Unit = newSuspendedTransaction {

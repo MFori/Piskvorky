@@ -21,3 +21,14 @@ header {
 article {
   margin: 15px;
 }
+
+#login-form {
+  max-width: 330px;
+  margin: 30px auto 0 auto;
+  text-align: center;
+
+  h1 {
+    font-size: 35px;
+    margin-bottom: 22px;
+  }
+}

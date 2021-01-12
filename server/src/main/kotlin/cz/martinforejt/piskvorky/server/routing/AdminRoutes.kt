@@ -2,14 +2,18 @@ package cz.martinforejt.piskvorky.server.routing
 
 import cz.martinforejt.piskvorky.domain.repository.ResultsRepository
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
+import cz.martinforejt.piskvorky.server.features.admin.model.asEditUserRequest
+import cz.martinforejt.piskvorky.server.features.admin.usecase.EditUserUseCase
 import cz.martinforejt.piskvorky.server.features.admin.view.*
 import cz.martinforejt.piskvorky.server.routing.exception.NotFoundApiException
+import cz.martinforejt.piskvorky.server.routing.utils.currentUser
 import cz.martinforejt.piskvorky.server.security.FORM_AUTH_ADMIN
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.html.*
 import io.ktor.http.content.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.sessions.*
@@ -59,12 +63,9 @@ fun Route.adminWebRoutes() {
 
     val usersRepository by inject<UsersRepository>()
     val resultsRepository by inject<ResultsRepository>()
+    val editUserUseCase by inject<EditUserUseCase>()
 
     route("/admin") {
-
-        static {
-            files("src/main/resources/css")
-        }
 
         get("/") {
             adminTemplate<HomePageTempl> {}
@@ -75,11 +76,30 @@ fun Route.adminWebRoutes() {
             adminTemplate(UsersListTempl(users)) { }
         }
 
-        get("/users/{id}") {
-            val id = call.parameters["id"]?.toIntOrNull()
-            val user =
-                id?.let { usersRepository.getUserById(it) } ?: throw NotFoundApiException("User with id not found.")
-            call.respond(mapOf("user" to user))
+        route("/users/{id}") {
+
+            get {
+                val id = call.parameters["id"]?.toIntOrNull()
+                val user = id?.let { usersRepository.getUserById(it) } ?: throw NotFoundApiException("User with id not found.")
+                adminTemplate(UserDetailTempl(user)) { }
+            }
+
+            post {
+                val id = call.parameters["id"]?.toIntOrNull()
+                val user = id?.let { usersRepository.getUserById(it) } ?: throw NotFoundApiException("User with id not found.")
+
+                val request = call.receiveParameters().asEditUserRequest()
+                val res = editUserUseCase.execute(EditUserUseCase.Params(currentUser, user, request))
+
+                if (!res.isSuccessful) {
+                    adminTemplate(UserDetailTempl(user, res.error?.message)) { }
+                } else if(request.delete) {
+                    call.respondRedirect("/admin/users")
+                } else {
+                    call.respondRedirect("/admin/users/${user.id}")
+                }
+            }
+
         }
 
         get("/results") {
@@ -91,6 +111,12 @@ fun Route.adminWebRoutes() {
 }
 
 fun Route.adminPublicWebRoutes() {
+    route("/admin") {
+        static {
+            files("src/main/resources/css")
+        }
+    }
+
     route("/login") {
 
         get {

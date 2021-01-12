@@ -10,28 +10,38 @@ import kotlinx.html.*
  * @author Martin Forejt
  */
 fun HTML.loginForm(queryParams: Parameters) {
+    head {
+        title("Piskvorky | Admin")
+        link("/admin/bootstrap.min.css", rel = "stylesheet")
+        link("/admin/admin.css", rel = "stylesheet")
+    }
     body {
         form(method = FormMethod.post) {
+            id = "login-form"
+            h1 {
+                +"Admin zone - login"
+            }
             val errorMsg = when {
-                "invalid" in queryParams -> "Sorry, incorrect username or password."
+                "invalid" in queryParams -> "Invalid email and/or password."
                 "no" in queryParams -> "Sorry, you need to be logged in to do that."
                 else -> null
             }
             if (errorMsg != null) {
-                div {
-                    style = "color:red;"
+                div("alert alert-danger") {
                     +errorMsg
                 }
             }
-            textInput(name = "user") {
-                placeholder = "email"
+            div("form-group") {
+                textInput(classes= "form-control", name = "user") {
+                    placeholder = "email"
+                }
             }
-            br
-            passwordInput(name = "password") {
-                placeholder = "password"
+            div("form-group") {
+                passwordInput(classes= "form-control", name = "password") {
+                    placeholder = "password"
+                }
             }
-            br
-            submitInput {
+            submitInput(classes="btn btn-primary btn-block") {
                 value = "Log in"
             }
         }

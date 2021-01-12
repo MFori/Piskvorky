@@ -4,6 +4,7 @@ import cz.martinforejt.piskvorky.domain.repository.*
 import cz.martinforejt.piskvorky.domain.service.EmailService
 import cz.martinforejt.piskvorky.server.core.service.EmailServiceImpl
 import cz.martinforejt.piskvorky.server.core.service.SocketService
+import cz.martinforejt.piskvorky.server.features.admin.usecase.EditUserUseCase
 import cz.martinforejt.piskvorky.server.features.game.repository.GameRepositoryImpl
 import cz.martinforejt.piskvorky.server.features.game.usecase.CancelGameInvitationUseCase
 import cz.martinforejt.piskvorky.server.features.game.usecase.GiveUpGameUseCase
@@ -178,6 +179,13 @@ fun serverModule(app: Application) = module {
         AddGameResultUseCase(
             usersRepository = get(),
             resultsRepository = get()
+        )
+    }
+
+    factory {
+        EditUserUseCase(
+            usersRepository = get(),
+            hashService = get()
         )
     }
 }
