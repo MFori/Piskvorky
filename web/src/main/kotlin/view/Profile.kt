@@ -1,11 +1,16 @@
 package view
 
-import core.component.CoreComponent
+import core.component.ConnectionAwareCoreComponent
 import core.component.CoreRProps
 import core.component.CoreRState
+import cz.martinforejt.piskvorky.api.model.GameSnap
+import cz.martinforejt.piskvorky.api.model.GameUpdateSocketApiMessage
+import cz.martinforejt.piskvorky.api.model.SocketApiMessage
 import kotlinx.browser.document
 import react.RBuilder
 import react.dom.div
+import react.router.dom.redirect
+import react.setState
 
 /**
  * Created by Martin Forejt on 01.01.2021.
@@ -14,7 +19,15 @@ import react.dom.div
  * @author Martin Forejt
  */
 
-class Profile : CoreComponent<CoreRProps, CoreRState>() {
+class ProfileState : CoreRState() {
+    var inGame = false
+}
+
+class Profile : ConnectionAwareCoreComponent<CoreRProps, ProfileState>() {
+
+    override fun ProfileState.init() {
+        inGame = false
+    }
 
     override fun componentDidMount() {
         super.componentDidMount()
@@ -22,6 +35,10 @@ class Profile : CoreComponent<CoreRProps, CoreRState>() {
     }
 
     override fun RBuilder.render() {
+        if (state.inGame) {
+            redirect("/lobby", "/game")
+            return
+        }
         div("container-md") {
             coreChild(Header::class)
             div("stretch-content") {
@@ -37,4 +54,11 @@ class Profile : CoreComponent<CoreRProps, CoreRState>() {
         }
     }
 
+    override fun onReceiveGameUpdate(message: SocketApiMessage<GameUpdateSocketApiMessage>) {
+        if (message.data?.game?.status == GameSnap.Status.running) {
+            setState {
+                inGame = true
+            }
+        }
+    }
 }
