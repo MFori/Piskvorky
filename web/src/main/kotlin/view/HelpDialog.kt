@@ -9,10 +9,7 @@ import react.RBuilder
 import react.RComponent
 import react.RProps
 import react.RState
-import react.dom.button
-import react.dom.div
-import react.dom.h5
-import react.dom.span
+import react.dom.*
 import kotlin.text.Typography.times
 
 /**
@@ -61,7 +58,22 @@ class HelpDialog : RComponent<HelpDialogProps, RState>() {
                         }
                     }
                     div("modal-body") {
-                        +"help content"
+                        b { +"Game controls" }
+                        br {}
+                        p {
+                            +"- Header: it shows game players with info about you (bold name), game symbol and current player on move (black text and white background)"
+                            br {}
+                            +"- Footer: there are two buttons for chat dialog and for game give up"
+                            br {}
+                            +"- Grid buttons: grid button with icons for help (you know), centering the grid and zooming grid in and out"
+                        }
+                        b { +"Rules" }
+                        br {}
+                        p {
+                            +"You can always place your symbol near any other symbol on grid (except first move), because of infinity grid to avoid playing in 'other world'. "
+                            br {}
+                            +"Winner is player that first connect his 5 symbols in any direction."
+                        }
                     }
                 }
             }
