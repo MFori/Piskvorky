@@ -51,7 +51,7 @@ fun Application.registerRoutes() {
             call.errorResponse(cause)
         }
         exception<Throwable> { cause ->
-            cause.printStackTrace()
+            application.environment.log.error(cause)
             call.errorResponse(cause, HttpStatusCode.InternalServerError)
         }
     }

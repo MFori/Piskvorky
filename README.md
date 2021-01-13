@@ -15,3 +15,10 @@ docker-compose up
 docker-compose build
 
 https://youtrack.jetbrains.com/issue/KTOR-646
+
+
+// connect to db from cli
+docker exec -it piskvory_mysql_1 bash -l
+mysql -uroot -ppassword
+use piskvorky_db;
+select * from users;
