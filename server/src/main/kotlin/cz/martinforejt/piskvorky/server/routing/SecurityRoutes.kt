@@ -44,7 +44,7 @@ fun Route.securityRoutes(jwtManager: JwtManager) {
     post("/login") {
         val request = call.receive<LoginRequest>()
         val principal = validateCredentialsUSeCase.execute(request.toCredentials()) ?: throw UnauthorizedApiException()
-        application.environment.log.info("Logged user")
+        application.environment.log.info("LoggedIn user: $principal")
         call.createTokenResponse(principal)
     }
 
@@ -54,6 +54,7 @@ fun Route.securityRoutes(jwtManager: JwtManager) {
         if (res.isSuccessful.not()) {
             throw ConflictApiException(res.error?.message ?: "Error occurred.")
         }
+        application.environment.log.info("Registered user: ${res.data}")
         call.createTokenResponse(res.data!!)
     }
 

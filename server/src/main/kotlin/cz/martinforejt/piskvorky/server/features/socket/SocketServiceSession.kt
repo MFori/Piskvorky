@@ -34,7 +34,6 @@ class SocketServiceSessionImpl(
 
     @Throws(SocketApiException::class)
     override suspend fun receivedMessage(data: String) {
-        println("received $data")
         val message = SocketApi.decode(data)
         if (!authorized && message.action != SocketApiAction.AUTHORIZE) {
             throw UnauthorizedSocketException()

@@ -59,7 +59,7 @@ class WebSocketServiceImpl : WebSocketService {
         try {
             ApiClient.webSocket(Api.EP.LOBBY) {
                 connection = this
-                println("onOpen")
+                println("socket opened")
                 connectionListener?.onConnect(this@WebSocketServiceImpl)
                 try {
                     incoming.consumeEach { frame ->
@@ -72,9 +72,9 @@ class WebSocketServiceImpl : WebSocketService {
                         }
                     }
                 } catch (e: ClosedReceiveChannelException) {
-                    println("onClose ${closeReason.await()}")
+                    println("socket closed: ${closeReason.await()}")
                 } catch (e: Throwable) {
-                    println("onError ${closeReason.await()}")
+                    println("socket error: ${closeReason.await()}")
                 } finally {
                     connection = null
                     authorized = false
@@ -149,7 +149,7 @@ interface MessageListener {
 
     @Suppress("UNCHECKED_CAST")
     fun onReceiveMessage(data: String) {
-        println("message $data")
+        println("socket receive: $data")
         val message = SocketApi.decode(data)
         when (message.action) {
             SocketApiAction.AUTHORIZE -> onReceiveAuthorize(message as SocketApiMessage<AuthorizeSocketApiMessage>)

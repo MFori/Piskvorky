@@ -40,7 +40,7 @@ fun Route.socketRoute() {
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session"))
             return@webSocket
         }
-        println("onOpen ${cookieSession.id}")
+        application.environment.log.info("Socket open: ${cookieSession.id}")
 
         val session = socketService.newConnection(cookieSession.id, this)
 
@@ -55,11 +55,10 @@ fun Route.socketRoute() {
                 }
             }
         } catch (e: ClosedReceiveChannelException) {
-            println("onClose ${closeReason.await()}")
+            application.environment.log.info("Socket close (${cookieSession.id}): ${closeReason.await()}")
         } catch (e: Throwable) {
-            println("onError ${closeReason.await()}")
+            application.environment.log.error("Socket error (${cookieSession.id}): ${closeReason.await()}")
         } finally {
-            println("lobby end")
             socketService.disconnect(session)
         }
     }
