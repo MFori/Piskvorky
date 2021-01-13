@@ -12,6 +12,7 @@ RUN chmod +x /wait-for-it.sh
 USER $APPLICATION_USER
 
 COPY ./build/libs/piskvorky-server.jar /server/piskvorky-server.jar
+COPY ./build/libs/static /server/static
 WORKDIR /server
 
 CMD ["/wait-for-it.sh", "mysql:3306", "--", "java", "-server", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-XX:InitialRAMFraction=2", "-XX:MinRAMFraction=2", "-XX:MaxRAMFraction=2", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=100", "-XX:+UseStringDeduplication", "-jar", "piskvorky-server.jar"]
