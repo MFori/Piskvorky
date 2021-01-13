@@ -40,8 +40,16 @@ application {
 }
 project.setProperty("mainClassName", mMainClassName)
 
+tasks.register<Copy>("copyStatic") {
+    from("$projectDir/static") {
+        exclude("**/*.scss", "**/*.map")
+    }
+    into("${rootProject.buildDir}/static")
+}
+
 tasks.withType<ShadowJar> {
     archiveBaseName.set("piskvorky-server")
     archiveClassifier.set("")
     archiveVersion.set("")
+    dependsOn("copyStatic")
 }
