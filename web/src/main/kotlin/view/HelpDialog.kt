@@ -70,7 +70,7 @@ class HelpDialog : RComponent<HelpDialogProps, RState>() {
                         b { +"Rules" }
                         br {}
                         p {
-                            +"You can always place your symbol near any other symbol on grid (except first move), because of infinity grid to avoid playing in 'other world'. "
+                            +"You must always place your symbol near any other symbol on grid (except first move), because of infinity grid and avoiding playing in 'other world'. "
                             br {}
                             +"Winner is player that first connect his 5 symbols in any direction."
                         }
