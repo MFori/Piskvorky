@@ -5,7 +5,10 @@ import com.zaxxer.hikari.HikariDataSource
 import cz.martinforejt.piskvorky.server.core.database.schema.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.exposedLogger
+import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.LocalDateTime
 
 /**
  * Created by Martin Forejt on 25.12.2020.
@@ -16,7 +19,18 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object DatabaseFactory {
 
     fun init() {
-        Database.connect(hikariSource())
+        // mysql (mainly first) startup takes longer time (and wait-for-it.sh not always do his job)
+        for (i in 1..10) {
+            try {
+                Database.connect(hikariSource())
+                break
+            //} catch (e: com.mysql.cj.jdbc.exceptions.CommunicationsException) {
+            } catch (e: Exception) {
+                exposedLogger.debug("Cannot connect to db, trying it again in $i seconds")
+                if (i == 10) throw e
+                else Thread.sleep(i * 1000L)
+            }
+        }
 
         transaction {
             SchemaUtils.create(
@@ -26,6 +40,8 @@ object DatabaseFactory {
                 GameResults,
                 LostPasswords
             )
+
+            prefilledUsers()
         }
     }
 
@@ -54,4 +70,15 @@ object DatabaseFactory {
         return HikariDataSource(config)
     }
 
+    private fun prefilledUsers() {
+        Users.insertIgnore {
+            it[id] = 1
+            it[email] = "admin@admin.com"
+            it[password] = "yLFxE1NAJNs/i5IA/Cmx/tHGQAwtxr8afOzF0O+Ed9Y=" // test123
+            it[active] = true
+            it[admin] = true
+            it[created] = LocalDateTime.now()
+        }
+
+    }
 }
