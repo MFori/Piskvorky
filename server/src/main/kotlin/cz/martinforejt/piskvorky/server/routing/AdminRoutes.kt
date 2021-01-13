@@ -122,7 +122,7 @@ fun Route.adminWebRoutes() {
 fun Route.adminPublicWebRoutes() {
     route("/admin") {
         static {
-            files("src/main/resources/css")
+            files("static/css")
         }
     }
 
