@@ -1,5 +1,10 @@
 # Piskvorky
 
+// TODO
+
+### KIV/PIA DOC
+See [this doc](doc/DOC.md).
+
 // build server
 cd server
 docker build -t piskvorky-server .
