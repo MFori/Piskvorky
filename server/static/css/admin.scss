@@ -1,20 +1,29 @@
 header {
   font-size: 28px;
-  height: 80px;
-  padding-left: 30px;
+  height: 93px;
   border-bottom: 1px solid #e0e0e0;
   padding-top: 21px;
   position: relative;
+  text-align: center;
+
+  @media (min-width: 520px) {
+    height: 80px;
+    padding-left: 30px;
+    text-align: left;
+  }
 
   #user-box {
-    height: 30px;
     font-size: 18px;
-    display: inline;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 15px;
-    margin: auto;
+
+    @media (min-width: 520px) {
+      top: 0;
+      height: 30px;
+      display: inline;
+      position: absolute;
+      bottom: 0;
+      right: 15px;
+      margin: auto;
+    }
   }
 }
 

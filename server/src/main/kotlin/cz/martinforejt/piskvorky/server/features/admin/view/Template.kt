@@ -16,11 +16,13 @@ class AdminLayoutTempl<CT : AdminContentTempl>(
     private val contentTempl: CT,
     val user: UserPrincipal
 ) : Template<HTML> {
+    val pageTitle = Placeholder<TITLE>()
     val content = TemplatePlaceholder<CT>()
 
     override fun HTML.apply() {
         head {
-            title("Piskvorky | Admin")
+            title { insert(pageTitle) }
+            meta("viewport", "width=device-width, initial-scale=1, shrink-to-fit=no")
             link("/admin/bootstrap.min.css", rel = "stylesheet")
             link("/admin/admin.css", rel = "stylesheet")
         }
@@ -35,7 +37,7 @@ class AdminLayoutTempl<CT : AdminContentTempl>(
     private fun BODY.createHeader() {
         header {
             a("/admin") {
-                +"Piskvorky - Admin zone"
+                +"Piskvorky-Admin"
             }
             div {
                 id = "user-box"

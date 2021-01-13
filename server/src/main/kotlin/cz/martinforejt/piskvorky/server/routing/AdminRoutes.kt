@@ -74,12 +74,16 @@ fun Route.adminWebRoutes() {
     route("/admin") {
 
         get("/") {
-            adminTemplate<HomePageTempl> {}
+            adminTemplate<HomePageTempl> {
+                pageTitle { +"Home | Admin | Piskvorky" }
+            }
         }
 
         get("/users") {
             val users = usersRepository.getUsers()
-            adminTemplate(UsersListTempl(users)) { }
+            adminTemplate(UsersListTempl(users)) {
+                pageTitle { +"Users | Admin | Piskvorky" }
+            }
         }
 
         route("/users/{id}") {
@@ -87,7 +91,9 @@ fun Route.adminWebRoutes() {
             get {
                 val id = call.parameters["id"]?.toIntOrNull()
                 val user = id?.let { usersRepository.getUserById(it) } ?: throw NotFoundApiException("User with id not found.")
-                adminTemplate(UserDetailTempl(user)) { }
+                adminTemplate(UserDetailTempl(user)) {
+                    pageTitle { +"${user.email} | Admin | Piskvorky" }
+                }
             }
 
             post {
@@ -98,7 +104,9 @@ fun Route.adminWebRoutes() {
                 val res = editUserUseCase.execute(EditUserUseCase.Params(currentUser, user, request))
 
                 if (!res.isSuccessful) {
-                    adminTemplate(UserDetailTempl(user, res.error?.message)) { }
+                    adminTemplate(UserDetailTempl(user, res.error?.message)) {
+                        pageTitle { +"${user.email} | Admin | Piskvorky" }
+                    }
                 } else if(request.delete) {
                     call.respondRedirect("/admin/users")
                 } else {
@@ -110,7 +118,9 @@ fun Route.adminWebRoutes() {
 
         get("/results") {
             val results = resultsRepository.getResults()
-            adminTemplate(ResultsListTempl(results)) { }
+            adminTemplate(ResultsListTempl(results)) {
+                pageTitle { +"Results | Admin | Piskvorky" }
+            }
         }
     }
 

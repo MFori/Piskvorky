@@ -12,6 +12,7 @@ import kotlinx.html.*
 fun HTML.loginForm(queryParams: Parameters) {
     head {
         title("Piskvorky | Admin")
+        meta("viewport", "width=device-width, initial-scale=1, shrink-to-fit=no")
         link("/admin/bootstrap.min.css", rel = "stylesheet")
         link("/admin/admin.css", rel = "stylesheet")
     }
