@@ -18,7 +18,9 @@ Project is using these technologies and libraries:
 - [Ktor](https://github.com/ktorio/ktor)
   \- as http server
 - [Serialization](https://github.com/Kotlin/kotlinx.serialization)
-  \- for serialization of json api messages 
+  \- for serialization of json api messages
+- [Koin](https://github.com/InsertKoinIO/koin)
+  \- for dependency injection, using alpha version with multiplatform support
 - [kotlin-react](https://github.com/JetBrains/kotlin-wrappers/tree/master/kotlin-react)
   \- Kotlin wrapper of ReactJS for building js client application 
 - [Exposed](https://github.com/JetBrains/Exposed)
@@ -78,6 +80,13 @@ Server will be listening at ```http://localhost:9090``` client app will be acces
 
 Project description
 ============
+Project is using gradle and is split into these modules:
+- **domain**
+  \- contains domain objects and other shared code between server and client(s) modules
+- **server**
+  \- http server using [Ktor](https://github.com/ktorio/ktor)
+- **web**
+  \- web client app in kotlin/js and ReactJS [wrapper](https://github.com/JetBrains/kotlin-wrappers/tree/master/kotlin-react)
 
 Screenshots
 ============
