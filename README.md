@@ -22,23 +22,19 @@ Screenshots
 Game
 -----
 ![](doc/img/game.png)
------
------
+
 Lobby
 -----
 ![](doc/img/lobby.png)
------
------
+
 Login page
 -----
 ![](doc/img/login.png)
------
------
+
 Admin
 -----
 ![](doc/img/admin.png)
------
------
+
 Notes
 ============
 Repository used Alpha features such as Kotlin Multiplatform and some problems with that may occur.
