@@ -55,8 +55,16 @@ java -jar server/build/libs/piskvorky-server.jar
 Server will listen at ```http://localhost:9090```, admin is located at ```http://localhost:9090/admin```
 
 **5. Start client**
+
 Copy content of ```web/distributions``` to some web server as nginx (see nginx [configuration](web/nginx.conf)) or run kotlin-browser gradle task as ```browserProductionRun``` 
 
+**6. Play**
+
+Create new account or use predefined admin account:
+```
+email: admin@admin.com
+pass: test123
+```
 
 ### One-Command Build&Deploy
 You can use prepared files [run.bat](run.bat)/[run.sh](run.sh) to build project using gradle wrapper and deploy to docker
@@ -66,15 +74,7 @@ gradlew build
 docker-compose build
 docker-compose up
 ```
-Server will be listening at ```http://localhost:9090``` client app will be accessible at ```http://localhost:80```. 
-
-**6. Play**
-
-Create new account or use predefined admin account:
-```
-email: admin@admin.com
-pass: test123
-```
+Server will be listening at ```http://localhost:9090``` client app will be accessible at ```http://localhost:80```.
 
 Project description
 ============
