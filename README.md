@@ -1,4 +1,11 @@
 # Piskvorky
+Piskvorky is TicTacToe multiplayer game build with Kotlin Multiplatform.
+
+
+![](doc/img/game.png)
+![](doc/img/lobby.png)
+![](doc/img/login.png)
+![](doc/img/admin.png)
 
 // TODO
 
