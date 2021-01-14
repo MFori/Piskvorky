@@ -26,7 +26,7 @@ Project is using these technologies and libraries:
 - [Exposed](https://github.com/JetBrains/Exposed)
   \- an ORM framework for Kotlin
 - [OpenApi](https://www.openapis.org/)
-  \- for generating api modal classes, see [specification](domain/api/specs/piskvorky-v1.0.yaml)
+  \- for generating api model classes, see [specification](domain/api/specs/piskvorky-v1.0.yaml)
 - [Docker](https://www.docker.com/)
   \- for build and deploy, see [installation](#installation)
 

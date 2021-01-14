@@ -21,9 +21,39 @@ viz https://github.com/osvetlik/pia2020/tree/master/semester-project
 
 Technologie
 ============
+Aplikace je z 95% napsaná v Kotlinu a jsou mimo jiné použity tyto technologie a knihovny:
+- [Kotlin Multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html)
+  \- pro možnost sdílení kódu mezi serverem napsaným v kotlin/jvm a klientem v kotlin/js
+- [Ktor](https://github.com/ktorio/ktor)
+  \- framework pro tvorbu http serveru a internetových aplikací
+- [Serialization](https://github.com/Kotlin/kotlinx.serialization)
+  \- knihovna pro serializaci zpráv v json api
+- [Koin](https://github.com/InsertKoinIO/koin)
+  \- dependency injection framework pro kotlin (je použita alpha verze s podporou pro kotlin/multiplatform)
+- [kotlin-react](https://github.com/JetBrains/kotlin-wrappers/tree/master/kotlin-react)
+  \- knihovna pro kotlin/js obalující frontend framework ReactJS
+- [Exposed](https://github.com/JetBrains/Exposed)
+  \- ORM framework pro Kotlin
+- [OpenApi](https://www.openapis.org/)
+  \- pro generování api kódu ze [specifikace](domain/api/specs/piskvorky-v1.0.yaml)
+- [SASS](https://sass-lang.com/)
+  \- pro psaní a generování css kódu
+- Gradle - pro automatizaci sestavení 
+- MySQL
 
 Instalace
 ============
+K dispozici jsou soubory [run.bat](../run.bat) a [run.sh](../run.sh), který přeloží projekt pomocí gradlu
+a spustí v dockeru za pomoci těchto příkazů:
+```
+gradlew build 
+docker-compose build
+docker-compose up
+```
+Server potom bude poslouchat na ```http://localhost:9090``` 
+
+Klient bude dostupný na ```http://localhost:80```
+
 
 Použití
 ============
