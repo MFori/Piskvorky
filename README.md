@@ -40,6 +40,7 @@ git clone https://github.com/MFori/Piskvorky.git
 gradlew build
 ```
 **3. Setup database**
+
 Create mysql db and pass connection params as environmental variables as below.
 
 **4. Run server**
@@ -66,6 +67,14 @@ docker-compose build
 docker-compose up
 ```
 Server will be listening at ```http://localhost:9090``` client app will be accessible at ```http://localhost:80```. 
+
+**6. Play**
+
+Create new account or use predefined admin account:
+```
+email: admin@admin.com
+pass: test123
+```
 
 Project description
 ============
