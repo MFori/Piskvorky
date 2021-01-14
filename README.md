@@ -31,6 +31,41 @@ Project is using these technologies and libraries:
 
 Installation
 ============
+**1. Clone this repository**
+```
+git clone https://github.com/MFori/Piskvorky.git
+```
+**2. Build using gradle wrapper**
+```
+gradlew build
+```
+**3. Setup database**
+Create mysql db and pass connection params as environmental variables as below.
+
+**4. Run server**
+```
+set SERVER_DB_ADDRESS=localhost
+set SERVER_DB_USER=root
+set SERVER_DB_PASSWORD=password
+set SERVER_DB_PORT=3306
+set SERVER_DB_NAME=piskvorky_db
+java -jar server/build/libs/piskvorky-server.jar
+```
+Server will listen at ```http://localhost:9090```, admin is located at ```http://localhost:9090/admin```
+
+**5. Start client**
+Copy content of ```web/distributions``` to some web server as nginx (see nginx [configuration](web/nginx.conf)) or run kotlin-browser gradle task as ```browserProductionRun``` 
+
+
+### One-Command Build&Deploy
+You can use prepared files [run.bat](run.bat)/[run.sh](run.sh) to build project using gradle wrapper and deploy to docker
+(Docker must  be installed.) with this commands:
+```
+gradlew build 
+docker-compose build
+docker-compose up
+```
+Server will be listening at ```http://localhost:9090``` client app will be accessible at ```http://localhost:80```. 
 
 Project description
 ============
