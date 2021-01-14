@@ -1,6 +1,8 @@
 # Piskvorky - Semestrální práce KIV/PIA 2020/2021
 Autor: Martin Forejt, A20N0079P, mforejt@students.zcu.cz
 
+Note: this file is also available as [pdf](DOC.pdf).
+
 Obsah
 ============
 <!--ts-->
