@@ -27,7 +27,7 @@ Aplikace je z 95% napsaná v Kotlinu a jsou mimo jiné použity tyto technologie
 - [Ktor](https://github.com/ktorio/ktor)
   \- framework pro tvorbu http serveru a internetových aplikací
 - [Serialization](https://github.com/Kotlin/kotlinx.serialization)
-  \- knihovna pro serializaci zpráv v json api
+  \- knihovna pro serializaci zpráv v json API
 - [Koin](https://github.com/InsertKoinIO/koin)
   \- dependency injection framework pro kotlin (je použita alpha verze s podporou pro kotlin/multiplatform)
 - [kotlin-react](https://github.com/JetBrains/kotlin-wrappers/tree/master/kotlin-react)
@@ -35,7 +35,7 @@ Aplikace je z 95% napsaná v Kotlinu a jsou mimo jiné použity tyto technologie
 - [Exposed](https://github.com/JetBrains/Exposed)
   \- ORM framework pro Kotlin
 - [OpenApi](https://www.openapis.org/)
-  \- pro generování api kódu ze [specifikace](domain/api/specs/piskvorky-v1.0.yaml)
+  \- pro generování api kódu ze [specifikace](../domain/api/specs/piskvorky-v1.0.yaml)
 - [SASS](https://sass-lang.com/)
   \- pro psaní a generování css kódu
 - Gradle - pro automatizaci sestavení 
@@ -60,7 +60,7 @@ Použití
 Role
 -----
 Existují dva typy uživatelů:
-- **User** - může pouze hrát, má přístup k api a do klientské aplikace
+- **User** - může pouze hrát, má přístup k API a do klientské aplikace
 
 - **Admin** (je zároveň User) - má přístup do administrace, kde vidí:
   - seznam uživatelů s možností jejich editace
@@ -75,7 +75,7 @@ pass: test123
 Server
 -----
 Server poslouchá na portu ```9090```.  
-Rest api viz [specifikace](../domain/api/specs/piskvorky-v1.0.yaml) je dostupné na ```/api/v1/```.  
+Rest API viz [specifikace](../domain/api/specs/piskvorky-v1.0.yaml) je dostupné na ```/api/v1/```.  
 Administrace je dostupná na ```/admin```
 
 ![](img/admin.png)
@@ -123,12 +123,46 @@ V nastavení (přístup z lobby přes link s vlastním emailem) je možné změn
 
 Architektura a Implementace
 ============
+Pro sestavení využívá aplikace nástroj Gradle a je rozdělena do těchto 3 Gradle modulů:
+- domain
+- server
+- web
+#### Domain
+Modul domain obsahuje doménové objekty, implementaci vlastní hry a pravidel, vygenerované soubory z OpenApi a další věci sdílené ostatními moduly. Není závislý na žádném jiném modulu.   
+Zdrojové kódy jsou dále rozděleny na:
+- **commonMain** - obsahuje pouze zdrojové kódy v tzv. Common Kotlin, který funguje na všech platformách
+- **jsMain** - zdrojové kódy v Kotlin/JS
+- **jvmMain** - zdrojové kódy v Kotlin/JVM
+
+#### Server
+Modul server obsahuje implementaci http serveru v Kotlin/JVM a je závislý pouze na modulu domain.
+
+#### Web
+Modul web obsahuje webovou (ReactJS) aplikaci v Kotlin/JS a je závislý také pouze na modulu domain.
+
+API
+-----
+Specifikace REST API je dostupná [zde](../domain/api/specs/piskvorky-v1.0.yaml).  
+
+Kromě REST API je dostupná jeho podmožina jako tzv. Socket API pro komunikaci přes websockety.
+Jeho specifikace je patrná v souborech [SocketMessage.kt](../domain/src/commonMain/kotlin/cz/martinforejt/piskvorky/api/model/SocketMessage.kt)
+a [SocketApi.kt](../domain/src/commonMain/kotlin/cz/martinforejt/piskvorky/api/model/SocketApi.kt).
+
+Autentizace probíhá pomocí JWT tokenů.
+
 Server
 -----
+Server je založen na frameworku [Ktor](https://github.com/ktorio/ktor), data jsou uloženy v MySQL databázi a přístup k ním probíhá přes ORM framework [Exposed](https://github.com/JetBrains/Exposed).  
+Hlavním úkolem serveru je implementaci Rest API (a Socket API) dle [specifikace](../domain/api/specs/piskvorky-v1.0.yaml), 
+mimo to poskytuje administrační rozhraní, které je tak odděleno od vlastní klientské aplikace.  
+
+
 Klient
 -----
+Klientská aplikace napsaná v Kotlin/JS je založena na frontend frameworku ReactJS.
 
 ### Design
+V aplikaci jsou použity nástroje Bootstrap a SASS. Design je responsivní a snaží se být jednoduchý a přehledný. 
 
 Testování
 ============
