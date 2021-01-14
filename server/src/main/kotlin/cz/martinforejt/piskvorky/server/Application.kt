@@ -19,6 +19,9 @@ import io.ktor.websocket.*
 import org.slf4j.event.Level
 import java.time.Duration
 
+/**
+ * Server app entry point
+ */
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 @KtorExperimentalAPI
@@ -53,7 +56,7 @@ fun Application.module() {
     }
 
     install(Sessions) {
-        cookie<SocketCookieSession>("LOBBY_SESSION")
+        cookie<SocketCookieSession>("SOCKET_SESSION")
         cookie<UserPrincipal>(
             "admin-auth",
             storage = SessionStorageMemory()

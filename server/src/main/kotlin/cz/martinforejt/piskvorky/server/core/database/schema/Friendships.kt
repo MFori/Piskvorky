@@ -15,6 +15,10 @@ import java.io.Serializable
  *
  * @author Martin Forejt
  */
+
+/**
+ * Friendships table
+ */
 object Friendships : IdTable<FriendshipId>(name = "friendships") {
     val user1 = reference("user_1", Users.id)
     val user2 = reference("user_2", Users.id)
@@ -22,6 +26,10 @@ object Friendships : IdTable<FriendshipId>(name = "friendships") {
     val author = integer("author")
     val pending = bool("pending")
 
+    /**
+     * Unused id as workaround entity ([FriendshipEntity]) with custom entity id ([FriendshipId])
+     * May be removed on exposed api improvements
+     */
     override val id = registerColumn<FriendshipId>("id", FriendshipIdColumnType()).entityId()
     override val primaryKey = PrimaryKey(user1, user2)
 }
@@ -91,6 +99,9 @@ class FriendshipIdColumnType : VarCharColumnType(15) {
     }
 }
 
+/**
+ * Friendship entity
+ */
 class FriendshipEntity(id: EntityID<FriendshipId>) : Entity<FriendshipId>(id) {
     companion object : EntityClass<FriendshipId, FriendshipEntity>(Friendships)
 

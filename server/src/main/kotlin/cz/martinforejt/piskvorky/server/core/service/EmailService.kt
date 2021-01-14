@@ -10,6 +10,8 @@ import org.apache.commons.mail.EmailException
 
 
 /**
+ * Email service implementation based on apache commons mail
+ *
  * Created by Martin Forejt on 02.01.2021.
  * me@martinforejt.cz
  *
@@ -36,6 +38,9 @@ class EmailServiceImpl(private val config: EmailServiceConfig) : EmailService {
     }
 }
 
+/**
+ * Service configuration
+ */
 data class EmailServiceConfig(
     val hostName: String,
     val port: Int,

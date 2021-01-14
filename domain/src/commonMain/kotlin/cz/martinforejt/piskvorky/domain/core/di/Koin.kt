@@ -4,6 +4,7 @@ import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.KoinAppDeclaration
 
+// called by Server,iOS,Android,js etc
 fun initKoin(
     modules: List<Module> = emptyList(),
     appDeclaration: KoinAppDeclaration = {}
@@ -20,5 +21,5 @@ fun initKoin(
         )
     }
 
-// called by iOS,Android,js etc
+// called by Server,iOS,Android,js etc
 fun initKoin(modules: List<Module> = emptyList()) = initKoin(modules = modules) {}

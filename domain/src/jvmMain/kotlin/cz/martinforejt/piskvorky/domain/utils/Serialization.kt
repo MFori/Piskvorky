@@ -16,6 +16,9 @@ import java.time.format.DateTimeFormatter
  * @author Martin Forejt
  */
 
+/**
+ * Serializer for [LocalDateTime]
+ */
 object IsoLocalDateTimeSerializer : LocalDateTimeSerializer(DateTimeFormatter.ISO_DATE_TIME)
 
 open class LocalDateTimeSerializer(private val formatter: DateTimeFormatter) : KSerializer<LocalDateTime> {

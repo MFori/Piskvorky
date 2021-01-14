@@ -10,5 +10,6 @@ actual data class Invitation(
     val userId1: Int,
     val userId2: Int,
     val created: kotlin.js.Date,
+    /** userId of game initializer */
     val author: Int
 )

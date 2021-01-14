@@ -22,6 +22,7 @@ object DatabaseFactory {
         // mysql (mainly first) startup takes longer time (and wait-for-it.sh not always do his job)
         for (i in 1..10) {
             try {
+                // try to connect to db
                 Database.connect(hikariSource())
                 break
             //} catch (e: com.mysql.cj.jdbc.exceptions.CommunicationsException) {
@@ -32,6 +33,7 @@ object DatabaseFactory {
             }
         }
 
+        // create tables and prefilled data
         transaction {
             SchemaUtils.create(
                 Users,
@@ -45,6 +47,9 @@ object DatabaseFactory {
         }
     }
 
+    /**
+     * Create hikari data source
+     */
     private fun hikariSource(): HikariDataSource {
         //val address = "localhost"
         //val user = "root"
@@ -70,6 +75,9 @@ object DatabaseFactory {
         return HikariDataSource(config)
     }
 
+    /**
+     * Insert some prefilled data
+     */
     private fun prefilledUsers() {
         Users.insertIgnore {
             it[id] = 1

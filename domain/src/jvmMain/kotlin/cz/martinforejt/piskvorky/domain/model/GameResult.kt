@@ -17,5 +17,6 @@ actual data class GameResult(
     val user2: User,
     @Serializable(with = IsoLocalDateTimeSerializer::class)
     val created: LocalDateTime,
+    /** userId of winner */
     val winnerId: Int
 )

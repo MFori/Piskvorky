@@ -15,5 +15,8 @@ object ApiUtils {
         .ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         .withZone(ZoneId.of("UTC"))
 
+    /**
+     * Format [LocalDateTime] to api string format
+     */
     fun LocalDateTime.formatApi(): String = this.format(dateFormatter)
 }

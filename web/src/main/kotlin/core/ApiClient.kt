@@ -23,24 +23,39 @@ import kotlin.js.json
  * @author Martin Forejt
  */
 
+/**
+ * Web client api helpers
+ */
 object ApiClient {
 
+    /**
+     * Http client
+     */
     @KtorExperimentalAPI
     val client = HttpClient {
         install(WebSockets)
     }
 
+    /**
+     * Make HTTP get request
+     */
     @ExperimentalSerializationApi
     suspend inline fun <reified T : Any> get(url: String, token: String? = null): ApiResult<T> {
         return getAndParseResult(url.apiUrl(), token)
     }
 
+    /**
+     * Make HTTP post request
+     */
     @ExperimentalSerializationApi
     suspend inline fun <reified T : Any> post(url: String, body: dynamic, token: String? = null): ApiResult<T> {
         console.log("body $body")
         return postAndParseResult(url.apiUrl(), body, token)
     }
 
+    /**
+     * Open websocket connection
+     */
     @KtorExperimentalAPI
     suspend fun webSocket(url: String, block: suspend DefaultClientWebSocketSession.() -> Unit) {
         client.webSocket(url.wsUrl(), {}, block)
@@ -48,6 +63,9 @@ object ApiClient {
 
 }
 
+/**
+ * Http api result
+ */
 data class ApiResult<T>(
     val data: T?,
     val error: Error?,
@@ -56,6 +74,9 @@ data class ApiResult<T>(
     val isSuccess = code == 200
 }
 
+/**
+ * Create http header with token
+ */
 fun buildHeader(token: String?, vararg pairs: Pair<String, Any>): kotlin.js.Json {
     val list = pairs.toMutableList()
     token?.let { list.add(Pair("Authorization", "Bearer $token")) }

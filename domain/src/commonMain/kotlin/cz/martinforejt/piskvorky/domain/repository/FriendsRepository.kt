@@ -5,6 +5,8 @@ import cz.martinforejt.piskvorky.domain.model.Friendship
 import cz.martinforejt.piskvorky.domain.model.PublicUser
 
 /**
+ * Friends repository
+ *
  * Created by Martin Forejt on 26.12.2020.
  * me@martinforejt.cz
  *

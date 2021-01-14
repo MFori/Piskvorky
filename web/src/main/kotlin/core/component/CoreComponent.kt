@@ -34,11 +34,16 @@ typealias AppContext = RContext<AppDependencies>
 
 class AppContextHolder(val appContext: AppContext)
 
-
+/**
+ * Core props with [context]
+ */
 abstract class CoreRProps : RProps, KoinComponent {
     var context: AppDependencies? = null
 }
 
+/**
+ * Core state with [dialogs] to render
+ */
 abstract class CoreRState : RState {
     var dialogs: MutableList<DialogBuilder>? = null
 }

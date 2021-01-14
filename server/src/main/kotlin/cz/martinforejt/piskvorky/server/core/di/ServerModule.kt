@@ -35,8 +35,15 @@ import org.koin.dsl.module
  * @author Martin Forejt
  */
 
+/**
+ * Koin server module
+ *
+ * @param app ktor app
+ */
 @KtorExperimentalAPI
 fun serverModule(app: Application) = module {
+
+    /////////// Services & repositories /////////////
 
     single<JwtManager> {
         val jwtIssuer = app.property("jwt.domain")
@@ -101,6 +108,10 @@ fun serverModule(app: Application) = module {
         EmailServiceImpl(config)
     }
 
+    /////////// Use cases /////////////
+
+    //---------- Users & security -------------//
+
     factory {
         ValidateUserCredentialsUseCase(
             authenticator = get()
@@ -138,6 +149,8 @@ fun serverModule(app: Application) = module {
         )
     }
 
+    //---------- Friendships -------------//
+
     factory {
         AddFriendUseCase(
             friendsRepository = get(),
@@ -151,6 +164,8 @@ fun serverModule(app: Application) = module {
             socketService = get()
         )
     }
+
+    //---------- Game invitations -------------//
 
     factory {
         JoinGameUseCase(
@@ -166,6 +181,8 @@ fun serverModule(app: Application) = module {
             socketService = get()
         )
     }
+
+    //---------- Game -------------//
 
     factory {
         PlayMoveUseCase(
@@ -190,6 +207,8 @@ fun serverModule(app: Application) = module {
             resultsRepository = get()
         )
     }
+
+    //---------- Admin -------------//
 
     factory {
         EditUserUseCase(

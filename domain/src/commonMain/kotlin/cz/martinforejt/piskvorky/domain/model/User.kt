@@ -8,15 +8,28 @@ import kotlinx.serialization.Serializable
  *
  * @author Martin Forejt
  */
+
+/**
+ * User DO
+ */
 expect class User
 
+/**
+ * User with password (plain or hashed, depends on specific usage)
+ */
 expect class UserWithPassword
 
+/**
+ * User with token
+ */
 data class UserWithToken(
     val email: String,
     val token: String
 )
 
+/**
+ * Public user
+ */
 @Serializable
 data class PublicUser(
     val id: Int,

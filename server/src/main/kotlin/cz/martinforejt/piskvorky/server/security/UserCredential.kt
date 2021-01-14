@@ -12,12 +12,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserCredential(
     val email: String,
-    val password: String
+    val password: String // plain
 ) : Credential
 
 @Serializable
 data class UserIdCredential(
     val id: Int,
     val email: String,
-    val admin: Boolean
+    val admin: Boolean // is user admin?
 ) : Credential

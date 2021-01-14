@@ -9,6 +9,10 @@ import org.jetbrains.exposed.sql.`java-time`.datetime
  *
  * @author Martin Forejt
  */
+
+/**
+ * Lost passwords table
+ */
 object LostPasswords : IntIdTable(name = "lost_passwords") {
     val user = reference("user", Users.id)
     val link = varchar("link", 255)

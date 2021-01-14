@@ -14,6 +14,8 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 /**
+ * Web socket service
+ *
  * Created by Martin Forejt on 03.01.2021.
  * me@martinforejt.cz
  *
@@ -21,10 +23,19 @@ import kotlinx.coroutines.launch
  */
 interface WebSocketService {
 
+    /**
+     * Open connection
+     */
     suspend fun open()
 
+    /**
+     * Send message
+     */
     suspend fun send(data: String)
 
+    /**
+     * Close connection
+     */
     suspend fun close(reason: CloseReason)
 
     fun setMessageListener(listener: MessageListener)
@@ -35,11 +46,86 @@ interface WebSocketService {
 
     fun removeConnectionListener(listener: ConnectionListener)
 
+    /**
+     * Check if user is authorized
+     */
     fun authorized() : Boolean
 
+    /**
+     * Mark that user is authorized
+     */
     fun setAuthorized()
 }
 
+/**
+ * Connection listener
+ */
+interface ConnectionListener {
+
+    /**
+     * Web socket connected
+     */
+    fun onConnect(connection: WebSocketService)
+
+    /**
+     * On connection closed
+     */
+    fun onConnectionClosed(closeReason: CloseReason)
+
+}
+
+interface MessageListener {
+
+    /**
+     * On received message
+     * Message is parsed and the right listener function bellow is called
+     */
+    @Suppress("UNCHECKED_CAST")
+    fun onReceiveMessage(data: String) {
+        println("socket receive: $data")
+        val message = SocketApi.decode(data)
+        when (message.action) {
+            SocketApiAction.AUTHORIZE -> onReceiveAuthorize(message as SocketApiMessage<AuthorizeSocketApiMessage>)
+            SocketApiAction.ONLINE_USERS -> onReceiveOnlineUsers(message as SocketApiMessage<OnlineUsersSocketApiMessage>)
+            SocketApiAction.FRIENDS -> onReceiveFriends(message as SocketApiMessage<FriendsSocketApiMessage>)
+            SocketApiAction.FRIENDSHIP_REQUEST -> onReceiveFriendRequest(message as SocketApiMessage<FriendShipRequestSocketApiMessage>)
+            SocketApiAction.FRIENDSHIP_CANCELLED -> onReceiveFriendCancel(message as SocketApiMessage<FriendshipCancelledSocketApiMessage>)
+            SocketApiAction.GAME_UPDATE -> onReceiveGameUpdate(message as SocketApiMessage<GameUpdateSocketApiMessage>)
+            SocketApiAction.GAME_REQUEST_CANCELLED -> onGameRequestCancel(message as SocketApiMessage<GameRequestCancelSocketApiMessage>)
+            SocketApiAction.GAME_REQUEST -> onReceiveGameRequest(message as SocketApiMessage<GameRequestSocketApiMessage>)
+            SocketApiAction.CHAT_MESSAGE -> onReceiveChatMessage(message as SocketApiMessage<ChatMessageSocketApiMessage>)
+            else -> {
+                onReceiveError(message)
+                throw InvalidSocketMessageException()
+            }
+        }
+    }
+
+    fun onReceiveAuthorize(message: SocketApiMessage<AuthorizeSocketApiMessage>)
+
+    fun onReceiveOnlineUsers(message: SocketApiMessage<OnlineUsersSocketApiMessage>)
+
+    fun onReceiveFriends(message: SocketApiMessage<FriendsSocketApiMessage>)
+
+    fun onReceiveFriendRequest(message: SocketApiMessage<FriendShipRequestSocketApiMessage>)
+
+    fun onReceiveFriendCancel(message: SocketApiMessage<FriendshipCancelledSocketApiMessage>)
+
+    fun onReceiveGameUpdate(message: SocketApiMessage<GameUpdateSocketApiMessage>)
+
+    fun onReceiveGameRequest(message: SocketApiMessage<GameRequestSocketApiMessage>)
+
+    fun onGameRequestCancel(message: SocketApiMessage<GameRequestCancelSocketApiMessage>)
+
+    fun onReceiveChatMessage(message: SocketApiMessage<ChatMessageSocketApiMessage>)
+
+    fun onReceiveError(message: SocketApiMessage<*>)
+
+}
+
+/**
+ * [WebSocketService] implementation for web client
+ */
 class WebSocketServiceImpl : WebSocketService {
     private var connection: WebSocketSession? = null
     private var messageListener: MessageListener? = null
@@ -135,57 +221,4 @@ class WebSocketServiceImpl : WebSocketService {
     override fun setAuthorized() {
         authorized = true
     }
-}
-
-interface ConnectionListener {
-
-    fun onConnect(connection: WebSocketService)
-
-    fun onConnectionClosed(closeReason: CloseReason)
-
-}
-
-interface MessageListener {
-
-    @Suppress("UNCHECKED_CAST")
-    fun onReceiveMessage(data: String) {
-        println("socket receive: $data")
-        val message = SocketApi.decode(data)
-        when (message.action) {
-            SocketApiAction.AUTHORIZE -> onReceiveAuthorize(message as SocketApiMessage<AuthorizeSocketApiMessage>)
-            SocketApiAction.ONLINE_USERS -> onReceiveOnlineUsers(message as SocketApiMessage<OnlineUsersSocketApiMessage>)
-            SocketApiAction.FRIENDS -> onReceiveFriends(message as SocketApiMessage<FriendsSocketApiMessage>)
-            SocketApiAction.FRIENDSHIP_REQUEST -> onReceiveFriendRequest(message as SocketApiMessage<FriendShipRequestSocketApiMessage>)
-            SocketApiAction.FRIENDSHIP_CANCELLED -> onReceiveFriendCancel(message as SocketApiMessage<FriendshipCancelledSocketApiMessage>)
-            SocketApiAction.GAME_UPDATE -> onReceiveGameUpdate(message as SocketApiMessage<GameUpdateSocketApiMessage>)
-            SocketApiAction.GAME_REQUEST_CANCELLED -> onGameRequestCancel(message as SocketApiMessage<GameRequestCancelSocketApiMessage>)
-            SocketApiAction.GAME_REQUEST -> onReceiveGameRequest(message as SocketApiMessage<GameRequestSocketApiMessage>)
-            SocketApiAction.CHAT_MESSAGE -> onReceiveChatMessage(message as SocketApiMessage<ChatMessageSocketApiMessage>)
-            else -> {
-                onReceiveError(message)
-                throw InvalidSocketMessageException()
-            }
-        }
-    }
-
-    fun onReceiveAuthorize(message: SocketApiMessage<AuthorizeSocketApiMessage>)
-
-    fun onReceiveOnlineUsers(message: SocketApiMessage<OnlineUsersSocketApiMessage>)
-
-    fun onReceiveFriends(message: SocketApiMessage<FriendsSocketApiMessage>)
-
-    fun onReceiveFriendRequest(message: SocketApiMessage<FriendShipRequestSocketApiMessage>)
-
-    fun onReceiveFriendCancel(message: SocketApiMessage<FriendshipCancelledSocketApiMessage>)
-
-    fun onReceiveGameUpdate(message: SocketApiMessage<GameUpdateSocketApiMessage>)
-
-    fun onReceiveGameRequest(message: SocketApiMessage<GameRequestSocketApiMessage>)
-
-    fun onGameRequestCancel(message: SocketApiMessage<GameRequestCancelSocketApiMessage>)
-
-    fun onReceiveChatMessage(message: SocketApiMessage<ChatMessageSocketApiMessage>)
-
-    fun onReceiveError(message: SocketApiMessage<*>)
-
 }

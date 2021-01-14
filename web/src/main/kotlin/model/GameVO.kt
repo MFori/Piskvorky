@@ -6,6 +6,8 @@ import cz.martinforejt.piskvorky.api.model.GameSnap
 import cz.martinforejt.piskvorky.api.model.Player
 
 /**
+ * Game view object
+ *
  * Created by Martin Forejt on 04.01.2021.
  * me@martinforejt.cz
  *
@@ -29,21 +31,42 @@ data class GameVO(
         }
     }
 
+    /**
+     * Get symbol at position
+     */
     fun getValue(x: Int, y: Int) = cells[Pair(x, y)] ?: BoardValue.none
 
+    /**
+     * Get symbol at position
+     */
     operator fun get(x: Int, y: Int) = getValue(x, y)
 
+    /**
+     * Set symbol at position
+     */
     fun setValue(x: Int, y: Int, value: BoardValue) {
         cells[Pair(x, y)] = value
     }
 
+    /**
+     * Set symbol at position
+     */
     operator fun set(x: Int, y: Int, value: BoardValue) = setValue(x, y, value)
 
+    /**
+     * Is position empty?
+     */
     fun isEmpty(x: Int, y: Int) = getValue(x, y) == BoardValue.none
 
+    /**
+     * Get symbol by player [email]
+     */
     fun player(email: String) = if (cross.email == email) BoardValue.cross else BoardValue.nought
 }
 
+/**
+ * Mapper from [GameSnap]
+ */
 fun GameSnap.asGameVO() = GameVO(
     status = this.status,
     board = this.board,

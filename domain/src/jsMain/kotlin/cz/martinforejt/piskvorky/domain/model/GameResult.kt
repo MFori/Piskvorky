@@ -11,5 +11,6 @@ actual data class GameResult(
     val user1: User,
     val user2: User,
     val created: kotlin.js.Date,
+    /** userId of winner */
     val winnerId: Int
 )

@@ -9,7 +9,7 @@ import org.koin.dsl.module
  * @author Martin Forejt
  */
 
-fun domainModule() = module {
-
-
-}
+/**
+ * Koin domain module
+ */
+fun domainModule() = module { }

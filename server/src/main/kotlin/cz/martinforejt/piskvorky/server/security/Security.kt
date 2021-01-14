@@ -35,6 +35,7 @@ fun Application.setUpSecurity() {
     val validateCredentialsUseCase by inject<ValidateUserCredentialsUseCase>()
 
     install(Authentication) {
+        // Jwt authentication for public api
         jwt(JWT_AUTH_USER) {
             realm = jwtConfig.realm
             verifier(jwtConfig.verifier)
@@ -43,6 +44,7 @@ fun Application.setUpSecurity() {
             }
             challenge { _, _ -> throw UnauthorizedApiException() }
         }
+        // Jwt authentication for admin api
         jwt(JWT_AUTH_ADMIN) {
             realm = jwtConfig.realm
             verifier(jwtConfig.verifier)
@@ -55,6 +57,7 @@ fun Application.setUpSecurity() {
             }
             challenge { _, _ -> throw UnauthorizedApiException() }
         }
+        // Htt basic authentication for admin
         /*basic(BASIC_AUTH_ADMIN) {
             realm = jwtConfig.realm
             validate { credential ->
@@ -66,6 +69,7 @@ fun Application.setUpSecurity() {
                 principal
             }
         }*/
+        // Form authentication for admin
         form(FORM_AUTH_ADMIN) {
             challenge {
                 @Suppress("DEPRECATION")
@@ -91,6 +95,7 @@ fun Application.setUpSecurity() {
                 principal
             }
         }
+        // Session authentication for admin (created after form authentication)
         session<UserPrincipal>(SESSION_AUTH_ADMIN) {
             challenge("/login")
             validate { session: UserPrincipal -> session }

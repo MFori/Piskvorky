@@ -11,5 +11,5 @@ import io.ktor.auth.*
 data class UserPrincipal(
     val id: Int,
     val email: String,
-    val admin: Boolean
+    val admin: Boolean // is user admin
 ) : Principal

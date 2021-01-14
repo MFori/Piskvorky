@@ -12,6 +12,10 @@ import org.jetbrains.exposed.sql.`java-time`.datetime
  *
  * @author Martin Forejt
  */
+
+/**
+ * Users table
+ */
 object Users : IntIdTable(name = "users") {
     val email = varchar("email", 50)
     val password = text("password")
@@ -20,6 +24,9 @@ object Users : IntIdTable(name = "users") {
     val active = bool("active")
 }
 
+/**
+ * User entity
+ */
 class UserEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<UserEntity>(Users)
 
@@ -32,6 +39,7 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id) {
     private val friends1 by FriendshipEntity referrersOn Friendships.user1
     private val friends2 by FriendshipEntity referrersOn Friendships.user2
 
+    /** query list of friends */
     val friends: List<UserEntity>
         get() {
             return friends1.filter { it.pending.not() }.map { it.getFriend(id.value) }
@@ -42,6 +50,7 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id) {
                 }.toList()
         }
 
+    /** query list of friend requests */
     val friendRequests: List<UserEntity>
         get() {
             return friends1.filter { it.pending }.map { it.getFriend(id.value) }

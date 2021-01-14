@@ -13,6 +13,8 @@ actual data class Friendship(
     val userId1: Int,
     val userId2: Int,
     val created: LocalDateTime,
+    /** userId of friendship initializer */
     val author: Int,
+    /** is friendship pending (= is it request) or is it confirmed friendship? */
     val pending: Boolean
 )

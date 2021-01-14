@@ -12,6 +12,10 @@ import org.jetbrains.exposed.sql.`java-time`.datetime
  *
  * @author Martin Forejt
  */
+
+/**
+ * Game results table
+ */
 object GameResults : IntIdTable(name = "results") {
     val user1 = reference("user_1", Users.id)
     val user2 = reference("user_2", Users.id)
@@ -19,6 +23,9 @@ object GameResults : IntIdTable(name = "results") {
     val winner = integer("winner")
 }
 
+/**
+ * Game results entity
+ */
 class GameResultEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<GameResultEntity>(GameResults)
 

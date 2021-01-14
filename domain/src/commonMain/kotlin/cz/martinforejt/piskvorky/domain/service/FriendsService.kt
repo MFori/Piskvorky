@@ -7,6 +7,8 @@ import cz.martinforejt.piskvorky.api.model.FriendRequest
 import cz.martinforejt.piskvorky.domain.usecase.Result
 
 /**
+ * Friends service (may be used by client apps)
+ *
  * Created by Martin Forejt on 27.12.2020.
  * me@martinforejt.cz
  *

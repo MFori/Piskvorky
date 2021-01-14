@@ -44,7 +44,7 @@ tasks.register<Copy>("copyStatic") {
     from("$projectDir/static") {
         exclude("**/*.scss", "**/*.map")
     }
-    into("${rootProject.buildDir}/static")
+    into("${buildDir}/static")
 }
 
 tasks.withType<ShadowJar> {

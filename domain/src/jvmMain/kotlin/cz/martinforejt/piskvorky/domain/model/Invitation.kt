@@ -13,5 +13,6 @@ actual data class Invitation(
     val userId1: Int,
     val userId2: Int,
     val created: LocalDateTime,
+    /** userId of game initializer */
     val author: Int
 )

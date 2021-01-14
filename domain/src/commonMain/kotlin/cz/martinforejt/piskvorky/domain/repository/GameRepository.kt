@@ -6,6 +6,8 @@ import cz.martinforejt.piskvorky.domain.model.Invitation
 import cz.martinforejt.piskvorky.domain.model.User
 
 /**
+ * Game repository
+ *
  * Created by Martin Forejt on 26.12.2020.
  * me@martinforejt.cz
  *
@@ -23,12 +25,24 @@ interface GameRepository {
 
     suspend fun getInvitations(userId: Int) : List<GameInvitation>
 
+    /**
+     * Get game in which is user with [userId] or null
+     */
     suspend fun getGame(userId: Int) : Game?
 
+    /**
+     * Create new game
+     */
     suspend fun newGame(user1: User, user2: User) : Game?
 
+    /**
+     * Remove game for both users, then [getGame] will return null
+     */
     suspend fun removeGame(userId1: Int, userId2: Int)
 
+    /**
+     * Remove game for one user, then [getGame] will return null
+     */
     suspend fun removeGame(userId1: Int)
 
 }

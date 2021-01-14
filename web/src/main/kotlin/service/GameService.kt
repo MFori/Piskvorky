@@ -12,12 +12,13 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 
 /**
+ * [GameService] implementation for web client
+ *
  * Created by Martin Forejt on 27.12.2020.
  * me@martinforejt.cz
  *
  * @author Martin Forejt
  */
-
 class GameServiceImpl : GameService {
 
     private val format = Json { serializersModule = SerializersModule { } }

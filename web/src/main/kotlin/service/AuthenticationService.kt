@@ -16,12 +16,13 @@ import org.w3c.dom.get
 import org.w3c.dom.set
 
 /**
+ * [AuthenticationService] implementation for web client
+ *
  * Created by Martin Forejt on 27.12.2020.
  * me@martinforejt.cz
  *
  * @author Martin Forejt
  */
-
 class AuthenticationServiceImpl : AuthenticationService {
 
     private val format = Json { serializersModule = SerializersModule { } }

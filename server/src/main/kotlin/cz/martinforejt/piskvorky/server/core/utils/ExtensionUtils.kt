@@ -9,6 +9,9 @@ import java.util.regex.Pattern
  * @author Martin Forejt
  */
 
+/**
+ * Validate email
+ */
 fun String.isEmail() =
     Pattern.compile(
         "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]|[\\w-]{2,}))@"

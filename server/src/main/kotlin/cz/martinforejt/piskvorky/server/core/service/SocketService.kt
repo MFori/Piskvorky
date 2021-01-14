@@ -19,20 +19,49 @@ import org.koin.core.KoinComponent
  */
 interface ISocketService : SocketBroadcaster {
 
+    /**
+     * Create new session
+     *
+     * @param sessionId session id, session can be any string representing current session
+     * @param connection websocket connection
+     */
     fun newConnection(sessionId: String, connection: WebSocketSession): SocketServiceSession
 
+    /**
+     * Disconnect session
+     */
     suspend fun disconnect(session: SocketServiceSession)
 
+    /**
+     * On received message by [session]
+     */
     suspend fun receivedMessage(data: String, session: SocketServiceSession)
 
+    /**
+     * Send message to [session]
+     */
     suspend fun send(message: String, session: SocketServiceSession)
 
+    /**
+     * Send message to session with [sessionId]
+     */
     suspend fun send(message: String, sessionId: String)
 
+    /**
+     * Send message to all session with [sessionIds]
+     */
     suspend fun send(message: String, vararg sessionIds: String)
 
+    /**
+     * Get list of online users (users connected via websocket to this service)
+     */
     suspend fun getOnlineUsers(): List<PublicUser>
 
+    /**
+     * Check if user with [userId] is online
+     *
+     * @param sessionId optionally search user only within session with this id
+     */
     fun isOnline(userId: Int, sessionId: String? = null): Boolean
 }
 
@@ -41,12 +70,24 @@ interface ISocketService : SocketBroadcaster {
  */
 interface SocketBroadcaster {
 
+    /**
+     * Send message to all connections
+     */
     suspend fun sendBroadcast(message: String)
 
+    /**
+     * Send message to all connections except session with [exceptSessionId]
+     */
     suspend fun sendOthers(message: String, exceptSessionId: String)
 
+    /**
+     * Send message to user with [userId]
+     */
     suspend fun sendMessageTo(userId: Int, message: String)
 
+    /**
+     * Send message to user with [userId]
+     */
     suspend fun sendMessageTo(userId: Int, message: SocketApiMessageData)
 
 }
@@ -123,11 +164,23 @@ abstract class SocketServiceSession(
     val authorized
         get() = user != null
 
+    /**
+     * Called on user left (from all connection within this [sessionId]
+     */
     abstract suspend fun userLeft()
 
+    /**
+     * Received message
+     */
     abstract suspend fun receivedMessage(data: String)
 
+    /**
+     * Send message to this session
+     */
     abstract suspend fun send(message: String)
 
+    /**
+     * Send message to this session
+     */
     abstract suspend fun send(message: SocketApiMessage<SocketApiMessageData>)
 }

@@ -23,6 +23,9 @@ class DialogProps : RProps {
     var dismissCallback: (() -> Unit)? = null
 }
 
+/**
+ * Dialog component
+ */
 class Dialog : RComponent<DialogProps, RState>() {
 
     override fun RBuilder.render() {
@@ -70,6 +73,11 @@ class Dialog : RComponent<DialogProps, RState>() {
     }
 }
 
+/**
+ * Dialog build
+ *
+ * @property builder Rbuilder to insert dialog into
+ */
 class DialogBuilder(private val builder: RBuilder? = null) {
     var title = ""
         private set
@@ -110,4 +118,7 @@ class DialogBuilder(private val builder: RBuilder? = null) {
     }
 }
 
+/**
+ * Create dialog in this Rbuilder
+ */
 fun RBuilder.dialogBuilder() = DialogBuilder(this)

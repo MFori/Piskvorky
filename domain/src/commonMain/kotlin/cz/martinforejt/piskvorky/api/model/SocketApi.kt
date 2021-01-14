@@ -12,6 +12,7 @@ import kotlinx.serialization.json.jsonPrimitive
  */
 object SocketApi {
 
+    @Throws(InvalidSocketMessageException::class)
     fun encode(message: SocketApiMessage<SocketApiMessageData>): String {
         return Json.encodeToString(
             SocketApiMessage.serializer(message.action.serializer()),

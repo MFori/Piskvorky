@@ -5,6 +5,8 @@ import cz.martinforejt.piskvorky.domain.model.UserWithToken
 import cz.martinforejt.piskvorky.domain.usecase.Result
 
 /**
+ * Authentication service (may be used by client apps)
+ *
  * Created by Martin Forejt on 27.12.2020.
  * me@martinforejt.cz
  *
@@ -25,7 +27,13 @@ interface AuthenticationService {
 
     fun logout()
 
+    /**
+     * Get current logged in user (with token)
+     */
     fun getCurrentUser(): UserWithToken?
 
+    /**
+     * Check if there is logged in user
+     */
     fun hasUser() = getCurrentUser() != null
 }
