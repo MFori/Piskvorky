@@ -1,7 +1,8 @@
 # Piskvorky
 Piskvorky is TicTacToe multiplayer game build with Kotlin Multiplatform.
 
-#Table of Contents
+Table of Contents
+============
 <!--ts-->
 * [Technologies](#technologies)
 * [Installation](#installation)
