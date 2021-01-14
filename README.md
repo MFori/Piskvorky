@@ -1,36 +1,54 @@
 # Piskvorky
 Piskvorky is TicTacToe multiplayer game build with Kotlin Multiplatform.
+#Table of Contents
+<!--ts-->
+* [Technologies](#technologies)
+* [Installation](#installation)
+* [Project description](#project-description)
+* [Screenshots](#screenshots)
+* [Notes](#notes)
+<!--te-->
+Technologies
+============
 
+Installation
+============
 
+Project description
+============
+
+Screenshots
+============
+Game
+-----
 ![](doc/img/game.png)
+-----
+-----
+Lobby
+-----
 ![](doc/img/lobby.png)
+-----
+-----
+Login page
+-----
 ![](doc/img/login.png)
+-----
+-----
+Admin
+-----
 ![](doc/img/admin.png)
+-----
+-----
+Notes
+============
+Repository used Alpha features such as Kotlin Multiplatform and some problems with that may occur.
 
-// TODO
+There is list of known issues:
+- Netty exception on every request: https://youtrack.jetbrains.com/issue/KTOR-646
+- Ktor's websocket auto ping/pong seems not working
 
-### KIV/PIA DOC
-See [this doc](doc/DOC.md).
+KIV/PIA
+-----
+This repository is semestral work of KIV/PIA.
 
-// build server
-cd server
-docker build -t piskvorky-server .
-docker run -m512M --cpus 2 -it -p 9090:9090 --rm piskvorky-server
-
-// build web
-cd root
-docker build -t piskvorky-web -f web/Dockerfile .
-
-
-docker-compose up
-
-docker-compose build
-
-https://youtrack.jetbrains.com/issue/KTOR-646
-
-
-// connect to db from cli
-docker exec -it piskvory_mysql_1 bash -l
-mysql -uroot -ppassword
-use piskvorky_db;
-select * from users;
+Please see [this doc](doc/DOC.md).
