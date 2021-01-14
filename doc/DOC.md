@@ -24,16 +24,16 @@ viz https://github.com/osvetlik/pia2020/tree/master/semester-project
 Technologie
 ============
 Aplikace je z 95% napsaná v Kotlinu a jsou mimo jiné použity tyto technologie a knihovny:
-- [Kotlin Multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html)
-  \- pro možnost sdílení kódu mezi serverem napsaným v kotlin/jvm a klientem v kotlin/js
+- [Kotlin/Multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html)
+  \- pro možnost sdílení kódu mezi serverem napsaným v Kotlin/JVM a klientem v Kotlin/JS
 - [Ktor](https://github.com/ktorio/ktor)
   \- framework pro tvorbu http serveru a internetových aplikací
 - [Serialization](https://github.com/Kotlin/kotlinx.serialization)
   \- knihovna pro serializaci zpráv v json API
 - [Koin](https://github.com/InsertKoinIO/koin)
-  \- dependency injection framework pro kotlin (je použita alpha verze s podporou pro kotlin/multiplatform)
+  \- dependency injection framework pro Kotlin (je použita alpha verze s podporou pro Kotlin/Multiplatform)
 - [kotlin-react](https://github.com/JetBrains/kotlin-wrappers/tree/master/kotlin-react)
-  \- knihovna pro kotlin/js obalující frontend framework ReactJS
+  \- knihovna pro Kotlin/JS obalující frontend framework ReactJS
 - [Exposed](https://github.com/JetBrains/Exposed)
   \- ORM framework pro Kotlin
 - [OpenApi](https://www.openapis.org/)
@@ -42,11 +42,12 @@ Aplikace je z 95% napsaná v Kotlinu a jsou mimo jiné použity tyto technologie
   \- pro psaní a generování css kódu
 - Gradle - pro automatizaci sestavení 
 - MySQL
+- Docker
 
 Instalace
 ============
-K dispozici jsou soubory [run.bat](../run.bat) a [run.sh](../run.sh), který přeloží projekt pomocí gradlu
-a spustí v dockeru za pomoci těchto příkazů:
+K dispozici jsou soubory [run.bat](../run.bat) a [run.sh](../run.sh), který přeloží projekt pomocí Gradlu
+a spustí v Dockeru za pomoci těchto příkazů:
 ```
 gradlew build 
 docker-compose build
@@ -132,7 +133,7 @@ Pro sestavení využívá aplikace nástroj Gradle a je rozdělena do těchto 3 
 #### Domain
 Modul domain obsahuje doménové objekty, implementaci vlastní hry a pravidel, vygenerované soubory z OpenApi a další věci sdílené ostatními moduly. Není závislý na žádném jiném modulu.   
 Zdrojové kódy jsou dále rozděleny na:
-- **commonMain** - obsahuje pouze zdrojové kódy v tzv. Common Kotlin, který funguje na všech platformách
+- **commonMain** - obsahuje pouze zdrojové kódy v Kotlin/Common, který funguje na všech platformách
 - **jsMain** - zdrojové kódy v Kotlin/JS
 - **jvmMain** - zdrojové kódy v Kotlin/JVM
 
@@ -158,6 +159,10 @@ Server je založen na frameworku [Ktor](https://github.com/ktorio/ktor), data js
 Hlavním úkolem serveru je implementaci Rest API (a Socket API) dle [specifikace](../domain/api/specs/piskvorky-v1.0.yaml), 
 mimo to poskytuje administrační rozhraní, které je tak odděleno od vlastní klientské aplikace.  
 
+### Session
+Server si také udržuje tzv. session, díky které je možné se připojit přes websocket vícekrát v rámci jedné session.
+To je využito ve webovém prohlížeči a je možné otevřít aplikaci ve více oknech. Naopak otevření (a přihlášení) na více zařízeních
+je blokováno.
 
 Klient
 -----
@@ -181,7 +186,7 @@ Známé problémy
 - Ktor's websocket auto ping/pong seems not working
   - Ktor poskytuje automatickou synchronizaci serveru a klienta přes websocket, tzv. ping/pong, tedy posílání zpráv pro ověření stálosti připojení.
   Toto se mi bohužel nepodařilo zprovoznit.
-- Spousta warningů při překladu webu a generování javascriptu. Je to způsobeno závislostmi v obalujících kotlin knihovnách. Jinak to nemá žádný vliv.    
+- Spousta warningů při překladu webu a generování javascriptu. Je to způsobeno závislostmi v obalujících Kotlin knihovnách. Jinak to nemá žádný vliv.    
 - Projekt využívá několik knihoven ve verzi alpha, mohou se tedy vyskytnout další problémy
 
 Bonusové části
