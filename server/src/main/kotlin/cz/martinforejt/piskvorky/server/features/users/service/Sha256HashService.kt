@@ -1,5 +1,6 @@
-package cz.martinforejt.piskvorky.server.features.users.manager
+package cz.martinforejt.piskvorky.server.features.users.service
 
+import cz.martinforejt.piskvorky.domain.service.HashService
 import io.ktor.util.*
 import java.util.*
 

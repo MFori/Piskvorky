@@ -1,7 +1,7 @@
 package cz.martinforejt.piskvorky.server.security
 
 import cz.martinforejt.piskvorky.domain.repository.UsersRepository
-import cz.martinforejt.piskvorky.server.features.users.manager.HashService
+import cz.martinforejt.piskvorky.domain.service.HashService
 import kotlinx.coroutines.runBlocking
 
 

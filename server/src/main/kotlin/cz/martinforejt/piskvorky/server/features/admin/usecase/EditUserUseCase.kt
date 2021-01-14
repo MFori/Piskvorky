@@ -6,7 +6,7 @@ import cz.martinforejt.piskvorky.domain.usecase.Error
 import cz.martinforejt.piskvorky.domain.usecase.Result
 import cz.martinforejt.piskvorky.domain.usecase.UseCaseResult
 import cz.martinforejt.piskvorky.server.features.admin.model.EditUserRequest
-import cz.martinforejt.piskvorky.server.features.users.manager.HashService
+import cz.martinforejt.piskvorky.domain.service.HashService
 import cz.martinforejt.piskvorky.server.security.UserPrincipal
 import kotlinx.coroutines.runBlocking
 

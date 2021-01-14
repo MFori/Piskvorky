@@ -5,7 +5,7 @@ import cz.martinforejt.piskvorky.domain.repository.UsersRepository
 import cz.martinforejt.piskvorky.domain.usecase.Error
 import cz.martinforejt.piskvorky.domain.usecase.Result
 import cz.martinforejt.piskvorky.domain.usecase.UseCaseResult
-import cz.martinforejt.piskvorky.server.features.users.manager.HashService
+import cz.martinforejt.piskvorky.domain.service.HashService
 import cz.martinforejt.piskvorky.server.security.IUserAuthenticator
 import cz.martinforejt.piskvorky.server.security.UserCredential
 import cz.martinforejt.piskvorky.server.security.UserPrincipal

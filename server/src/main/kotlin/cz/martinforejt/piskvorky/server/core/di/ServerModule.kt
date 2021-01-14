@@ -14,8 +14,8 @@ import cz.martinforejt.piskvorky.server.features.game.usecase.PlayMoveUseCase
 import cz.martinforejt.piskvorky.server.features.results.repository.ResultsRepositoryImpl
 import cz.martinforejt.piskvorky.server.features.results.usecase.AddGameResultUseCase
 import cz.martinforejt.piskvorky.server.features.socket.SocketServiceImpl
-import cz.martinforejt.piskvorky.server.features.users.manager.HashService
-import cz.martinforejt.piskvorky.server.features.users.manager.Sha256HashService
+import cz.martinforejt.piskvorky.domain.service.HashService
+import cz.martinforejt.piskvorky.server.features.users.service.Sha256HashService
 import cz.martinforejt.piskvorky.server.features.users.repository.FriendsRepositoryImpl
 import cz.martinforejt.piskvorky.server.features.users.repository.LostPasswordRepositoryImpl
 import cz.martinforejt.piskvorky.server.features.users.repository.UsersRepositoryImpl

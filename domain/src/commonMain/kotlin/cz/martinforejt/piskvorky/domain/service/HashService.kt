@@ -1,4 +1,4 @@
-package cz.martinforejt.piskvorky.server.features.users.manager
+package cz.martinforejt.piskvorky.domain.service
 
 /**
  * Created by Martin Forejt on 26.12.2020.
